@@ -1,6 +1,8 @@
-## 此目录为传送门可直接传送视频讲解(内附代码)
+## 此目录为传送门可直接传送视频讲解(内附文字版及代码片段)
 
-### [代码地址](https://github.com/edanlx/SealBook)
+### [文字版](https://github.com/edanlx/SealBook)
+
+### [可直接运行的完整代码](https://github.com/edanlx/TechingCode)
 
   1. 优雅代码
         1. [lombok](https://www.bilibili.com/video/BV1yC4y1877R/)
