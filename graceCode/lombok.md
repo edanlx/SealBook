@@ -1,4 +1,5 @@
-@[TOC](lombok与delombok)
+<center>lombok与delombok</center>
+
 # lombok
 先上[官网](https://projectlombok.org/)地址  
 [官方教程](https://projectlombok.org/features/EqualsAndHashCode)  注意替换域名后缀
