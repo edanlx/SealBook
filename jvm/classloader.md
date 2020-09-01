@@ -102,6 +102,48 @@ public Class<?> loadClass(String var1, boolean var2) throws ClassNotFoundExcepti
         }
 ```
 
+```
+// 演示的时候漏了一段核心代码 先是一层一层往上抛，如果父加载器找不到则自己加载
+protected Class<?> loadClass(String name, boolean resolve)
+    throws ClassNotFoundException
+{
+    synchronized (getClassLoadingLock(name)) {
+        // 检查当前类加载器是否已经加载了该类
+        Class<?> c = findLoadedClass(name);
+        if (c == null) {
+            long t0 = System.nanoTime();
+            try {
+                if (parent != null) {  //如果当前加载器父加载器不为空则委托父加载器加载该类
+                    c = parent.loadClass(name, false);
+                } else {  //如果当前加载器父加载器为空则委托引导类加载器加载该类
+                    c = findBootstrapClassOrNull(name);
+                }
+            } catch (ClassNotFoundException e) {
+                // ClassNotFoundException thrown if class not found
+                // from the non-null parent class loader
+            }
+
+            if (c == null) {
+                // If still not found, then invoke findClass in order
+                // to find the class.
+                long t1 = System.nanoTime();
+                //都会调用URLClassLoader的findClass方法在加载器的类路径里查找并加载该类
+                c = findClass(name);
+
+                // this is the defining class loader; record the stats
+                sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);
+                sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);
+                sun.misc.PerfCounter.getFindClasses().increment();
+            }
+        }
+        if (resolve) {  //不会执行
+            resolveClass(c);
+        }
+        return c;
+    }
+}
+```
+
 
 
 从代码和图中可知所谓双亲委派就是一层一层往上找，每层加载的代码不同避免了重复加载，通常用户所写的代码在系统类加载器
