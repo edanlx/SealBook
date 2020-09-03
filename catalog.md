@@ -15,6 +15,8 @@
         8. Swagger前后端分离api文档
         9. 借助aop构建全局日志
         10. 借助ErrorController无侵入验证字段
+        11. stream的常用示例
+        12. mybatisplus
   2. JVM深度剖析及调优
         1. [双亲委派及其破坏](https://www.bilibili.com/video/BV1Sz4y1f7FB/)
         2. 自定义类加载器
@@ -35,4 +37,6 @@
   12. LVS
   13. springcloud-alibaba 
   14. nginx
-  15. k8s、Jenkins与分布式
+    15. redis
+    16. k8s、Jenkins与分布式
+    17. 设计模式
