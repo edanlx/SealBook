@@ -1,5 +1,13 @@
 <center>jvm双亲委派及其破坏</center>
 
+# 友情链接
+[目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
+[可直接运行的完整代码](https://github.com/edanlx/TechingCode)  
+[视频讲解](https://www.bilibili.com/video/BV1Sz4y1f7FB/)   
+[文字版](https://github.com/edanlx/SealBook/blob/master/jvm/classloader.md)
+
+如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要
+
 # 类的生命周期
 ![类的生命周期](http://www.showediy.com/pic/classLifeCircle.jpg)
 
@@ -75,7 +83,7 @@
 
 双亲委派核心代码package sun.misc.Launcher;
 
-```
+```java
 public Class<?> loadClass(String var1, boolean var2) throws ClassNotFoundException {
             int var3 = var1.lastIndexOf(46);
             if (var3 != -1) {
@@ -102,7 +110,7 @@ public Class<?> loadClass(String var1, boolean var2) throws ClassNotFoundExcepti
         }
 ```
 
-```
+```java
 // 演示的时候漏了一段核心代码 先是一层一层往上抛，如果父加载器找不到则自己加载
 protected Class<?> loadClass(String name, boolean resolve)
     throws ClassNotFoundException
@@ -152,7 +160,7 @@ protected Class<?> loadClass(String name, boolean resolve)
 
 演示代码
 
-```
+```java
 package com.example.demo.lesson.jvm.loader;
 
 import sun.misc.Launcher;
@@ -213,7 +221,7 @@ public class ClassLoaderExe {
 
 核心代码在jdk11进行了迁移jdk.internal.loader.ClassLoaders
 
-```
+```java
 	private static final BootClassLoader BOOT_LOADER;
     private static final PlatformClassLoader PLATFORM_LOADER;
     private static final AppClassLoader APP_LOADER;
@@ -249,7 +257,7 @@ public class ClassLoaderExe {
 
 演示代码
 
-```
+```java
 package com.example.demo.lesson.jvm.loader;
 
 
@@ -277,13 +285,3 @@ public class ClassLoaderPlant {
 }
 
 ```
-
-
-
-# 友情链接
-[目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
-[可直接运行的完整代码](https://github.com/edanlx/TechingCode)  
-[视频讲解](https://www.bilibili.com/video/BV1Sz4y1f7FB/)   
-[文字版](https://github.com/edanlx/SealBook/blob/master/jvm/classloader.md)
-
-如果有帮助到你的话请顺手点个赞，这对我真的很重要
