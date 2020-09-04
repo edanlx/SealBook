@@ -5,12 +5,12 @@
 ### [可直接运行的完整代码](https://github.com/edanlx/TechingCode)
 
   1. 优雅代码
-        1. [lombok](https://www.bilibili.com/video/BV1yC4y1877R/)
-        2. [使用get、set方法避免魔法值](https://www.bilibili.com/video/BV1ok4y1q7Be/)
-        3. Optional杜绝NPE
-        4. 1行代码完成多线程
-        5. apache、spring下你忽略的工具类
-        6. 利用common-pool构建高效连接池
+        1. [lombok(最简单的简化代码注解)](https://www.bilibili.com/video/BV1yC4y1877R/)
+        2. [使用get、set方法避免魔法值(java传个方法你会吗,不是Method对象)](https://www.bilibili.com/video/BV1ok4y1q7Be/)
+        3. Optional杜绝NPE(看完这个就不要再写空指针了)
+        4. 1行代码完成多线程，别再写runnable了
+        5. apache、spring下你忽略的工具类，好用到哭
+        6. 利用common-pool构建高效连接池，实测连接池访问baidu的效率
         7. 利用idea优化代码
         8. Swagger前后端分离api文档
         9. 借助aop构建全局日志
@@ -18,10 +18,10 @@
         11. stream的常用示例
         12. mybatisplus
   2. JVM深度剖析及调优
-        1. [双亲委派及其破坏](https://www.bilibili.com/video/BV1Sz4y1f7FB/)
-        2. 自定义类加载器
-        3. JVM整体结构
-        4. JVM内存非配
+        1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)](https://www.bilibili.com/video/BV1Sz4y1f7FB/)
+        2. 自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)
+        3. JVM整体结构(写了final就是常量池了么)
+        4. JVM内存分配
         5. 字节码
         6. 垃圾收集器
         7. GC调优
@@ -36,7 +36,7 @@
   11. netty
   12. LVS
   13. springcloud-alibaba 
-  14. nginx
+    14. nginx
     15. redis
     16. k8s、Jenkins与分布式
     17. 设计模式
