@@ -1,5 +1,11 @@
 <center>lombok与delombok</center>
 
+# 友情链接
+[目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
+[可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/entity)  
+[视频讲解](https://www.bilibili.com/video/BV1yC4y1877R/)   
+[文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/lombok.md)
+
 # lombok
 先上[官网](https://projectlombok.org/)地址  
 [官方教程](https://projectlombok.org/features/EqualsAndHashCode)  注意替换域名后缀
@@ -24,8 +30,3 @@
 java -jar lombok.jar delombok src -d src-delomboked
 ```
 注意替换包名
-# 友情链接
-[视频讲解](https://www.bilibili.com/video/BV1yC4y1877R/)  
-[github](https://github.com/edanlx/SealBook)
-
-如果有帮助到你的话请顺手点个赞，这对我真的很重要
