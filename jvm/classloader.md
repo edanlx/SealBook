@@ -1,4 +1,4 @@
-<center>jvm双亲委派及其破坏</center>
+<center>双亲委派都会说，破坏双亲委派你会吗</center>
 
 # 友情链接
 [目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
