@@ -8,7 +8,7 @@
         1. lombok(最简单的简化代码注解)[视频版](https://www.bilibili.com/video/BV1yC4y1877R/)  [文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/lombok.md)
         2. 使用get、set方法避免魔法值(java传个方法你会吗,不是Method对象)[视频版](https://www.bilibili.com/video/BV1ok4y1q7Be/)  [文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/%E4%BC%A0%E5%85%A5%E6%96%B9%E6%B3%95.md)
         3. Optional杜绝NPE(看完这个就不要再写空指针了)[视频版](https://www.bilibili.com/video/BV1oy4y1r7r1/)  [文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/optional.md)
-        4. 1行代码完成多线程，别再写runnable了
+        4. 1行代码完成多线程，别再写runnable了[视频版](https://www.bilibili.com/video/BV1jr4y1w7SH/)  [文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/thread.md)
         5. apache、spring下你忽略的工具类，好用到哭
         6. 利用common-pool构建高效连接池，实测连接池访问baidu的效率
         7. 利用idea优化代码
