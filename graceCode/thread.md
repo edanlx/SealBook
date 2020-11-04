@@ -2,7 +2,7 @@
 
 # 1.友情链接
 [目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
-[可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/optional)  
+[可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/thread)  
 [视频讲解](https://www.bilibili.com/video/BV1jr4y1w7SH/)   
 [文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/thread.md)
 
@@ -146,8 +146,9 @@ List<ThreadEntity> listEntity = IntStream.range(0, 10).mapToObj(x -> new ThreadE
 ```
 
  ## 3.3异步代码
- 以下代码可以直接简写成一行，在处理异步任务变得异常方便
- CompletableFuture.runAsync(() -> fun())
+ 以下代码可以直接简写成一行，在处理异步任务变得异常方便  
+ CompletableFuture.runAsync(() -> fun())  
+
  ```java
  List<ThreadEntity> listEntity = IntStream.range(0, 500).mapToObj(x -> new ThreadEntity(x)).collect(Collectors.toList());
         List<CompletableFuture> listCompletableFuture = listEntity.stream().map(x -> {
