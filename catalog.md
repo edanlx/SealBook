@@ -21,7 +21,7 @@
         1. 双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)[视频版](https://www.bilibili.com/video/BV1Sz4y1f7FB/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/classloader.md)
         2. 自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)[视频版](https://www.bilibili.com/video/BV1Y54y1274Y/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/myclassLoader.md)
         3. JVM整体结构(写了final就是常量池了么)[视频版](https://www.bilibili.com/video/BV1LZ4y1N75R)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/jv.md)
-        4. 字节码(我偷偷改了你编译后的class文件)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/clazz.md)
+        4. 字节码(我偷偷改了你编译后的class文件)[视频版](https://www.bilibili.com/video/BV1454y1r7mf/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/clazz.md)
         5. 即时编译器(为什么你写的代码有时候和预期不一致)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/compile.md)
         6. 并发的内存模型
         7. HotSpot创建对象(java最流行的虚拟机HotSpot了解多少)[文字版](https://github.com/edanlx/SealBook/blob/master/jvm/jv.md)
