@@ -1,4 +1,4 @@
-<center>lombok与delombok</center>
+<center>最简单的简化代码注解</center>
 
 # 友情链接
 [目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
