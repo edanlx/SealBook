@@ -4,7 +4,7 @@
 
 ### [可直接运行的完整代码](https://github.com/edanlx/TechingCode)
 
-如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要
+屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
   1. 优雅代码
         1. lombok(最简单的简化代码注解)[视频版](https://www.bilibili.com/video/BV1yC4y1877R/)  [文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/lombok.md)
@@ -20,14 +20,14 @@
         11. stream的常用示例
         12. mybatisplus
         13. 克隆和构造方法谁更快
-          14. linkedList插入真的比arrayList快么
-          15. json和序列化到底谁快
-          16. BigDecimal到底该怎么用，fastjson的那些默认事
-          17. 为什么enum和localDate的工具类那么少
-          18. final修饰集合后怎样无法让外部不能改变内部值
-          19. 方法懒执行
-          20. 代码多年自我总结超实用的正则
-          21. 非聚簇索引和聚簇索引怎么选
+        14. linkedList插入真的比arrayList快么
+        15. json和序列化到底谁快
+        16. BigDecimal到底该怎么用，fastjson的那些默认事
+        17. 为什么enum和localDate的工具类那么少
+        18. final修饰集合后怎样无法让外部不能改变内部值
+        19. 方法懒执行
+        20. 代码多年自我总结超实用的正则
+        21. 非聚簇索引和聚簇索引怎么选
   2. JVM深度剖析及调优
         1. 双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)[视频版](https://www.bilibili.com/video/BV1Sz4y1f7FB/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/classloader.md)
         2. 自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)[视频版](https://www.bilibili.com/video/BV1Y54y1274Y/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/myclassLoader.md)
@@ -36,8 +36,8 @@
         5. 即时编译器(为什么你写的代码有时候和预期不一致) [视频版](https://www.bilibili.com/video/BV11i4y1L7BX/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/compile.md)
         6. HotSpot创建对象(new一个对象到底占了多少内存?) [视频版](https://www.bilibili.com/video/BV1A54y1k7UW/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/jv.md)
         7. 并发的内存模型(偏向锁、轻量锁、重量锁到底是啥?) [视频版](https://www.bilibili.com/video/BV1LV411a7u7/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/concurrence.md)
-        8. 垃圾收集器(垃圾回收器那么多傻傻分不清?)
-        9. GC调优(频繁full gc分析思路)
+        8. 垃圾收集器(垃圾回收器那么多傻傻分不清?) [视频版](https://www.bilibili.com/video/BV1S5411V74U/)   [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/gcCollector.md)
+        9. GC调优(频繁full gc分析思路) [视频版](https://www.bilibili.com/video/BV1Ey4y167HQ/) [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/gc.md)
   3. tomcat深度剖析及调优
   4. mysql深度剖析及调优
   5. 并发
