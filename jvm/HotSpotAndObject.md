@@ -1,8 +1,8 @@
-<center>HotSpot创建对象</center>
+<center>new一个对象到底占了多少内存?</center>
 
 # 一.友情链接
 [目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
-[可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/myloader)  
+[可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/object)  
 [视频讲解](https://www.bilibili.com/video/BV1Sz4y1f7FB/)   
 [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/HotSpotAndObject.md)
 
