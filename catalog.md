@@ -32,7 +32,7 @@
         3. JVM整体结构(写了final就是常量池了么)[视频版](https://www.bilibili.com/video/BV1LZ4y1N75R)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/jv.md)
         4. 字节码(我偷偷改了你编译后的class文件)[视频版](https://www.bilibili.com/video/BV1454y1r7mf/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/clazz.md)
         5. 即时编译器(为什么你写的代码有时候和预期不一致) [视频版](https://www.bilibili.com/video/BV11i4y1L7BX/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/compile.md)
-        6. HotSpot创建对象(new一个对象到底占了多少内存?) [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/jv.md)
+        6. HotSpot创建对象(new一个对象到底占了多少内存?) [视频版](https://www.bilibili.com/video/BV1A54y1k7UW/ )  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/jv.md)
         7. 并发的内存模型(偏向锁、轻量锁、重量锁到底是啥?)
         8. 垃圾收集器(垃圾回收器那么多傻傻分不清?)
         9. GC调优(频繁full gc分析思路)
