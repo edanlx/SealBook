@@ -6,6 +6,8 @@
 [视频讲解](https://www.bilibili.com/video/BV1yC4y1877R/)   
 [文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/lombok.md)
 
+如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
+
 # lombok
 先上[官网](https://projectlombok.org/)地址  
 [官方教程](https://projectlombok.org/features/EqualsAndHashCode)  注意替换域名后缀

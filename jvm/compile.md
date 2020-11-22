@@ -5,6 +5,8 @@
 [视频讲解](https://www.bilibili.com/video/BV11i4y1L7BX/)   
 [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/compile.md)
 
+如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
+
 # 二.前端编译
 ## 2.1javac编译器
 即一般所说的编译，从javac代码的总体结构来看，编译过程大致可以分为1个准备过程和3个处理过程，它们分为  

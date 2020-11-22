@@ -6,6 +6,8 @@
 [视频讲解](https://www.bilibili.com/video/BV1A54y1k7UW/)   
 [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/HotSpotAndObject.md)
 
+如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
+
 # 二.对象的创建
 当Java虚拟机遇到一条字节码new指令时，首先将去检查这个指令的参数是否能在常量池中定位到 一个类的符号引用，并且检查这个符号引用代表的类是否已被加载、解析和初始化过。如果没有，那必须先执行相应的类加载过程。
 ## 1.空间分配

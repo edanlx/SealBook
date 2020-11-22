@@ -6,6 +6,8 @@
 [视频讲解](https://www.bilibili.com/video/BV1LV411a7u7/)   
 [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/concurrence.md)
 
+如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
+
 # 二.概述
 多任务处理在现代计算机操作系统中几乎已是一项必备的功能了。在许多场景下，让计算机同时 去做几件事情，不仅是因为计算机的运算能力强大了，还有一个很重要的原因是计算机的运算速度与  它的存储和通信子系统的速度差距太大，大量的时间都花费在磁盘I/O、网络通信或者数据库访问上。这个在 [一行代码完成多线程](https://github.com/edanlx/SealBook/blob/master/graceCode/thread.md)有写过如何分配线程，原理基本一致。  
 由于计算机 的存储设备与处理器的运算速度有着几个数量级的差距，所以现代计算机系统都不得不加入一层或多 层读写速度尽可能接近处理器运算速度的高速缓存(Cache)  来作为内存与处理器之间的缓冲，但同时引入新的问题即缓存一致性Java虚拟机的即时编译器中也有指令重排序 (Instruction Reorder)优化([详见](https://github.com/edanlx/SealBook/blob/master/jvm/compile.md))。

@@ -6,7 +6,7 @@
 [视频讲解](https://www.bilibili.com/video/BV1oy4y1r7r1/)   
 [文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/optional.md)
 
-如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要
+如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
 # 2.建立Child、Parent、GrandParent的层级
 

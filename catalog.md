@@ -4,6 +4,8 @@
 
 ### [可直接运行的完整代码](https://github.com/edanlx/TechingCode)
 
+如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要
+
   1. 优雅代码
         1. lombok(最简单的简化代码注解)[视频版](https://www.bilibili.com/video/BV1yC4y1877R/)  [文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/lombok.md)
         2. 使用get、set方法避免魔法值(java传个方法你会吗,不是Method对象)[视频版](https://www.bilibili.com/video/BV1ok4y1q7Be/)  [文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/%E4%BC%A0%E5%85%A5%E6%96%B9%E6%B3%95.md)

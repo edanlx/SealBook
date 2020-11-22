@@ -6,7 +6,7 @@
 [视频讲解](https://www.bilibili.com/video/BV1Y54y1274Y/)   
 [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/myclassLoader.md)
 
-如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要
+如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
 # 简单手写自己的类加载器
 
