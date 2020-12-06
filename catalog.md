@@ -27,7 +27,9 @@
         18. final修饰集合后怎样无法让外部不能改变内部值
         19. 方法懒执行
         20. 代码多年自我总结超实用的正则
-        21. 非聚簇索引和聚簇索引怎么选
+        21. 异或、左移、右移到底该怎么用
+        22. 各种bean的copy效率比较
+        23. 非聚簇索引和聚簇索引怎么选
   2. JVM深度剖析及调优
         1. 双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)[视频版](https://www.bilibili.com/video/BV1Sz4y1f7FB/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/classloader.md)
         2. 自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)[视频版](https://www.bilibili.com/video/BV1Y54y1274Y/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/myclassLoader.md)
