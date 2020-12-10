@@ -30,7 +30,7 @@
         21. 代码多年自我总结超实用的正则
         22. 异或、左移、右移到底该怎么用  [文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/symbol.md)
         23. 各种bean的copy效率比较
-        24. 非聚簇索引和聚簇索引怎么选
+        24. 明明使用了泛型为什么还是其他类型
   2. JVM深度剖析及调优
         1. 双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)[视频版](https://www.bilibili.com/video/BV1Sz4y1f7FB/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/classloader.md)
         2. 自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)[视频版](https://www.bilibili.com/video/BV1Y54y1274Y/)  [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/myclassLoader.md)
@@ -70,4 +70,12 @@
          9. 分治算法
   20. 大规模性能监控及链路追踪
   21. 计算机网络协议
-  22. 分布式计算    
+  22. 分布式计算
+  23. 辅助工具
+        1. 简单python
+        2. drwa.io
+        3. jmeter
+        4. postman
+        5. markdown/坚果云
+        6. selenuim
+        7. appium
