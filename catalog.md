@@ -42,7 +42,7 @@
         8. 垃圾收集器(垃圾回收器那么多傻傻分不清?) [视频版](https://www.bilibili.com/video/BV1S5411V74U/)   [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/gcCollector.md)
         9. GC调优(频繁full gc分析思路) [视频版](https://www.bilibili.com/video/BV1Ey4y167HQ/) [文字版](https://github.com/edanlx/SealBook/blob/master/jvm/gc.md)
   3. tomcat深度剖析及调优
-          1. 双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)[视频版](https://www.bilibili.com/video/BV1GK41137LQ/)  [文字版](https://github.com/edanlx/SealBook/blob/master/tomcat/bootstrap.md)
+        1. tomcat启动流程[视频版](https://www.bilibili.com/video/BV1GK41137LQ/)  [文字版](https://github.com/edanlx/SealBook/blob/master/tomcat/bootstrap.md)
   4. mysql深度剖析及调优
   5. 并发
   6. spring
