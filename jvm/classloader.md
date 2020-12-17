@@ -9,7 +9,7 @@
 如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
 # 类的生命周期
-![类的生命周期](http://www.showediy.com/pic/classLifeCircle.jpg)
+![类的生命周期](https://seal_li.gitee.io/sealbook/classLifeCircle.jpg)
 
 首先可以从图中明确类的生命周期  
 
@@ -79,7 +79,7 @@
 
 # jdk8双亲委派模型
 
-![JDK8类加载器](http://www.showediy.com/pic/JDK8ClassLoaderModel.jpg)
+![JDK8类加载器](https://seal_li.gitee.io/sealbook/JDK8ClassLoaderModel.jpg)
 
 双亲委派核心代码package sun.misc.Launcher;
 
@@ -217,7 +217,7 @@ public class ClassLoaderExe {
 
 # jdk9破坏双亲委派模型
 
-![JDK9类加载器](http://www.showediy.com/pic/JDK9ClassLoaderModel.jpg)
+![JDK9类加载器](https://seal_li.gitee.io/sealbook/JDK9ClassLoaderModel.jpg)
 
 核心代码在jdk11进行了迁移jdk.internal.loader.ClassLoaders
 
