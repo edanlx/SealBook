@@ -9,7 +9,7 @@
 如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
 # 类的生命周期
-![类的生命周期](http://seal_li.gitee.io/sealbook/pic/classLifeCircle.jpg)
+![类的生命周期](http://www.showediy.com/pic/classLifeCircle.jpg)
 
 首先可以从图中明确类的生命周期  
 
