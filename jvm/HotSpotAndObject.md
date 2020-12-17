@@ -44,9 +44,9 @@
 由于HotSpot虚拟机的自动内存管理系统要求对象起始地址必须是8字节的整数倍
 # 四.对象的访问定位
 ## 句柄访问
-![句柄访问](https://seal_li.gitee.io/sealbook/object1.png)
+![句柄访问](https://github.com/edanlx/SealBook/tree/master/tools/picobject1.png)
 ## 直接指针访问(HotSpot使用,可以减少一次指针开销)
-![直接指针](https://seal_li.gitee.io/sealbook/object2.png)
+![直接指针](https://github.com/edanlx/SealBook/tree/master/tools/picobject2.png)
 # 五.内存分配与回收策略
 ## 对象优先在Eden分配
 大多数情况下，对象在新生代Eden区中分配。当Eden区没有足够空间进行分配时，虚拟机将发起 一次Minor GC。Hotspot默认为8:1:1
