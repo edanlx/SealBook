@@ -9,9 +9,9 @@
 如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
 # 二.jre和jdk的关系
-![jre和jdk的关系](https://github.com/edanlx/SealBook/tree/master/tools/picJDKwithJRE.png)
+![jre和jdk的关系](https://github.com/edanlx/SealBook/tree/master/tools/pic/JDKwithJRE.png)
 # 三.运行时数据区域
-![运行时数据区域](https://github.com/edanlx/SealBook/tree/master/tools/picruntiemDataArea.jpg)
+![运行时数据区域](https://github.com/edanlx/SealBook/tree/master/tools/pic/runtiemDataArea.jpg)
 ## 程序计数器
 它是程序控制流的指示器，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成
 ## java虚拟机栈
@@ -41,18 +41,18 @@ JDK8以前为永久代实现，以后则为元空间实现，且元空间采用�
 ·动态调用点和动态常量（Dynamically-Computed Call Site、Dynamically-Computed Constant）  
 
 ## 官方给出的存放至常量池的内容
-![常量池](https://github.com/edanlx/SealBook/tree/master/tools/picConstantPoolType.jpg)
+![常量池](https://github.com/edanlx/SealBook/tree/master/tools/pic/ConstantPoolType.jpg)
 ## javap命令实际查看Constant Pool到底存放哪些东西
 # 五.运行时栈桢结构
 每一个方法从调用开始至执行结束的过程，都对应着一个栈帧在虚拟机栈里面从入栈到出栈的过程。一个线程中的方法调用链可能会很长。而对于执行引擎来讲，在活动线程中，只有位于栈顶的方 法才是在运行的，只有位于栈顶的栈帧才是生效的，其被称为“当前栈帧”（Current Stack Frame），与这个栈帧所关联的方法被称为“当前方法”（Current Method）
-![运行时栈桢结构](https://github.com/edanlx/SealBook/tree/master/tools/picstackFrame.jpg)
+![运行时栈桢结构](https://github.com/edanlx/SealBook/tree/master/tools/pic/stackFrame.jpg)
 ## 局部变量表
 存放boolean、 byte、char、short、int、float、reference、returnAddress占一个slot
 long、double占两个个slot
 ## 操作数栈
 后入先出（Last In First Out，LIFO） 
 当一个方法刚刚开始执行的时候，这个方法的操作数栈是空的，在方法的执行过程中，会有各种 字节码指令往操作数栈中写入和提取内容，也就是出栈和入栈操作。譬如在做算术运算的时候是通过 将运算涉及的操作数栈压入栈顶后调用运算指令来进行的，又譬如在调用其他方法的时候是通过操作数栈来进行方法参数的传递。
-![操作栈共享区域](https://github.com/edanlx/SealBook/tree/master/tools/picStackFrameDataShare.jpg)
+![操作栈共享区域](https://github.com/edanlx/SealBook/tree/master/tools/pic/StackFrameDataShare.jpg)
 
 ## 动态连接
 每个栈帧都包含一个指向运行时常量池，目的是找到要运行方法的直接引用
