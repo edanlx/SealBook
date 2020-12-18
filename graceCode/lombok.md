@@ -3,7 +3,7 @@
 # 友情链接
 [目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
 [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/entity)  
-[视频讲解](https://www.bilibili.com/video/BV1yC4y1877R/)   
+[视频讲解]()   
 [文字版](https://github.com/edanlx/SealBook/blob/master/graceCode/lombok.md)
 
 如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
