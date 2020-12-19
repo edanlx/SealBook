@@ -1,6 +1,4 @@
-<center>java传个方法你会吗,不是Method对象</center>
-
-# 友情链接
+# java传个方法你会吗,不是Method对象
 [目录](https://github.com/edanlx/SealBook/blob/master/catalog.md) 
 [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/bean)  
 [视频讲解](https://www.bilibili.com/video/BV1ok4y1q7Be)   
@@ -8,10 +6,10 @@
 
 如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
-# 背景介绍
+## 1.背景介绍
 在日常代码中有时候近乎避免不了的使用魔法值，但是如果使用传入方法这种方式可以极大的降低魔法值出现的频率并且不用创建静态值。该方法主要参考了mybatisPlus，并在此基础上进行了扩展。
-# 相关代码  
-FnConverter
+## 2.相关代码  
+* FnConverter
 ```java
 package com.example.demo.bean;
 
@@ -80,7 +78,7 @@ public class FnConverter<F, T> {
 
 ```
 
-IFn
+* IFn
 ```java
 package com.example.demo.bean;
 
@@ -97,7 +95,7 @@ public interface IFn<F, T> extends Serializable {
 
 ```
 
-Reflections
+* Reflections
 ```java
 package com.example.demo.bean;
 
@@ -175,7 +173,8 @@ public class Reflections {
 }
 
 ```
-# 举例应用  
+
+## 3.举例应用  
 1. 如视频中所展现的可以取方法/字段的注解
 2. 利用反射实现伪代理
 3. 最普遍的应用即mybatisPlus的应用，可以动态传入需要的字段和不需要的字段而不用改动sql，以此优化性能

@@ -1,6 +1,4 @@
-<center>mysql的innodb整体结构</center>
-
-# 1.友情链接
+# mysql的innodb整体结构
 [目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
 [视频讲解](https://www.bilibili.com/video/BV1Ey4y167HQ/)   
 [文字版](https://github.com/edanlx/SealBook/blob/master/mysql/structure.md)
@@ -9,4 +7,4 @@
 
 **注意以下流程每个tomcat版本略有不同**
 
-# 2.整体启动
+# 1.整体启动

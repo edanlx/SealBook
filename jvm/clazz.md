@@ -1,6 +1,4 @@
-<center>我偷偷改了你编译后的class文件</center>
-
-# 1.友情链接
+# 我偷偷改了你编译后的class文件
 [目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
 [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/clazz)  
 [视频讲解](https://www.bilibili.com/video/BV1454y1r7mf/)   
@@ -8,7 +6,7 @@
 
 如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
-# 2.准备工作
+## 1.准备工作
 准备一份代码
 ```java
 public class TestEntity {
@@ -45,7 +43,7 @@ cafe babe 0000 0034 0012 0a00 0300 0f07
 可使用javap -verbose TestEntity.class辅助查看
 
 安装jclasslib
-# 3.class文件结构
+## 2.class文件结构
 |类型|名称|数量|
 |---|----|----|
 |u4|magic|1|
@@ -65,7 +63,7 @@ cafe babe 0000 0034 0012 0a00 0300 0f07
 |u2|attributes_count|1|
 |attribute_info|attributes|attributes_count|
 具体的
-# 4.实例解析
+## 3.实例解析
 1)cafe babe  
 这个就是开头魔数占4个字节  
 2)0000  
@@ -107,7 +105,7 @@ Constant pool:
 
 字节码文件以此类推
 
-# 5.字节码命令
+## 4.字节码命令
 ```text
 0 aload_0
 1 invokespecial #1 <java/lang/Object.<init>>
@@ -115,7 +113,7 @@ Constant pool:
 ```
 如上命令分别表示1.将this入栈，2.执行object的init方法3.出栈
 
-# 6.知识补充
+## 5.知识补充
 
 1)java agent可以在main函数之前执行，可以用于传统aop，也是依赖字节码
 
@@ -123,9 +121,9 @@ Constant pool:
 
 3)编译检查也是可以通过class文件完成的
 
-# 7.附录
+## 6.附录
 
-## 7.1访问权限查询手册
+### 6.1访问权限查询手册
 |flag_name|value|desc|
 |---|----|----|
 |ACC_PUBLIC|0x0001|public修饰符号|
@@ -142,7 +140,7 @@ Constant pool:
 |ACC_PRIVATE|0x8000|表示这是一个模块|
 
 
-## 7.2Field_info 字段表结构
+### 6.2Field_info 字段表结构
 |类型|名称|数量|
 |---|----|----|
 |u2|access_flag(权限修饰符)|1|
@@ -151,7 +149,7 @@ Constant pool:
 |u2|attribute_count(属性表个数)|1|
 |attribute_info|attributes|attribute_count|
 
-## 7.3Method_info 字段表结构
+### 6.3Method_info 字段表结构
 |类型|名称|数量|
 |---|----|----|
 |u2|access_flag(权限修饰符)|1|
@@ -160,14 +158,14 @@ Constant pool:
 |u2|attribute_count(属性表个数)|1|
 |attribute_info|attributes|attribute_count|
 
-## 7.4attribute_info 结构
+### 6.4attribute_info 结构
 |类型|名称|数量|
 |---|----|----|
 |u2|attribute_name_index|1|
 |u4|attribute_length|1|
 |u1|info[attribute_length]|1|
 
-## 7.5常量池flag标注
+### 6.5常量池flag标注
 |常量|项目|类型|描述|
 |---|----|----|---|
 |CONSTANT_Utf8_info|tag|u1|值为1|

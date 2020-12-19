@@ -1,6 +1,4 @@
-<center>optional杜绝空指针异常</center>
-
-# 1.友情链接
+# optional杜绝空指针异常
 [目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
 [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/optional)  
 [视频讲解](https://www.bilibili.com/video/BV1oy4y1r7r1/)   
@@ -8,9 +6,9 @@
 
 如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
-# 2.建立Child、Parent、GrandParent的层级
+## 1.建立Child、Parent、GrandParent的层级
 
-Child
+* Child
 
 ```java
 @Data
@@ -24,7 +22,7 @@ public class Child {
 }
 ```
 
-GrandParent
+* GrandParent
 ```java
 @Data
 @AllArgsConstructor
@@ -36,7 +34,7 @@ public class GrandParent {
 }
 ```
 
-Parent
+* Parent
 ```java
 @Data
 @AllArgsConstructor
@@ -48,7 +46,7 @@ public class Parent {
 }
 
 ```
-测试类
+* 测试类
 ```java
 	GrandParent opt1 = null;
         String opt1Str =
@@ -73,7 +71,7 @@ public class Parent {
         System.out.println(String.format("%s:%s", "opt3Str", opt3Str));
 ```
 
-输出结果
+* 输出结果
 ```
 opt1Object:null
 opt2list:null
@@ -82,7 +80,7 @@ opt3Str:ssss
 ```
 可以发现嵌套类无论是string还是list，中间任何一个类为null都会直接返回null，而不用去多层嵌套if这种很蠢的做法
 
-# 3.非常规复杂optional用法
+## 2.非常规复杂optional用法
 当然平常时候总会遇到一些奇奇怪怪的结果，例如查询数据库会返回List<Map<String, String>>这样的结构，也是可以用Optinoal做的
 ```java
         List<Map<String, String>> listR = null;
@@ -115,7 +113,7 @@ null
 null
 C
 ```
-# 4.其它优秀杜绝空指针异常的优秀方法
+## 3.其它优秀杜绝空指针异常的优秀方法
 首先是lombok的@NonNull，这个可以作用于方法参数上，如果传入空则直接抛异常，并在日志精准打印出异常位置及情况，非常适合校验参数，增加代码简洁性
 
 当然刚才写的类还是返回了null，但是没关系，可以用以下工具类，在各种情况下都可以抛出自定义异常或直接return出去

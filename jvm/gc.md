@@ -1,6 +1,4 @@
-<center>full gc分析思路</center>
-
-# 一.友情链接
+# full gc分析思路
 [目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
 [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/gc) 
 [视频讲解](https://www.bilibili.com/video/BV1Ey4y167HQ/)   
@@ -8,21 +6,21 @@
 
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
-# 二.命令界面
-## 2.1Jmap堆命令
+## 1.命令界面
+### 1.1.Jmap堆命令
 jmap -histo:live {pid} | head -13  
 * num:序号
 * instances:实例数量
 * bytes:占用空间大小
 * class name:类名称，[C is a char[]，[S is a short[]，[I is a int[]，[B is a byte[]，[[I is a int[][]
 
-## 2.2Jstack线程命令
+### 1.2.Jstack线程命令
 执行 jstack -l {pid}
 
 
-## 2.3Jinfo运行参数命令
+### 1.3.Jinfo运行参数命令
 jinfo {pid}
-## 2.4Jstat综合命令
+### 1.4.Jstat综合命令
 垃圾回收统计jstat -gc {pid}
 
 * NGCMN:新生代最小容量 
@@ -44,9 +42,9 @@ jinfo {pid}
 * YGC:年轻代gc次数 
 * FGC:老年代GC次数
 
-# 三.可视化界面
-## 3.1jvisualvm
-## 3.2Arthas
+## 2.可视化界面
+### 2.1.jvisualvm
+### 2.2.Arthas
 * 下载：curl -O https://arthas.aliyun.com/arthas-boot.jar
 * 启动 java -jar arthas-boot.jar
 |命令|介绍|
@@ -65,7 +63,7 @@ jinfo {pid}
 |classloader|查看 classloader 的继承树，urls，类加载信息|
 |heapdump|类似 jmap 命令的 heap dump 功能|
 
-# 四.线上参数
+## 3.线上参数
 堆溢出自动打印日志
 ‐XX:+HeapDumpOnOutOfMemoryError
 打印路径

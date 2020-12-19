@@ -1,6 +1,4 @@
-<center>双亲委派都会说，破坏双亲委派你会吗</center>
-
-# 友情链接
+# 双亲委派都会说，破坏双亲委派你会吗
 [目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
 [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/loader)  
 [视频讲解](https://www.bilibili.com/video/BV1Sz4y1f7FB/)   
@@ -8,7 +6,7 @@
 
 如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
-# 类的生命周期
+## 1.类的生命周期
 ![类的生命周期](http://www.showediy.com/sealbook/pic/classLifeCircle.jpg)
 
 首先可以从图中明确类的生命周期  
@@ -77,7 +75,7 @@
 
  7. 卸载
 
-# jdk8双亲委派模型
+## 2.jdk8双亲委派模型
 
 ![JDK8类加载器](http://seal_li.gitee.io/sealbook/pic/JDK8ClassLoaderModel.jpg)
 
@@ -215,7 +213,7 @@ public class ClassLoaderExe {
 
 
 
-# jdk9破坏双亲委派模型
+## 3.jdk9破坏双亲委派模型
 
 ![JDK9类加载器](http://seal_li.gitee.io/sealbook/pic/JDK9ClassLoaderModel.jpg)
 

@@ -1,6 +1,4 @@
-<center>手写自己的类加载器</center>
-
-# 友情链接
+# 手写自己的类加载器
 [目录](https://github.com/edanlx/SealBook/blob/master/catalog.md)  
 [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/myloader)  
 [视频讲解](https://www.bilibili.com/video/BV1Y54y1274Y/)   
@@ -8,7 +6,7 @@
 
 如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
-# 简单手写自己的类加载器
+## 1.简单手写自己的类加载器
 
 创建一个类继承ClassLoader,然后重写findClass、loadClass这两个方法
 
@@ -46,7 +44,7 @@ if (name.startsWith("com.example.demo.lesson")) {
 }
 ```
 
-# 加载一个和jdk中同名的类
+## 2.加载一个和jdk中同名的类
 
 创建一个java.lang.Byte的类，然后用自己的类加载器去加载，然后就触发了jdk的沙箱机制，报了一个安全错误
 
@@ -55,7 +53,7 @@ if (name.startsWith("com.example.demo.lesson")) {
 如图所示，这里的核心其实就是每一个war包的代码即使含有同名的类也可以加载
 做法如下，自己的classloader复制一份然后加载同一个class文件，可以看到启用的是不同的加载器，都被加载了
 
-# 完整代码
+## 3.完整代码
 ```java
 package com.example.demo.lesson.jvm.myloader;
 
@@ -179,7 +177,7 @@ public class MyClassLoaderDemo {
 }
 ```
 
-# ConstantPool
+## 4.ConstantPool
 ```
 Constant pool:
     #1 = Methodref          #2.#3         // java/lang/Object."<init>":()V
