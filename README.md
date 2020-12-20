@@ -7,7 +7,7 @@ I want to share my experience about java.
 * [gitee](https://gitee.com/seal_li/SealBook)
 * [知乎]
 * [csdn]
-![公众号](http://seal_li.gitee.io/sealbook/pic/wechat.png)
+![公众号](http://seal_li.gitee.io/sealbook/pic/wechat.jpg)
 * 欢迎关注b站账号/公众号“六边形战士夏宁”
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
