@@ -95,4 +95,4 @@ synchronized以及JDK5后新起的java.util.concurrent.locks.Lock
 ### 6.5.偏向锁
 如果整个过程jvm判断没有竞争关系，则进行锁消除处理，在该锁被其它线程获取时依据轻量锁标记判断退化为轻量锁还是重量锁
 
-![偏向锁和轻量锁的关系](http://seal_li.gitee.io/sealbook/pic/lock.png)
+![偏向锁和轻量锁的关系](http://seal_li.gitee.io/sealbook/pic/jvm_concurrence_lock.png)

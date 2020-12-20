@@ -41,9 +41,9 @@
 
 ## 3.对象的访问定位
 * 句柄访问
-![句柄访问](http://seal_li.gitee.io/sealbook/pic/object1.png)
+![句柄访问](http://seal_li.gitee.io/sealbook/pic/jvm_HotSpotAndObject_object1.png)
 * 直接指针访问(HotSpot使用,可以减少一次指针开销)
-![直接指针](http://seal_li.gitee.io/sealbook/pic/object2.png)
+![直接指针](http://seal_li.gitee.io/sealbook/pic/jvm_HotSpotAndObject_object2.png)
 
 ## 4.内存分配与回收策略
 * 对象优先在Eden分配
