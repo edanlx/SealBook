@@ -1,15 +1,12 @@
 # SealBook
 
-hello, my name is Seal.
-
-I want to share my experience about java.
+> 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。
+屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [github](https://github.com/edanlx/SealBook)
 * [gitee](https://gitee.com/seal_li/SealBook)
-* [知乎]
-* [csdn]
+* [知乎](https://zhuanlan.zhihu.com/p/338222208)
+* [csdn](https://blog.csdn.net/seal_li/article/details/111415366)
 ![公众号](http://seal_li.gitee.io/sealbook/pic/wechat.jpg)
-* 欢迎关注b站账号/公众号“六边形战士夏宁”
-屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
   1. 优雅代码
         1. [lombok(最简单的简化代码注解)](./graceCode/lombok.md)  [视频版](https://www.bilibili.com/video/BV1yC4y1877R/)
@@ -42,7 +39,7 @@ I want to share my experience about java.
         3. [JVM整体结构(写了final就是常量池了么)](./jvm/jv.md)  [视频版](https://www.bilibili.com/video/BV1LZ4y1N75R)
         4. [字节码(我偷偷改了你编译后的class文件)](./jvm/clazz.md)  [视频版](https://www.bilibili.com/video/BV1454y1r7mf/)
         5. [即时编译器(为什么你写的代码有时候和预期不一致)](./jvm/compile.md)  [视频版](https://www.bilibili.com/video/BV11i4y1L7BX/)
-        6. [HotSpot创建对象(new一个对象到底占了多少内存?)](./jvm/jv.md) [视频版](https://www.bilibili.com/video/BV1A54y1k7UW/)
+        6. [HotSpot创建对象(new一个对象到底占了多少内存?)](./jvm/HotSpotAndObject.md) [视频版](https://www.bilibili.com/video/BV1A54y1k7UW/)
         7. [并发的内存模型(偏向锁、轻量锁、重量锁到底是啥?)](./jvm/concurrence.md)  [视频版](https://www.bilibili.com/video/BV1LV411a7u7/)
         8. [垃圾收集器(垃圾回收器那么多傻傻分不清?)](./jvm/gcCollector.md)  [视频版](https://www.bilibili.com/video/BV1S5411V74U/)
         9. [GC调优(频繁full gc分析思路)](./jvm/gc.md) [视频版](https://www.bilibili.com/video/BV1Ey4y167HQ/)
