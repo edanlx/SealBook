@@ -283,3 +283,6 @@ public class ClassLoaderPlant {
 }
 
 ```
+
+## 参考资料
+《深入理解Java虚拟机》-周志明

@@ -232,3 +232,7 @@ Instance size: 24 bytes
 Space losses: 0 bytes internal + 6 bytes external = 6 bytes total
 ```
 即一个空对象为8byte的普通对象头+4byte的kcalss+4byte的补充空间
+
+
+## 参考资料
+《深入理解Java虚拟机》-周志明

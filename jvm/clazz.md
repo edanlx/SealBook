@@ -210,3 +210,6 @@ Constant pool:
 |-|name_index|u2|值必须是对常量池的有效索引。常量池在该索引处的项必须是CONSTANT_Utf8_info结构，表示模块名字||
 |CONSTANT_Module_info|tag|u1|值为20|
 |-|name_index|u2|值必须是对常量池的有效索引。常量池在该索引处的项必须是CONSTANT_Utf8_info结构，表示模包名称||
+
+## 参考资料
+《深入理解Java虚拟机》-周志明

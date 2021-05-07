@@ -74,3 +74,6 @@ jinfo {pid}
 ­XX:+DisableExplicitGC
 gc日志相关
 ‐Xloggc:./gc‐%t.log‐XX:+PrintGCDetails‐XX:+PrintGCDateStamps‐XX:+PrintGCTimeStamps‐XX:+PrintGCCause ‐XX:+UseGCLogFileRotation‐XX:NumberOfGCLogFiles=10‐XX:GCLogFileSize=100M
+
+## 参考资料
+《深入理解Java虚拟机》-周志明

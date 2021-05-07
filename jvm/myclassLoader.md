@@ -349,3 +349,6 @@ Constant pool:
   #167 = Utf8               SourceFile
   #168 = Utf8               Master.java
 ```
+
+## 参考资料
+《深入理解Java虚拟机》-周志明

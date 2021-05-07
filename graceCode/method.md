@@ -7,77 +7,10 @@
 如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
 ## 1.背景介绍
-在日常代码中有时候近乎避免不了的使用魔法值，但是如果使用传入方法这种方式可以极大的降低魔法值出现的频率并且不用创建静态值。该方法主要参考了mybatisPlus，并在此基础上进行了扩展。
+在日常代码中有时候近乎避免不了的使用魔法值，但是如果使用传入方法这种方式可以极大的降低魔法值出现的频率并且不用创建静态值。该方法主要参考了mybatisPlus，并在此基础上进行了扩展。  
+核心部分(1)IFN,该类java有自带的Function,使用方法一致，可用于各种get方法的传入，如果是set方法则使用Consumer。本质上调用时第一个参数传入对象，和反射的用法非常相似
+(2)使用writeReplace，该部分为重写Serializable中的方法
 ## 2.相关代码  
-* FnConverter
-```java
-package com.example.demo.bean;
-
-import com.example.demo.entity.ValidatedRequestVO;
-
-/**
- * @author seal 876651109@qq.com
- * @description
- * @date 7/12/2020 7:20 PM
- */
-public class FnConverter<F, T> {
-    /**
-     * 传入方法返回字段名
-     *
-     * @param fn 方法
-     * @return 字段名
-     * @author seal 876651109@qq.com
-     * @date 7/12/2020 7:32 PM
-     */
-    public String fnToFieldName(IFn<F, T> fn) {
-        return Reflections.fnToFieldName(fn);
-    }
-
-    /**
-     * 传入方法返回方法名
-     *
-     * @param fn 方法
-     * @return 方法名
-     * @author seal 876651109@qq.com
-     * @date 7/12/2020 7:32 PM
-     */
-    public String fnToFnName(IFn<F, T> fn) {
-        return Reflections.fnToFnName(fn);
-    }
-
-    /**
-     * 传入方法返回注解
-     *
-     * @param fn 方法
-     * @return mongo注解
-     * @author seal 876651109@qq.com
-     * @date 7/12/2020 7:32 PM
-     */
-    public String fnToMongoName(IFn<F, T> fn) {
-        return Reflections.fnToMongoName(fn);
-    }
-
-    public static void main(String[] args) {
-        FnConverter<ValidatedRequestVO, Object> fnConverter = new FnConverter();
-        String fieldName = fnConverter.fnToFieldName(ValidatedRequestVO::getStr);
-        System.out.println("字段名：" + fieldName);
-        String fnName = fnConverter.fnToFnName(ValidatedRequestVO::getStr);
-        System.out.println("方法名：" + fnName);
-
-        FnConverter<String, Object> fnConverter2 = new FnConverter();
-        String fieldName2 = fnConverter2.fnToFieldName(new ValidatedRequestVO()::setStr);
-        System.out.println("字段名：" + fieldName2);
-        String fnName2 = fnConverter2.fnToFnName(new ValidatedRequestVO()::setStr);
-        System.out.println("方法名：" + fnName2);
-
-        FnConverter<ValidatedRequestVO, Object> fnConverter3 = new FnConverter();
-        String fieldName3 = fnConverter3.fnToMongoName(ValidatedRequestVO::getStartDate);
-        System.out.println("字段名：" + fieldName3);
-    }
-}
-
-```
-
 * IFn
 ```java
 package com.example.demo.bean;
@@ -91,6 +24,23 @@ import java.io.Serializable;
 @FunctionalInterface
 public interface IFn<F, T> extends Serializable {
     T apply(F source);
+}
+
+```
+
+* IFnVoid
+```java
+package com.example.demo.bean;
+
+import java.io.Serializable;
+
+/**
+ * F 传入类型，T返回类型
+ * @author seal
+ */
+@FunctionalInterface
+public interface IFnVoid<F,T> extends Serializable {
+    void apply(F source,T arg);
 }
 
 ```
@@ -117,58 +67,90 @@ public class Reflections {
     private Reflections() {
     }
 
-    public static String fnToFieldName(IFn fn) {
-        try {
-            Method method = fn.getClass().getDeclaredMethod("writeReplace");
-            method.setAccessible(Boolean.TRUE);
-            SerializedLambda serializedLambda = (SerializedLambda) method.invoke(fn);
-            String getter = serializedLambda.getImplMethodName();
-            String fieldName = "";
-            if (getter.startsWith("get")) {
-                fieldName = Introspector.decapitalize(getter.replace("get", ""));
-            } else {
-                fieldName = Introspector.decapitalize(getter.replace("set", ""));
-            }
-            return fieldName;
-        } catch (ReflectiveOperationException e) {
-            log.warn(String.format("%s:%s",
-                    Thread.currentThread().getStackTrace()[1].getMethodName(), e.getMessage()), e);
+    public static <F, T> String fnToFieldName(IFn<F, T> fn) {
+        SerializedLambda serializedLambda = getSerializedLambda(fn);
+        String getter = serializedLambda.getImplMethodName();
+        String fieldName = "";
+        if (getter.startsWith("get")) {
+            fieldName = Introspector.decapitalize(getter.replace("get", ""));
         }
-        return "";
+        return fieldName;
     }
 
-    public static String fnToFnName(IFn fn) {
-        try {
-            Method method = fn.getClass().getDeclaredMethod("writeReplace");
-            method.setAccessible(Boolean.TRUE);
-            SerializedLambda serializedLambda = (SerializedLambda) method.invoke(fn);
-            return serializedLambda.getImplMethodName();
-        } catch (ReflectiveOperationException e) {
-            log.warn(String.format("%s:%s",
-                    Thread.currentThread().getStackTrace()[1].getMethodName(), e.getMessage()), e);
-        }
-        return "";
+    public static <F, T> String fnToFnName(IFn<F, T> fn) {
+        return getSerializedLambda(fn).getImplMethodName();
     }
 
-    public static String fnToMongoName(IFn fn) {
+    public static <F, T> Method fnToMethod(IFn<F, T> fn) {
+        SerializedLambda serializedLambda = getSerializedLambda(fn);
+        Method method = null;
+        try {
+            method = getClazz(serializedLambda).getDeclaredMethod(serializedLambda.getImplMethodName());
+        } catch (NoSuchMethodException e) {
+            log.error("", e);
+        }
+        return method;
+    }
+
+    public static <F, T> Field fnToField(IFn<F, T> fn) {
+        SerializedLambda serializedLambda = getSerializedLambda(fn);
+        String fieldName = "";
+        String getter = serializedLambda.getImplMethodName();
+        if (getter.startsWith("get")) {
+            fieldName = Introspector.decapitalize(getter.replace("get", ""));
+        }
+        Class clazz = getClazz(serializedLambda);
+        Field field = null;
+        try {
+            field = clazz.getDeclaredField(fieldName);
+            ReflectionUtils.makeAccessible(field);
+        } catch (NoSuchFieldException e) {
+            log.error("", e);
+        }
+        return field;
+    }
+
+    public static <F, T> String fnToFieldNameVoid(IFnVoid<F, T> fn) {
+        SerializedLambda serializedLambda = getSerializedLambda(fn);
+        String getter = serializedLambda.getImplMethodName();
+        String fieldName = "";
+        if (getter.startsWith("set")) {
+            fieldName = Introspector.decapitalize(getter.replace("set", ""));
+        }
+        return fieldName;
+    }
+
+    private static SerializedLambda getSerializedLambda(Object fn) {
+        SerializedLambda serializedLambda = null;
         try {
             Method method = fn.getClass().getDeclaredMethod("writeReplace");
             method.setAccessible(Boolean.TRUE);
-            SerializedLambda serializedLambda = (SerializedLambda) method.invoke(fn);
-            String getter = serializedLambda.getImplMethodName();
-            String fieldName = "";
-            if (getter.startsWith("get")) {
-                fieldName = Introspector.decapitalize(getter.replace("get", ""));
-            } else {
-                fieldName = Introspector.decapitalize(getter.replace("set", ""));
-            }
-            Field field = Class.forName(serializedLambda.getImplClass().replace("/", ".")).getDeclaredField(fieldName).getAnnotation(Field.class);
-            return field == null ? fieldName : field.value();
-        } catch (ReflectiveOperationException e) {
-            log.warn(String.format("%s:%s",
-                    Thread.currentThread().getStackTrace()[1].getMethodName(), e.getMessage()), e);
+            serializedLambda = (SerializedLambda) method.invoke(fn);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            log.error("", e);
         }
-        return "";
+        return serializedLambda;
+    }
+
+    private static Class getClazz(SerializedLambda serializedLambda) {
+        Class clazz = null;
+        try {
+            clazz = Class.forName(serializedLambda.getImplClass().replace("/", "."));
+        } catch (ClassNotFoundException e) {
+            log.error("", e);
+        }
+        return clazz;
+    }
+
+    public static void main(String[] args) {
+        String fieldName = Reflections.fnToFieldName(ValidatedRequestVO::getStr);
+        System.out.println("字段名：" + fieldName);
+        String fnName = Reflections.fnToFnName(ValidatedRequestVO::getStr);
+        System.out.println("方法名：" + fnName);
+        String fieldName2 = Reflections.fnToFieldNameVoid(ValidatedRequestVO::setStr);
+        System.out.println("字段名：" + fieldName2);
+        Method method = Reflections.fnToMethod(ValidatedRequestVO::getStartDate);
+        System.out.println("注解：" + Reflections.fnToField(ValidatedRequestVO::getStartDate).getAnnotation(org.springframework.data.mongodb.core.mapping.Field.class).value());
     }
 }
 
@@ -177,4 +159,104 @@ public class Reflections {
 ## 3.举例应用  
 1. 如视频中所展现的可以取方法/字段的注解
 2. 利用反射实现伪代理
-3. 最普遍的应用即mybatisPlus的应用，可以动态传入需要的字段和不需要的字段而不用改动sql，以此优化性能
+3. 最普遍的应用即mybatisPlus的应用，可以动态传入需要的字段和不需要的字段而不用改动sql，以此优化性能  
+
+平铺转树与树转平铺的个人工具类
+
+```java
+public class TreeUtils {
+    public static void main(String[] args) {
+        List<TestTreeObj> list = new ArrayList<TestTreeObj>() {{
+            add(TestTreeObj.builder().id(1).build());
+            add(TestTreeObj.builder().id(11).pid(1).build());
+            add(TestTreeObj.builder().id(12).pid(1).build());
+            add(TestTreeObj.builder().id(111).pid(11).build());
+            add(TestTreeObj.builder().id(112).pid(11).build());
+            add(TestTreeObj.builder().id(121).pid(12).build());
+            add(TestTreeObj.builder().id(122).pid(12).build());
+            add(TestTreeObj.builder().id(2).build());
+            add(TestTreeObj.builder().id(21).pid(2).build());
+            add(TestTreeObj.builder().id(22).pid(2).build());
+            add(TestTreeObj.builder().id(211).pid(21).build());
+            add(TestTreeObj.builder().id(212).pid(21).build());
+            add(TestTreeObj.builder().id(221).pid(22).build());
+            add(TestTreeObj.builder().id(222).pid(22).build());
+        }};
+        List<TestTreeObj> treeResult = listToTree(list, TestTreeObj::setTestTreeObj, TestTreeObj::getId, TestTreeObj::getPid, (l) -> l.getPid() == 0);
+
+        List<TestTreeObj> testTreeObjs = new ArrayList<TestTreeObj>() {{
+            add(TestTreeObj.builder().id(1).testTreeObj(new ArrayList<TestTreeObj>() {{
+                add(TestTreeObj.builder().id(11).testTreeObj(new ArrayList<TestTreeObj>() {{
+                    add(TestTreeObj.builder().id(111).build());
+                    add(TestTreeObj.builder().id(112).build());
+                }}).build());
+            }}).build());
+        }};
+        List<TestTreeObj> result = new ArrayList<>();
+        treeToListDeep(testTreeObjs, result, TestTreeObj::getTestTreeObj, (l) -> l.getTestTreeObj() == null);
+        List<TestTreeObj> result2 = new ArrayList<>();
+        treeToListDeep(testTreeObjs, result2, TestTreeObj::getTestTreeObj, (l) -> l.getPid() == 0);
+        System.out.println(result2);
+    }
+
+    /**
+     * 树转平铺
+     * treeToListDeep(testTreeObjs, result, TestTreeObj::getTestTreeObj, (l) -> l.getTestTreeObj() == null);
+     *
+     * @param source 源数据
+     * @param target 目标容器
+     * @param childListFn 递归调用方法
+     * @param addTargetCondition 添加到容器的判断方法
+     * @author 876651109@qq.com
+     * @date 2021/3/1 8:19 下午
+     */
+    public static <F> void treeToListDeep(List<F> source, List<F> target, Function<F, List<F>> childListFn, Predicate<F> addTargetCondition) {
+        if (CollectionUtils.isEmpty(source)) {
+            return;
+        }
+        for (F f : source) {
+            if (addTargetCondition.test(f)) {
+                target.add(f);
+            }
+            treeToListDeep(childListFn.apply(f), target, childListFn, addTargetCondition);
+        }
+    }
+
+    /**
+     * List<TestTreeObj> treeResult = listToTree(list, TestTreeObj::setTestTreeObj, TestTreeObj::getId, TestTreeObj::getPid, (l) -> l.getPid() == 0);
+     *
+     * @param source 源数据
+     * @param childListFn 设置递归的方法
+     * @param idFn 获取id的方法
+     * @param pidFn 获取父id的方法
+     * @param getRootCondition 获取根节点的提哦啊见
+     * @return {@link List<F>}
+     * @author 876651109@qq.com
+     * @date 2021/3/1 8:18 下午
+     */
+    public static <F, T> List<F> listToTree(List<F> source, BiConsumer<F, List<F>> childListFn, Function<F, T> idFn, Function<F, T> pidFn, Predicate<F> getRootCondition) {
+        List<F> tree = new ArrayList<>();
+        Map<T, List<F>> map = new HashMap<>();
+        for (F f : source) {
+            if (getRootCondition.test(f)) {
+                tree.add(f);
+            } else {
+                List<F> tempList = map.getOrDefault(pidFn.apply(f), new ArrayList<>());
+                tempList.add(f);
+                map.put(pidFn.apply(f), tempList);
+            }
+        }
+        tree.forEach(l -> assembleTree(l, map, childListFn, idFn));
+        return tree;
+    }
+
+    private static <F, T> void assembleTree(F current, Map<T, List<F>> map, BiConsumer<F, List<F>> childListFn, Function<F, T> idFn) {
+        List<F> fs = map.get(idFn.apply(current));
+        if (CollectionUtils.isEmpty(fs)) {
+            return;
+        }
+        childListFn.accept(current, fs);
+        fs.forEach(l -> assembleTree(l, map, childListFn, idFn));
+    }
+}
+```
