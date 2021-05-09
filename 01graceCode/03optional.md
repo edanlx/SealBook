@@ -6,6 +6,8 @@
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/optional)  
 * [视频讲解](https://www.bilibili.com/video/BV1oy4y1r7r1/)   
+* [上一篇](./02method.md)
+* [下一篇](./04thread.md)
 
 如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 

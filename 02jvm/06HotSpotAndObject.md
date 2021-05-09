@@ -1,11 +1,13 @@
-# 【jvm】07-new一个对象到底占了多少内存?
+# 【jvm】06-new一个对象到底占了多少内存?
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [gitee目录](https://gitee.com/seal_li/SealBook)
 * [知乎目录](https://zhuanlan.zhihu.com/p/338222208)
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/object)  
-* [视频讲解](https://www.bilibili.com/video/BV1A54y1k7UW/)   
+* [视频讲解](https://www.bilibili.com/video/BV1A54y1k7UW/) 
+* [上一篇](./05compile.md)
+* [下一篇](./07concurrence.md)
 
 ## 1.对象的创建
 当Java虚拟机遇到一条字节码new指令时，首先将去检查这个指令的参数是否能在常量池中定位到 一个类的符号引用，并且检查这个符号引用代表的类是否已被加载、解析和初始化过。如果没有，那必须先执行相应的类加载过程。

@@ -1,11 +1,13 @@
-# 【jvm】04-偏向锁、轻量锁、重量锁到底是啥?
+# 【jvm】07-偏向锁、轻量锁、重量锁到底是啥?
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [gitee目录](https://gitee.com/seal_li/SealBook)
 * [知乎目录](https://zhuanlan.zhihu.com/p/338222208)
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/concurrence) 
-* [视频讲解](https://www.bilibili.com/video/BV1LV411a7u7/)   
+* [视频讲解](https://www.bilibili.com/video/BV1LV411a7u7/) 
+* [上一篇](./06HotSpotAndObject.md)
+* [下一篇](./08gcCollector.md)
 
 ## 1.概述
 多任务处理在现代计算机操作系统中几乎已是一项必备的功能了。在许多场景下，让计算机同时 去做几件事情，不仅是因为计算机的运算能力强大了，还有一个很重要的原因是计算机的运算速度与  它的存储和通信子系统的速度差距太大，大量的时间都花费在磁盘I/O、网络通信或者数据库访问上。这个在 [一行代码完成多线程](https://github.com/edanlx/SealBook/blob/master/graceCode/thread.md)有写过如何分配线程，原理基本一致。  

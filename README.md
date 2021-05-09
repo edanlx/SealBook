@@ -6,6 +6,7 @@
 * [gitee](https://gitee.com/seal_li/SealBook)
 * [知乎](https://zhuanlan.zhihu.com/p/338222208)
 * [csdn](https://blog.csdn.net/seal_li/article/details/111415366)
+
 ![公众号](http://seal_li.gitee.io/sealbook/pic/wechat.jpg)
 
   1. 优雅代码
@@ -34,14 +35,14 @@
         23. 非聚簇索引和聚簇索引怎么选
   2. JVM深度剖析及调优
         1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)](./02jvm/01classloader.md)  [视频版](https://www.bilibili.com/video/BV1Sz4y1f7FB/)
-        2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)](./02jvm/myclassLoader.md)  [视频版](https://www.bilibili.com/video/BV1Y54y1274Y/)
-        3. [JVM整体结构(写了final就是常量池了么)](./02jvm/jv.md)  [视频版](https://www.bilibili.com/video/BV1LZ4y1N75R)
-        4. [字节码(我偷偷改了你编译后的class文件)](./02jvm/clazz.md)  [视频版](https://www.bilibili.com/video/BV1454y1r7mf/)
-        5. [即时编译器(为什么你写的代码有时候和预期不一致)](./02jvm/compile.md)  [视频版](https://www.bilibili.com/video/BV11i4y1L7BX/)
-        6. [HotSpot创建对象(new一个对象到底占了多少内存?)](./02jvm/HotSpotAndObject.md) [视频版](https://www.bilibili.com/video/BV1A54y1k7UW/)
-        7. [并发的内存模型(偏向锁、轻量锁、重量锁到底是啥?)](./02jvm/concurrence.md)  [视频版](https://www.bilibili.com/video/BV1LV411a7u7/)
-        8. [垃圾收集器(垃圾回收器那么多傻傻分不清?)](./02jvm/gcCollector.md)  [视频版](https://www.bilibili.com/video/BV1S5411V74U/)
-        9. [GC调优(频繁full gc分析思路)](./02jvm/gc.md) [视频版](https://www.bilibili.com/video/BV1Ey4y167HQ/)
+        2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)](./02jvm/02myclassLoader.md)  [视频版](https://www.bilibili.com/video/BV1Y54y1274Y/)
+        3. [JVM整体结构(写了final就是常量池了么)](./02jvm/03jv.md)  [视频版](https://www.bilibili.com/video/BV1LZ4y1N75R)
+        4. [字节码(我偷偷改了你编译后的class文件)](./02jvm/04clazz.md)  [视频版](https://www.bilibili.com/video/BV1454y1r7mf/)
+        5. [即时编译器(为什么你写的代码有时候和预期不一致)](./02jvm/05compile.md)  [视频版](https://www.bilibili.com/video/BV11i4y1L7BX/)
+        6. [HotSpot创建对象(new一个对象到底占了多少内存?)](./02jvm/06HotSpotAndObject.md) [视频版](https://www.bilibili.com/video/BV1A54y1k7UW/)
+        7. [并发的内存模型(偏向锁、轻量锁、重量锁到底是啥?)](./02jvm/07concurrence.md)  [视频版](https://www.bilibili.com/video/BV1LV411a7u7/)
+        8. [垃圾收集器(垃圾回收器那么多傻傻分不清?)](./02jvm/08gcCollector.md)  [视频版](https://www.bilibili.com/video/BV1S5411V74U/)
+        9. [GC调优(频繁full gc分析思路)](./02jvm/09gc.md) [视频版](https://www.bilibili.com/video/BV1Ey4y167HQ/)
   3. 并发
   4. tomcat深度剖析及调优
         1. [tomcat主流程](./04tomcat/01bootstrap.md)  [视频版](https://www.bilibili.com/video/BV1GK41137LQ/)

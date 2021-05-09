@@ -4,8 +4,7 @@
 * [gitee目录](https://gitee.com/seal_li/SealBook)
 * [知乎目录](https://zhuanlan.zhihu.com/p/338222208)
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
-
-屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
+* [上一篇](./04thread.md)
 
 ## 1.算数运算符
 ### 1.1.单目
