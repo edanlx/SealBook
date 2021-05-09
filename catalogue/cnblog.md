@@ -1,4 +1,3 @@
-@[TOC]
 * [github](https://github.com/edanlx/SealBook)
 * [gitee](https://gitee.com/seal_li/SealBook)
 * [知乎](https://zhuanlan.zhihu.com/p/338222208)
@@ -11,11 +10,11 @@
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
   1. 优雅代码
-        1. [lombok(最简单的简化代码注解)](https://blog.csdn.net/seal_li/article/details/107297013)
-        2. [使用get、set方法避免魔法值(java传个方法你会吗,不是Method对象)](https://blog.csdn.net/seal_li/article/details/107448690)
-        3. [Optional杜绝NPE(看完这个就不要再写空指针了)](https://blog.csdn.net/seal_li/article/details/109349529)
-        4. [1行代码完成多线程，别再写runnable了](https://blog.csdn.net/seal_li/article/details/116562009)
-        5. [异或、左移、右移到底该怎么用](https://blog.csdn.net/seal_li/article/details/110914457)
+        1. [lombok(最简单的简化代码注解)](https://www.cnblogs.com/sealLee/p/13585767.html)
+        2. [使用get、set方法避免魔法值(java传个方法你会吗,不是Method对象)](https://www.cnblogs.com/sealLee/p/13585810.html)
+        3. [Optional杜绝NPE(看完这个就不要再写空指针了)](https://www.cnblogs.com/sealLee/p/13888669.html)
+        4. [1行代码完成多线程，别再写runnable了](https://www.cnblogs.com/sealLee/p/13894504.html)
+        5. [异或、左移、右移到底该怎么用](https://www.cnblogs.com/sealLee/p/14106526.html)
         6. apache、spring下优秀的工具类
         7. 利用common-pool构建高效连接池，实测连接池访问baidu的效率
         8. 利用idea优化代码
@@ -35,18 +34,18 @@
         22. 各种bean的copy效率比较
         23. 非聚簇索引和聚簇索引怎么选
   2. JVM深度剖析及调优
-        1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)](https://blog.csdn.net/seal_li/article/details/108306583)
-        2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)](https://blog.csdn.net/seal_li/article/details/108422861)
-        3. [JVM整体结构(写了final就是常量池了么)](https://blog.csdn.net/seal_li/article/details/116562161)
-        4. [字节码(我偷偷改了你编译后的class文件)](https://blog.csdn.net/seal_li/article/details/109634831) 
-        5. [即时编译器(为什么你写的代码有时候和预期不一致)](https://blog.csdn.net/seal_li/article/details/109920496)
-        6. [HotSpot创建对象(new一个对象到底占了多少内存?)](https://blog.csdn.net/seal_li/article/details/109939295)
-        7. [并发的内存模型(偏向锁、轻量锁、重量锁到底是啥?)](https://blog.csdn.net/seal_li/article/details/109958784)
-        8. [垃圾收集器(垃圾回收器那么多傻傻分不清?)](https://blog.csdn.net/seal_li/article/details/109981348) 
-        9. [GC调优(频繁full gc分析思路)](https://blog.csdn.net/seal_li/article/details/109981351)
+        1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)](https://www.cnblogs.com/sealLee/p/13585743.html)
+        2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)](https://www.cnblogs.com/sealLee/p/13619102.html)
+        3. [JVM整体结构(写了final就是常量池了么)](https://www.cnblogs.com/sealLee/p/14748378.html)
+        4. [字节码(我偷偷改了你编译后的class文件)](https://www.cnblogs.com/sealLee/p/13961861.html) 
+        5. [即时编译器(为什么你写的代码有时候和预期不一致)](https://www.cnblogs.com/sealLee/p/14018257.html)
+        6. [HotSpot创建对象(new一个对象到底占了多少内存?)](https://www.cnblogs.com/sealLee/p/14748385.html)
+        7. [并发的内存模型(偏向锁、轻量锁、重量锁到底是啥?)](https://www.cnblogs.com/sealLee/p/14020143.html)
+        8. [垃圾收集器(垃圾回收器那么多傻傻分不清?)](https://www.cnblogs.com/sealLee/p/14022657.html) 
+        9. [GC调优(频繁full gc分析思路)](https://www.cnblogs.com/sealLee/p/14022661.html)
   3. 并发 
   4. tomcat深度剖析及调优
-          1. [tomcat主流程](https://blog.csdn.net/seal_li/article/details/110848075)
+          1. [tomcat主流程](https://www.cnblogs.com/sealLee/p/14100544.html)
   5. mysql深度剖析及调优
   6. spring
   7. zookeeper
@@ -62,7 +61,7 @@
   17. 设计模式
   18. 面试专题
   19. 算法专题
-         1. [数据结构概述(注意区分jvm堆与堆/jvm栈与栈)](https://blog.csdn.net/seal_li/article/details/110848112)
+         1. [数据结构概述(注意区分jvm堆与堆/jvm栈与栈)](https://www.cnblogs.com/sealLee/p/14100545.html)
          2. 二分查找
          3. 深度优先
          4. 广度优先

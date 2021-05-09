@@ -4,6 +4,7 @@
 * [gitee目录](https://gitee.com/seal_li/SealBook)
 * [知乎目录](https://zhuanlan.zhihu.com/p/338222208)
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
+* [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 
 ## 1.数据结构的物理存储方式
 * **顺序结构**：和列表基本一致
