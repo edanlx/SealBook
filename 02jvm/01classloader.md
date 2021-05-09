@@ -10,7 +10,7 @@
 * [下一篇](./02myclassLoader.md)
 
 ## 1.类的生命周期
-![类的生命周期](http://www.showediy.com/sealbook/pic/jvm_classloader_classLifeCircle.jpg)
+![类的生命周期](http://seal_li.gitee.io/sealbook/pic/jvm_classloader_classLifeCircle.jpg)
 
 首先可以从图中明确类的生命周期  
 
