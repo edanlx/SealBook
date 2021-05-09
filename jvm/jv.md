@@ -1,15 +1,10 @@
 # 写了final就是常量池了么
-[视频讲解](https://www.bilibili.com/video/BV1Sz4y1f7FB/)
-* [github](https://github.com/edanlx/SealBook)
-* [gitee](https://gitee.com/seal_li/SealBook)
-* [知乎](https://zhuanlan.zhihu.com/p/338222208)
-* [csdn](https://blog.csdn.net/seal_li/article/details/111415366)
-![公众号](http://seal_li.gitee.io/sealbook/pic/wechat.jpg)
-* 欢迎关注b站账号/公众号“六边形战士夏宁”
-
+> 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
-* ps:优先b站更新
-* 我是六边形战士夏宁致力于把六商刷满的up主。秉承金融是本质,思维是源泉,爱好是生活,互联网是最佳工具的思想。
+* [gitee目录](https://gitee.com/seal_li/SealBook)
+* [知乎目录](https://zhuanlan.zhihu.com/p/338222208)
+* [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
+* [视频讲解](https://www.bilibili.com/video/BV1Sz4y1f7FB/)
 
 ## 1.jre和jdk的关系
 ![jre和jdk的关系](http://seal_li.gitee.io/sealbook/pic/jvm_jv_JDKwithJRE.png)
