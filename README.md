@@ -16,22 +16,15 @@
         4. [1行代码完成多线程，别再写runnable了](./01graceCode/04thread.md)  [视频版](https://www.bilibili.com/video/BV1jr4y1w7SH/)
         5. [异或、左移、右移到底该怎么用](./01graceCode/05symbol.md)
         6. [apache下优秀的工具类](./01graceCode/06apacheUtils.md)
-        7. [spring下优秀的工具类](./01graceCode/06apacheUtils.md)(补充bean拷贝和bean转map，map转bean)
-        8. 利用common-pool构建高效连接池，实测连接池访问baidu的效率
-        9. 利用idea优化代码(无)
-        10. Swagger前后端分离api文档
-        11. 借助aop构建全局日志
-        12. 借助ErrorController无侵入验证字段
-        13. stream的常用示例
-        14. mybatisplus
-        15. 更快的创建对象(clone)(无)
-        16. linkedList插入真的比arrayList快么
-        17. 更快的序列化(无)
-        18. 更快的json(static)(无)
-        19. localDate的使用(无)
-        20. final修饰集合后怎样无法让外部不能改变内部值(无)
-        21. 方法懒执行
-        22. 不用部署中间件的本地缓存(无)
+        7. [spring下优秀的工具类](./01graceCode/06apacheUtils.md)
+        8. 构建自己的高效连接池(区分连接池和线程池)
+        9. idea调优
+        10. 优雅和前端交互
+        11. stream的常用示例/方法懒执行
+        12. 更快的序列化(clone,序列化,fastjson)
+        13. linkedList插入真的比arrayList快么，以及guava的速度比较
+        14. 不用部署中间件的本地缓存(无)
+        15. guava精选方法
   2. JVM深度剖析及调优
         1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)](./02jvm/01classloader.md)  [视频版](https://www.bilibili.com/video/BV1Sz4y1f7FB/)
         2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)](./02jvm/02myclassLoader.md)  [视频版](https://www.bilibili.com/video/BV1Y54y1274Y/)
