@@ -72,7 +72,6 @@ maven的优秀伙伴，但是越发觉得maven臃肿了，项目体量一上来j
 |--|--|
 |Ctrl + Alt + L|格式化代码，代码就是我们写的诗，至少雷军大大也是这么说的|
 |Ctrl + C|CV大法好|
-|Ctrl + C|CV大法好|
 |Ctrl + V|CV大法好|
 |Ctrl + Z|撤销|
 |Ctrl + F|当前页查找|
