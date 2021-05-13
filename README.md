@@ -16,8 +16,8 @@
         4. [1行代码完成多线程，别再写runnable了](./01graceCode/04thread.md)  [视频版](https://www.bilibili.com/video/BV1jr4y1w7SH/)
         5. [异或、左移、右移到底该怎么用](./01graceCode/05symbol.md)
         6. [apache下优秀的工具类](./01graceCode/06apacheUtils.md)
-        7. [spring下优秀的工具类](./01graceCode/06apacheUtils.md)(补充bean拷贝和bean转map，map转bean)
-        8. 利用common-pool构建高效连接池，实测连接池访问baidu的效率
+        7. [spring下优秀的工具类](./01graceCode/06apacheUtils.md)
+        8. 构建自己的高效连接池(区分连接池和线程池)
         9. 利用idea优化代码(无)
         10. Swagger前后端分离api文档
         11. 借助aop构建全局日志
