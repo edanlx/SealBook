@@ -61,7 +61,7 @@ Editor | File Encodings->勾选 Transp....
 1. lombok
 主要用@slfj和javaBean相关的注解，插入后可以再用idea反编译成实体代码，非常舒适
 2. free mybaties
-最舒适的功能是辅助检查xml的错误，当然跳转这功能要很给力
+最舒适的功能是辅助检查xml的错误，当然跳转这功能也很给力
 3. alibabacode
 规范代码，每次上线前可以用一下，能处理掉一些bug
 4. maven helper
