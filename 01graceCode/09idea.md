@@ -6,7 +6,7 @@
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [上一篇](./08commonPool.md)
-* [下一篇](./09front.md)
+* [下一篇](./10front.md)
 
 ## 1.背景
 用好idea可以辅助程序员更快的开发，从效率和bug上都能取得更优秀的成绩

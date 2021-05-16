@@ -35,7 +35,7 @@
         7. [并发的内存模型(偏向锁、轻量锁、重量锁到底是啥?)](./02jvm/07concurrence.md)  [视频版](https://www.bilibili.com/video/BV1LV411a7u7/)
         8. [垃圾收集器(垃圾回收器那么多傻傻分不清?)](./02jvm/08gcCollector.md)  [视频版](https://www.bilibili.com/video/BV1S5411V74U/)
         9. [GC调优(频繁full gc分析思路)](./02jvm/09gc.md) [视频版](https://www.bilibili.com/video/BV1Ey4y167HQ/)
-        3. 并发
+  3. 并发
         1. jmm(jmm与cpu)
         2. sychornized(monitor,两种队列,锁升级)
         3. unsafe与CAS
@@ -53,7 +53,7 @@
         15. 线程池
         16. stream
         17. forkJoinPool
-        4. tomcat深度剖析及调优
+  4. tomcat深度剖析及调优
         1. [tomcat主流程](./04tomcat/01bootstrap.md)  [视频版](https://www.bilibili.com/video/BV1GK41137LQ/)
         5. mysql深度剖析及调优
         6. spring
@@ -69,7 +69,7 @@
         16. k8s、Jenkins与分布式
         17. 设计模式
         18. 面试专题
-        19. 算法专题
+  19. 算法专题
             1. [数据结构概述(注意区分jvm堆与堆/jvm栈与栈)](./arithmetic/structure.md)
             2. 二分查找
             3. 深度优先
@@ -79,6 +79,6 @@
             7. 动态规划
             8. 贪心算法
             9. 分治算法
-        20. 大规模性能监控及链路追踪
-        21. 计算机网络协议
-        22. 分布式计算    
+  20. 大规模性能监控及链路追踪
+  21. 计算机网络协议
+  22. 分布式计算    
