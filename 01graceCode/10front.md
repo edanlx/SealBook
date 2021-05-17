@@ -185,6 +185,7 @@ public class GlobalExceptionHandler implements ErrorController {
 在日常开发中难免会遇到string转各种奇怪的格式，或预处理，或后置处理，则对其进行扩展非常有必要
 1. json格式
 * 反序列化，外部数据转对象时
+- 写法一
 ```java
 /**
  * 实现去空格反序列化
@@ -199,6 +200,27 @@ public class TrimNotNullDeJson extends JsonDeserializer<String> {
         return StringUtils.trim(p.getText());
     }
 }
+- 写法二
+```java
+/**
+ * 在该注解下，反序列化时会调用该类的这个方法，注意方法要static
+ *
+ * @author 876651109@qq.com
+ * @date 2021/5/14 1:46 下午
+ */
+@JsonCreator
+public static ErrorCodeEnum get(String value) {
+    if (StringUtils.isBlank(value)) {
+        return null;
+    }
+    ErrorCodeEnum errorCodeEnum = MAPS.get(value);
+    if (errorCodeEnum == null) {
+        return ErrorCodeEnum.valueOf(value);
+    } else {
+        return errorCodeEnum;
+    }
+}
+```
 ```
 * 序列化，对象转string时
 ```java
