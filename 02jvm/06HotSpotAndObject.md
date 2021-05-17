@@ -7,8 +7,8 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/object)  
 * [视频讲解](https://www.bilibili.com/video/BV1A54y1k7UW/) 
-* [上一篇](./05compile.md)
-* [下一篇](./07concurrence.md)
+* [上一篇](./05compile.md)为什么你写的代码有时候和预期不一致
+* [下一篇](./07concurrence.md)偏向锁、轻量锁、重量锁到底是啥?
 
 ## 1.对象的创建
 当Java虚拟机遇到一条字节码new指令时，首先将去检查这个指令的参数是否能在常量池中定位到 一个类的符号引用，并且检查这个符号引用代表的类是否已被加载、解析和初始化过。如果没有，那必须先执行相应的类加载过程。

@@ -6,8 +6,8 @@
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/front) 
-* [上一篇](./09idea.md)
-* [下一篇](./11stream.md)
+* [上一篇](./09idea.md)idea调优
+* [下一篇](./11stream.md)stream精选示例
 
 ## 1.背景
 在目前开发中，前后端分离已然成为主流，而后端则有三件事要做，1.不完全信任前端的数据，2.减轻前后端压力3.将接口文档暴露给前端并确保其能看得懂，
@@ -185,6 +185,7 @@ public class GlobalExceptionHandler implements ErrorController {
 在日常开发中难免会遇到string转各种奇怪的格式，或预处理，或后置处理，则对其进行扩展非常有必要
 1. json格式
 * 反序列化，外部数据转对象时
+- 写法一
 ```java
 /**
  * 实现去空格反序列化
@@ -199,6 +200,27 @@ public class TrimNotNullDeJson extends JsonDeserializer<String> {
         return StringUtils.trim(p.getText());
     }
 }
+- 写法二
+```java
+/**
+ * 在该注解下，反序列化时会调用该类的这个方法，注意方法要static
+ *
+ * @author 876651109@qq.com
+ * @date 2021/5/14 1:46 下午
+ */
+@JsonCreator
+public static ErrorCodeEnum get(String value) {
+    if (StringUtils.isBlank(value)) {
+        return null;
+    }
+    ErrorCodeEnum errorCodeEnum = MAPS.get(value);
+    if (errorCodeEnum == null) {
+        return ErrorCodeEnum.valueOf(value);
+    } else {
+        return errorCodeEnum;
+    }
+}
+```
 ```
 * 序列化，对象转string时
 ```java

@@ -5,8 +5,8 @@
 * [知乎目录](https://zhuanlan.zhihu.com/p/338222208)
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
-* [上一篇](./04thread.md)
-* [下一篇](./06utils.md)
+* [上一篇](./04thread.md)1行代码完成多线程
+* [下一篇](./06apacheUtils.md)apache下的优秀工具类
 
 ## 1.算数运算符
 ### 1.1.单目

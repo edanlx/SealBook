@@ -7,8 +7,8 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/reflect)  
 * [视频讲解](https://www.bilibili.com/video/BV1ok4y1q7Be)   
-* [上一篇](./01lombok.md)
-* [下一篇](./03optional.md)
+* [上一篇](./01lombok.md)lombok精选注解
+* [下一篇](./03optional.md)optional杜绝空指针异常
 
 ## 1.背景介绍
 在日常代码中有时候近乎避免不了的使用魔法值，但是如果使用传入方法这种方式可以极大的降低魔法值出现的频率并且不用创建静态值。该方法主要参考了mybatisPlus，并在此基础上进行了扩展。  

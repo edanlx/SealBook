@@ -6,8 +6,8 @@
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/apache)  
-* [上一篇](./05symbol.md)
-* [下一篇](./07springUtils.md)
+* [上一篇](./05symbol.md)异或、左移、右移到底该怎么用
+* [下一篇](./07springUtils.md)spring下的优秀工具类
 
 ## 1.codec包
 ### 1.1背景

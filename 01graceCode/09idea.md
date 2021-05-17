@@ -5,8 +5,8 @@
 * [知乎目录](https://zhuanlan.zhihu.com/p/338222208)
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
-* [上一篇](./08commonPool.md)
-* [下一篇](./10front.md)
+* [上一篇](./08commonPool.md)构建自己的连接池
+* [下一篇](./10front.md)优雅和前端交互
 
 ## 1.背景
 用好idea可以辅助程序员更快的开发，从效率和bug上都能取得更优秀的成绩

@@ -7,8 +7,8 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/loader)  
 * [视频讲解](https://www.bilibili.com/video/BV1Sz4y1f7FB/)  
-* [上一章](../01graceCode/01lombok.md)
-* [下一篇](./02myclassLoader.md)
+* [上一章](../01graceCode/01lombok.md)lombok精选注解
+* [下一篇](./02myclassLoader.md)手写自己的类加载器
 
 ## 1.类的生命周期
 ![类的生命周期](http://seal_li.gitee.io/sealbook/pic/jvm_classloader_classLifeCircle.jpg)
