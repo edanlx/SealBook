@@ -7,8 +7,8 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/myloader)  
 * [视频讲解](https://www.bilibili.com/video/BV1Y54y1274Y/) 
-* [上一篇](./01classloader.md)
-* [下一篇](./03jv.md)
+* [上一篇](./01classloader.md)双亲委派都会说，破坏双亲委派你会吗
+* [下一篇](./03jv.md)写了final就是常量池了么
 
 ## 1.简单手写自己的类加载器
 

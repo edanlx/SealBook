@@ -1,4 +1,4 @@
-# 【优雅代码】11stream的常用示例
+# 【优雅代码】11stream精选示例
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [gitee目录](https://gitee.com/seal_li/SealBook)
@@ -6,8 +6,8 @@
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/stream) 
-* [上一篇](./10front.md)
-* [下一篇](./12serialize.md)
+* [上一篇](./10front.md)优雅和前端交互
+* [下一篇](./12serialize.md)更快的序列化
 
 ## 1.背景
 之前在优雅代码系列的第3节分享过了[optional](./03optional.md)的用法,这边就不再赘述了

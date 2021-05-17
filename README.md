@@ -20,11 +20,11 @@
         8. 构建自己的高效连接池(区分连接池和线程池)
         9. idea调优
         10. 优雅和前端交互
-        11. stream的常用示例/方法懒执行
+        11. stream精选示例
         12. 更快的序列化(序列化,fastjson)
         13. linkedList插入真的比arrayList快么，以及guava的速度比较
-        14. 不用部署中间件的本地缓存(无)
-        15. guava精选方法
+        14. guava精选方法
+        15. 不用部署中间件的本地缓存
   2. JVM深度剖析及调优
         1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)](./02jvm/01classloader.md)  [视频版](https://www.bilibili.com/video/BV1Sz4y1f7FB/)
         2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)](./02jvm/02myclassLoader.md)  [视频版](https://www.bilibili.com/video/BV1Y54y1274Y/)

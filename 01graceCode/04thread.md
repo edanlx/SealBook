@@ -7,8 +7,8 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/thread)  
 * [视频讲解](https://www.bilibili.com/video/BV1jr4y1w7SH/)  
-* [上一篇](./03optional.md)
-* [下一篇](./05symbol.md)
+* [上一篇](./03optional.md)optional杜绝空指针异常
+* [下一篇](./05symbol.md)异或、左移、右移到底该怎么用
 
 ## 1.建立相关类
 ### 1.1.ThreadEntity

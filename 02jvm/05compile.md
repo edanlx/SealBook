@@ -6,8 +6,8 @@
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [视频讲解](https://www.bilibili.com/video/BV11i4y1L7BX/)  
-* [上一篇](./04clazz.md)
-* [下一篇](./06HotSpotAndObject.md)
+* [上一篇](./04clazz.md)我偷偷改了你编译后的class文件
+* [下一篇](./06HotSpotAndObject.md)new一个对象到底占了多少内存?
 ## 1.前端编译
 ### 1.1.javac编译器
 即一般所说的编译，从javac代码的总体结构来看，编译过程大致可以分为1个准备过程和3个处理过程，它们分为  

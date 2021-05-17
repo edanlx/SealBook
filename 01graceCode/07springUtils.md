@@ -6,8 +6,8 @@
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/spring)  
-* [上一篇](./06apacheUtils.md)
-* [下一篇](./08commonPool.md)
+* [上一篇](./06apacheUtils.md)apache下的优秀工具类
+* [下一篇](./08commonPool.md)构建自己的连接池
 
 ## 1.反射相关(重要)
 ### 1.1背景

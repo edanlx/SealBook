@@ -6,8 +6,8 @@
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/front) 
-* [上一篇](./09idea.md)
-* [下一篇](./11stream.md)
+* [上一篇](./09idea.md)idea调优
+* [下一篇](./11stream.md)stream精选示例
 
 ## 1.背景
 在目前开发中，前后端分离已然成为主流，而后端则有三件事要做，1.不完全信任前端的数据，2.减轻前后端压力3.将接口文档暴露给前端并确保其能看得懂，

@@ -7,8 +7,8 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/concurrence) 
 * [视频讲解](https://www.bilibili.com/video/BV1LV411a7u7/) 
-* [上一篇](./06HotSpotAndObject.md)
-* [下一篇](./08gcCollector.md)
+* [上一篇](./06HotSpotAndObject.md)new一个对象到底占了多少内存?
+* [下一篇](./08gcCollector.md)垃圾回收器那么多傻傻分不清?
 
 ## 1.概述
 多任务处理在现代计算机操作系统中几乎已是一项必备的功能了。在许多场景下，让计算机同时 去做几件事情，不仅是因为计算机的运算能力强大了，还有一个很重要的原因是计算机的运算速度与  它的存储和通信子系统的速度差距太大，大量的时间都花费在磁盘I/O、网络通信或者数据库访问上。这个在 [一行代码完成多线程](https://github.com/edanlx/SealBook/blob/master/graceCode/thread.md)有写过如何分配线程，原理基本一致。  

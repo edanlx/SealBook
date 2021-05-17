@@ -5,8 +5,8 @@
 * [知乎目录](https://zhuanlan.zhihu.com/p/338222208)
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
-* [上一篇](./11stream.md)
-* [下一篇](./13listSpeed.md)
+* [上一篇](./11stream.md)stream精选示例
+* [下一篇](./13listSpeed.md)linkedList插入真的比arrayList快么
 
 ## 1.背景
 平常我们在使用rpc调用或者将其持久化到数据库的时候则需要将对象或者文件或者图片等数据将其转为二进制字节数据。

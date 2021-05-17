@@ -6,8 +6,8 @@
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/listspeed) 
-* [上一篇](./12serialize.md)
-* [下一篇](./14localeCache.md)
+* [上一篇](./12serialize.md)更快的序列化
+* [下一篇](./14localeCache.md)guava精选方法
 
 ## 1.背景
 在学习中，常规的方法总是先去模仿，硬性的接收知识，等到构建起大体框架后再去探寻实际情况

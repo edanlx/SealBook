@@ -6,8 +6,8 @@
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/commonpool) 
-* [上一篇](./07springUtils.md)
-* [下一篇](./09idea.md)
+* [上一篇](./07springUtils.md)spring下的优秀工具类
+* [下一篇](./09idea.md)idea调优
 
 ## 1.背景
 线程池的优势自不比多说，连接池和线程池有着众多想通之处，比较常见的连接池有druid、jedis等，但若是某些自研数据库等该如何构建自己的连接池就成问题。笔者使用http这一工具进行构建，可以对比效率差异。核心包为common-pool2

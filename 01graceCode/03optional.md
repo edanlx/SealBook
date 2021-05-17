@@ -7,8 +7,8 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/optional)  
 * [视频讲解](https://www.bilibili.com/video/BV1oy4y1r7r1/)   
-* [上一篇](./02method.md)
-* [下一篇](./04thread.md)
+* [上一篇](./02method.md)java传递方法
+* [下一篇](./04thread.md)1行代码完成多线程
 
 ## 1.建立Child、Parent、GrandParent的层级
 
