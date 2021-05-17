@@ -21,7 +21,7 @@
         9. idea调优
         10. 优雅和前端交互
         11. stream的常用示例/方法懒执行
-        12. 更快的序列化(clone,序列化,fastjson)
+        12. 更快的序列化(序列化,fastjson)
         13. linkedList插入真的比arrayList快么，以及guava的速度比较
         14. 不用部署中间件的本地缓存(无)
         15. guava精选方法
