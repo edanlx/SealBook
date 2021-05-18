@@ -32,7 +32,7 @@ public static void immutableOrdinary() {
     }
     Set<Integer> build = builder.build();
 
-    // 常规list转不可变,值得注意的是Collections.unmodifiableList()如果原list被改变不可变是会被改变的，guava的是深拷贝
+    // 常规list转不可变,值得注意的是Collections.unmodifiableList()
     List<Integer> collect = Stream.of(1, 2, 3, 4).collect(Collectors.toList());
     List<Integer> integers = ImmutableList.copyOf(collect);
 }
@@ -109,7 +109,12 @@ sw.stop();
 002458426  019%  guavaFor
 ```
 如上所述，这就是我非常喜欢guava的原因
-
+5. 区别对比
+```text
+// 常规list转不可变,值得注意的是Collections.unmodifiableList()如果原list被改变不可变是会被改变的
+list.remove(0);
+// 即list和unmodifiableList都会少一个
+```
 ### 3.2新集合类型
 
 ## 4.缓存(重要)
@@ -118,6 +123,7 @@ sw.stop();
 同2一样，在stream的强力作用下不怎么用了
 ## 6.并发Concurrency
 Futrue部分已经有了CompletableFuture(在第4节thread有介绍)，非常好用。Service部分功能是很强，但这东西一般情况是真的用不上。
+限流算法
 ## 7.字符串处理Strings
 apache的也不差，这块都差不多
 ## 8.原生类型Primitives
