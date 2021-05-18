@@ -239,23 +239,24 @@ final long reserveAndGetWaitLength(int permits, long nowMicros) {
     // 因为now就是最大的，所以max是0
     return max(momentAvailable - nowMicros, 0);
   }
- // 主流程3从上一步进入
+ // 主流程3从上一步进入。这里涉及令牌桶的核心算法
 @Override
   final long reserveEarliestAvailable(int requiredPermits, long nowMicros) {
   	// 主流程4
     resync(nowMicros);
     long returnValue = nextFreeTicketMicros;
-    // 这里因为是获取1个，所以min出来还是1，准备消耗的令牌数为1
+    // 返回要消耗掉的令牌数，这里需要先看主流程4的逻辑，如果够消耗则返回1，不够消耗只有零点几
     double storedPermitsToSpend = min(requiredPermits, this.storedPermits);
-    // 1-1=0，用于计算刷新令牌等待时间，这边不等待
+    // 这里有两种情况，如果令牌有余额，则1-1=0，如果令牌不足则获得一个小于1的数
     double freshPermits = requiredPermits - storedPermitsToSpend;
-    // 这里两个方法都是返回0，就不贴源码了
+    // 这里左边固定是0，就不贴源码了
+    // 根据上面的情况，这里有可能是0即有余令牌，那么再往下走两行，下次刷新时间则不动。如果小于1则令牌不够，将差额和间隔进行相乘获得还需要下个令牌的时间
     long waitMicros =
         storedPermitsToWaitTime(this.storedPermits, storedPermitsToSpend)
             + (long) (freshPermits * stableIntervalMicros);
-     // 这里赋值下次的时间，其实就是把两个参数加起来，但右边的是0
+     // 这里赋值下次的时间，其实就是把两个参数加起来，然后就得到了下次的时间，这也是为什么示例中的2.05的下次就是3.05
     this.nextFreeTicketMicros = LongMath.saturatedAdd(nextFreeTicketMicros, waitMicros);
-    // 这里减掉一个令牌
+    // 这里减掉消耗掉的令牌数
     this.storedPermits -= storedPermitsToSpend;
     return returnValue;
   }
@@ -266,9 +267,9 @@ final long reserveAndGetWaitLength(int permits, long nowMicros) {
     // 如果当前时间大于下次获取时间则进入，正常情况是一定大于的，否则就没有多余的令牌可以发
     if (nowMicros > nextFreeTicketMicros) {
     	// coolDownIntervalMicros()这个就是返回stableIntervalMicros
-    	// 前面存的这玩意儿现在再除回去进行还原，即可以获得的令牌数
+    	// 前面存的这玩意儿现在再除回去进行还原，即可以获得的令牌数,注意这里是可以返回零点几的
       double newPermits = (nowMicros - nextFreeTicketMicros) / coolDownIntervalMicros();
-      // 相加得到现在的令牌数
+      // 相加得到现在的令牌数，根据上一行，这里通常是几点几
       storedPermits = min(maxPermits, storedPermits + newPermits);
       // 标记获取令牌时间
       nextFreeTicketMicros = nowMicros;
