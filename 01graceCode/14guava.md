@@ -361,7 +361,7 @@ void dispatch(Object event, Iterator<Subscriber> subscribers) {
     }
   }
 }
-// 从2.1.1寄哪里就可以看到把任务直接丢到线程池
+// 从2.1.1这里就可以看到把任务直接丢到线程池
 final void dispatchEvent(final Object event) {
     executor.execute(
         new Runnable() {
