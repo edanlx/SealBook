@@ -6,9 +6,47 @@
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [上一篇](./14guava.md)guava精选方法
-* [下一章](../02jvm/01classloader.md)双亲委派都会说，破坏双亲委派你会吗
+* [下一篇](./16bloomAndRate.md)guava布隆过滤与限流算法
 
 ## 1.背景
-在目前开发中，前后端分离已然成为主流，而后端则有三件事要做，1.不完全信任前端的数据，2.减轻前后端压力3.将接口文档暴露给前端并确保其能看得懂，
-## 2.注解边界值
-### 2.1官方注解
+承接前一篇章的guava精选方法
+## 2.cache
+这一块的功能设计很巧的是和redis也很像
+### 2.1使用
+```java
+@SneakyThrows
+public static void cache() {
+    // 注意两个如果一起用有时候会有bug
+    Cache<Integer, Integer> accessBuild = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.SECONDS).build();
+    Cache<Integer, Integer> writeBuild = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.SECONDS).build();
+
+    accessBuild.put(1, 1);
+    accessBuild.put(2, 2);
+    writeBuild.put(1, 1);
+    writeBuild.put(2, 2);
+    // 输出1
+    System.out.println(accessBuild.getIfPresent(1));
+    // 输出1
+    System.out.println(writeBuild.getIfPresent(1));
+    Thread.sleep(500);
+    // 输出2
+    System.out.println(accessBuild.getIfPresent(2));
+    Thread.sleep(600);
+    // 输出null
+    System.out.println(accessBuild.getIfPresent(1));
+    // 输出2
+    System.out.println(accessBuild.getIfPresent(2));
+    // 输出null
+    System.out.println(writeBuild.getIfPresent(1));
+}
+```
+输出如下
+```text
+1
+1
+2
+null
+2
+null
+```
+### 2.2核心源码详解

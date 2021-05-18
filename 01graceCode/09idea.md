@@ -54,7 +54,7 @@ log.info("$methodeName$:$line$line:{}","")
 |methodeName|methodeName()|
 |line|lineNumber()|
 5. 序列化提示 
-Preferences | Editor | Inspections | serializable ->勾选class with 'serialVersionUID'
+Preferences | Editor | Inspections | serializable ->勾选class without 'serialVersionUID'
 6. properties编码
 Editor | File Encodings->勾选 Transp....
 ## 3.idea插件
