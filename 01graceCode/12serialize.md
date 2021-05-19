@@ -14,7 +14,7 @@
 java自带的序列化,平常用的最多的json序列化(也可以叫http数据传输的序列化),dubbo默认的序列化hessian2,其优势在于跨语言(不过跨语言序列化一般还是json和xml范围更广些),目前公认稳定且最快的序列化方式Kryo
 ### 2.1 Hessian使用
 #### 2.1导包
-```java
+```xml
 <dependency>
     <groupId>com.alibaba</groupId>
     <artifactId>hessian-lite</artifactId>
@@ -59,7 +59,7 @@ public static <T> T deserialize(byte[] serializeData) {
 ```
 ### 2.2kryo
 #### 2.2.1导包
-```java
+```xml
 <dependency>
     <groupId>com.esotericsoftware</groupId>
     <artifactId>kryo-shaded</artifactId>
