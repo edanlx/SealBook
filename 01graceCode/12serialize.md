@@ -189,6 +189,7 @@ private static void compareDeSerialize() {
     byte[] serialize = SerializationUtils.serialize(serializeTestObject);
     byte[] serializeHe = Hessian2Utils.serialize(serializeTestObject);
     byte[] serializeHeKryo = KryoUtils.serialization(serializeTestObject);
+    // 这里统一采用复杂json的处理方式
     TypeReference<SerializeTestObject> fastJsonType = new TypeReference<SerializeTestObject>() {
     };
     com.fasterxml.jackson.core.type.TypeReference<SerializeTestObject> jackJsonType = new com.fasterxml.jackson.core.type.TypeReference<SerializeTestObject>() {
