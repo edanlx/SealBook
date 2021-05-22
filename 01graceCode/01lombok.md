@@ -5,39 +5,71 @@
 * [知乎目录](https://zhuanlan.zhihu.com/p/338222208)
 * [csdn目录](https://blog.csdn.net/seal_li/article/details/111415366)
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
-* [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/entity)
+* [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/lombok) 
 * [视频讲解](https://www.bilibili.com/video/BV1yC4y1877R/)
 * [下一篇](./02method.md)java传递方法
 
-## 1.lombok
-先上[官网](https://projectlombok.org/)地址  
-[官方教程](https://projectlombok.org/features/EqualsAndHashCode)  注意替换域名后缀
-### 1.1.相关注解
-* 方法使用的注解
-@SneakyThrows该注解后面可以跟异常，一般会使用编译时异常，因为编译时异常正常都是不会报错的，比如类找不到等情况，使用该注解可以让代码变得更易读
-* 实体类使用的注解
-@EqualsAndHashCode(equals和hashcode相关)、@AllArgsConstructor（构造方法相关）、@NoArgsConstructor（构造方法相关）、@Data(get、set类)、@Builder(创建类的时候可以直接使用build强力推荐)。推荐使用以上五个注解，至于@Accessors注解虽然很好用但是和bean拷贝会有冲突，所以不太推荐使用。注意这里部分注解在使用的时候要把父类实现带上，否则会有隐藏bug。
-* 日志使用的注解
-@Slf4j该注解反编译会自动注入class算是比较方便的
-* 其它注解
-这些注解使用场景并不多
-@Log, @Log4j, @Log4j2,  @XSlf4j, @CommonsLog, @JBossLog, @Flogger, @CustomLog(日志相关)  
-@Data(get、set方法)  
-@SuperBuilder(构造链)  
-@Singular(默认值)  
-@Delegate(委托方法，用于避免超类出错)  
-@Value(私有构造方法，并开放一个公共静态构造)  
-@Accessors(链式调用)  
-@Wither(已并入value)  
-@With(使用with构造)  
-@val,@var(没有不会js的吧)  
-@clean
-
-## 2.delombok
-[官网](https://projectlombok.org/features/delombok)
+## 1.背景介绍
+在日常开发中免不了进行一些繁琐的代码自动生成，虽然ide的功能已然非常强大但是并不能够做到动态，lombok可以非常好的解决这个问题。它会在生成class文件时将其进行编译成平常所写的代码,这里介绍一些我个人觉得比较好用的注解
+## 2.lombok
+先上[官网](https://projectlombok.org/)地址。如果想了解更多注解可以去[https://projectlombok.org/features/all](https://projectlombok.org/features/all)
+### 2.1.get/set注解(重要)
+此部分注解有@Data、@Getter、@Setter,一般普通Bean对象会使用@Data注解(里面已经包含另外两个注解)，如果是enum则使用@Getter注解
+```java
+@Data
+static class DataExample{
+    private String name;
+}
+```
+### 2.2.构造方法注解(重要)
+此部分注解包含@NoArgsConstructor无参构造、@AllArgsConstructor所有参构造、@Builder构造链
+```java
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
+static class DataExample{
+    private String name;
+}
+// 使用方法如下
+new DataExample();
+new DataExample("");
+DataExample.builder().name("123").build();
+```
+### 2.3.日志注解(重要)
+此部分注解包含@Slf4j，其它的注解都不重要，这个会自动根据引入包进行选择
+```java
+@Slf4j
+public class LombokExample {
+	public static void main(String[] args) {
+        log.info("123");
+    }
+}
+```
+### 2.4.Bean辅助注解(重要)
+众所周知，比较两个对象是否相等是要用equals。所以有如下注解@EqualsAndHashCode、@ToString。值得注意的是如果有继承父类需要填写callSuper = true
+### 2.5.链式调用
+@Accessors,该注解一度觉得很好用，后来发现它和一些拷贝等不兼容就放弃了
+### 2.6.关闭流
+@Cleanup,这个可以帮助关闭流，需要注意的是需要对其捕获IO异常。虽然不错，但是有了trywith的写法以后就用的不多了。
+```java
+try {
+    @Cleanup FileInputStream fileInputStream = new FileInputStream("");
+} catch (IOException e) {
+    e.printStackTrace();
+}
+```
+### 2.7.异常注解
+在捕获编译时异常的时候比较好用，但是现在越来越多的工具类都对编译异常捕获了，它的出场机会并不多
+```java
+@SneakyThrows({Exception.class})
+    public static void main(String[] args) {
+}
+```
+## 3.delombok
+如果后面不想用注解则需要使用delombok[官网](https://projectlombok.org/features/delombok)
 * 方法一
 
-```
+```sh
 java -jar lombok.jar delombok src -d src-delomboked
 ```
 注意替换包名
