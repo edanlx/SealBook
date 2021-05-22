@@ -36,6 +36,7 @@ $params$
 |returns|methodReturnType()|
 |date|date()|
 |time|time()|
+* lombok注释
 ```java
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -66,6 +67,8 @@ Editor | File Encodings->勾选 Transp....
 规范代码，每次上线前可以用一下，能处理掉一些bug
 4. maven helper
 maven的优秀伙伴，但是越发觉得maven臃肿了，项目体量一上来jar包冲突惨不忍睹
+5. jclasslib
+学习字节码的好帮手
 
 ## 4.idea快捷键
 |快捷键|介绍|

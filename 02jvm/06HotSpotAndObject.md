@@ -129,6 +129,7 @@ public static void main(String[] args) {
       System.out.println("------------------layout9------------------");
       // 打开String源码，里面有两个属性 一个 private int hash，一个 private final char value[]
       // 输出12字节对象头+4字节指针指向hash+4字节指针指向value[]+4字节的对象补齐，共计24字节
+      // ps:string里面除了hash和value[]两个指针应该还存其它指针，但是不知道为什么没有打印出来
       System.out.println(layout9.toPrintable());
       Character chr4 = '1';
       ClassLayout layout10 = ClassLayout.parseInstance(chr4);
@@ -136,6 +137,7 @@ public static void main(String[] args) {
       // 输出12字节对象头+2字节的值(1个char占2个字节)+2字节的对象补齐，共计16字节
       System.out.println(layout10.toPrintable());
       // 综上，一个长度为n的字符串，总占用即20的基础字节+n*2的字节+对象补齐
+      // ps:这里打印应该是略有出入的根据周耀明的《大话JAVA性能调优》。对象头8字节+char数组(16字节)+4*4。即基础字节为40。
       while (true){
           parent.toString();
       }

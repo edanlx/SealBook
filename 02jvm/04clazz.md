@@ -7,7 +7,7 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/jvm/clazz)  
 * [视频讲解](https://www.bilibili.com/video/BV1454y1r7mf/)  
-* [上一篇](./03jv.md)写了final就是常量池了么
+* [上一篇](./03jv.md)string真的会共用常量池吗
 * [下一篇](./05compile.md)为什么你写的代码有时候和预期不一致
 ## 1.准备工作
 准备一份代码
