@@ -16,16 +16,17 @@
         4. [1行代码完成多线程，别再写runnable了](./01graceCode/04thread.md)  [视频版](https://www.bilibili.com/video/BV1jr4y1w7SH/)
         5. [异或、左移、右移到底该怎么用](./01graceCode/05symbol.md)
         6. [apache下优秀的工具类](./01graceCode/06apacheUtils.md)
-        7. [spring下优秀的工具类](./01graceCode/06apacheUtils.md)
-        8. 构建自己的高效连接池(区分连接池和线程池)
-        9. idea调优
-        10. 优雅和前端交互
-        11. stream精选示例
-        12. 更快的序列化(序列化,fastjson)
-        13. linkedList插入真的比arrayList快么，以及guava的速度比较
-        14. guava精选方法
-        15. 不用部署中间件的本地缓存
-        16. guava布隆过滤与限流算法
+        7. [spring下优秀的工具类](./01graceCode/07springUtils.md)
+        8. [构建自己的高效连接池(区分连接池和线程池)](./01graceCode/08commonPool.md)
+        9. [idea调优](./01graceCode/09idea.md)
+        10. [优雅和前端交互](./01graceCode/10front.md)
+        11. [stream精选示例](./01graceCode/11stream.md)
+        12. [更快的序列化](./01graceCode/12serialize.md)
+        13. [linkedList插入真的比arrayList快么](./01graceCode/13listSpeed.md)
+        14. [guava精选方法](./01graceCode/14guava.md)
+        15. [不用部署中间件的本地缓存](./01graceCode/15localeCache.md)
+        16. [guava布隆过滤与限流算法](./01graceCode/16bloomAndRate.md)
+        17. [当泛型遇上多肽](./01graceCode/17generic.md)
   2. JVM深度剖析及调优
         1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)](./02jvm/01classloader.md)  [视频版](https://www.bilibili.com/video/BV1Sz4y1f7FB/)
         2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)](./02jvm/02myclassLoader.md)  [视频版](https://www.bilibili.com/video/BV1Y54y1274Y/)
@@ -56,20 +57,20 @@
         17. forkJoinPool
   4. tomcat深度剖析及调优
         1. [tomcat主流程](./04tomcat/01bootstrap.md)  [视频版](https://www.bilibili.com/video/BV1GK41137LQ/)
-        5. mysql深度剖析及调优
-        6. spring
-        7. zookeeper
-        8. rabbitmq
-        9. 分库分表
-        10. dubbo
-        11. netty
-        12. LVS
-        13. springcloud-alibaba
-        14. nginx
-        15. redis
-        16. k8s、Jenkins与分布式
-        17. 设计模式
-        18. 面试专题
+   5. mysql深度剖析及调优
+   6. spring
+   7. zookeeper
+   8. rabbitmq
+   9. 分库分表
+   10. dubbo
+   11. netty
+   12. LVS
+   13. springcloud-alibaba
+   14. nginx
+   15. redis
+   16. k8s、Jenkins与分布式
+   17. 设计模式
+   18. 面试专题
   19. 算法专题
             1. [数据结构概述(注意区分jvm堆与堆/jvm栈与栈)](./arithmetic/structure.md)
             2. 二分查找
