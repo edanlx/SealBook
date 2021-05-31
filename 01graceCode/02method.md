@@ -22,7 +22,8 @@ package com.example.demo.bean;
 import java.io.Serializable;
 
 /**
- * F 传入类型，T返回类型
+ * F 传入类的类型，T返回类型
+ * 类比get方法第一个参数是隐形的this,那么source就是此对象,F就是此对象的类型
  * @author seal
  */
 @FunctionalInterface
@@ -39,7 +40,8 @@ package com.example.demo.bean;
 import java.io.Serializable;
 
 /**
- * F 传入类型，T返回类型
+ * F 传入类的类型，T第一个参数的类型
+ * 类比set方法第一个参数是隐形的this,那么source就是此对象,arg就是第一个要传入参数
  * @author seal
  */
 @FunctionalInterface
