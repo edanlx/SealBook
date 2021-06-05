@@ -32,7 +32,7 @@
         2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)](./02jvm/02myclassLoader.md)  [视频版](https://www.bilibili.com/video/BV1Y54y1274Y/)
         3. [JVM整体结构(写了final就是常量池了么)](./02jvm/03jv.md)  [视频版](https://www.bilibili.com/video/BV1LZ4y1N75R)
         4. [字节码(我偷偷改了你编译后的class文件)](./02jvm/04clazz.md)  [视频版](https://www.bilibili.com/video/BV1454y1r7mf/)
-        5. [即时编译器(为什么你写的代码有时候和预期不一致)](./02jvm/05compile.md)  [视频版](https://www.bilibili.com/video/BV11i4y1L7BX/)
+        5. [编译优化(为什么你写的代码有时候和预期不一致)](./02jvm/05compile.md)  [视频版](https://www.bilibili.com/video/BV11i4y1L7BX/)
         6. [HotSpot创建对象(new一个对象到底占了多少内存?)](./02jvm/06HotSpotAndObject.md) [视频版](https://www.bilibili.com/video/BV1A54y1k7UW/)
         7. [并发的内存模型(偏向锁、轻量锁、重量锁到底是啥?)](./02jvm/07concurrence.md)  [视频版](https://www.bilibili.com/video/BV1LV411a7u7/)
         8. [垃圾收集器(垃圾回收器那么多傻傻分不清?)](./02jvm/08gcCollector.md)  [视频版](https://www.bilibili.com/video/BV1S5411V74U/)
