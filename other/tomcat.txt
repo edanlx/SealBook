@@ -1,0 +1,89 @@
+tomcat
+第1章 一个简单的web服务器
+1.创建客户端socket去访问服务端
+2.创建服务端ServerSocket，进行监听。具体为await方法对齐进行创建，等待accept()返回并循环。接收到请求后accept()可以获取InputStream和OutputStream。并创建new Request(input)，request.parse()进行解析。解析完毕后会new Response(output),接着response.setRequest(request)、response.sendStaticReponse()如果uri请求的路径存在则返回该静态资源并写入outputStream,若不存在则返回错误消息。最后判断是否结束循环根据uri关键字是否关闭。
+
+第2章 一个简单的servlet容器
+Servlet接口中声明了5个方法，方法签名如下:
+public coid init(ServletConfig config) throws ServletException
+public void service(ServletRequest request, ServletResponse response) throws ServletException, java.io.IOException
+public void destroy()
+public ServletConfig getServletConfig()
+public String getServletInfo()
+其中init()\service()和destroy()是与servlet的生命周期相关的方法。当实例化某个servlet容器后悔调用其init()方法进行初始化。这个也是在引入springMVC与Struts2之前时需要实现的类,service()就是主要逻辑。即使是现在，在用到request和response时也可以看到期继承了servletRequest和servletReponse。为了动态的jsp技术则需要URLClassLoader的loadClass()动态载入servlet类
+
+第3章 连接器
+Catailna中有两个主要的模块，连接器(connector)和容器(container)
+StringManager，像tomcat这种国际化程序，其对语言也是有一定支持的，方便admin管理。如果将异常全部放在一个properties,那将是一场噩梦,其采用了分包的方式，将properties放入不同的包中
+连接器程序主要包含3各模块:连机器模块、启动模块和核心模块。
+	启动模块只有一个类(Bootstrap)
+	连接器模块可分为5个类型
+		连接器机器支持类(HttpConector和HttpProcessor)
+		HTTP请求类(HttpRequest)
+		HTTP响应类(HttpResponse)
+		外观类(HttpRequestFacade和HttpResponseFacade)(ps:外观类通常是部分属性一致但移除了部分敏感属性或方法)
+		常量类
+	核心模块包含两个类,servletProcessor和StaticProcessor
+
+连接器就是起了个服务，然后等待监听，来一个就创建HttpRequest和HttpResponse。将对象传递给servletProcessor或StaticResourceProcessor的process()方法
+【TODO connector具体实现】
+第4章tomcat默认连接器
+第5章serrvlet容器(直译为小程序服务)
+对于Catalina中的容器，需要注意的是共有4中类型的容器，分别对应不同的概念层次
+Engine:表示Catalina servlet引擎
+Host:表示一个或多个Context容器的虚拟主机
+Context:表示一个Web应用程序。一个Context可以有多个Wrapper
+Wrapper:表示一个独立的servlet
+上述的每个概念层级有org.apache.catalina包内的一个接口表示，并且都集成子Container接口,该方法包含findChildren()、addChild()、removeChild()等对低级子容器操作的方法
+
+管道任务
+Pipeline、Valve、Contained接口负责执行管道与阀的相关工作，可以在server.xml进行定义，处理逻辑与过滤器类似，在完成一个阀的任务后交给下一个
+Pipeline有addValve()、removeValve(Valve valve)等操作阀的方法，其中setBasic(Valve valve)为基础阀，是最后调用的阀，负责处理requet和response对象。每个组件都会有pipeline.setBasic(new StandardHostValve());类似的代码
+
+Wrapper接口
+	是关于serlet的相关方法负责管理servlet的生命周期，调用init()等方法，其继承Contained。还包含setServlet()、getServlet()等方法，调用后会接着调用servlet.service()完成用户自定义的服务
+Context接口
+	其组我诶Wrapper的上策再有addWrapper()和createWrapper()。值得注意的是其继承包含findServletMapping(String pattern)则作为通过url找wrapper的关键，去到具体实现类的话StandardContext，可以看到是由map实现的。
+Valve接口
+	其包含getNext()与setNext(Valve valve)，以及invoke(Request request, Response response)。那么基本可以推测的出来在调用invoke后会接着调用getNext()。这里可以看下tomcat包下的实现类名称有RequestFilterValve、AccessLogValve、JDBCAccessLogValve从名称上可以看猜的出来阀门都在做的事情。StandardContextValve等，每个组件也会有自身的阀处理方式
+
+
+第6章生命周期
+接口Lifecycle,其下有多个事件BEFORE_INIT_EVENT、AFTER_INIT_EVENT等，在组件启动或关闭时触发。其中start()、stop()方法是最重要的方法实现，供其父组件调用以实现启动/关闭操作。addLifecycleListener(LifecycleListener listener)、removeLifecycleListener(LifecycleListener listener)为监听器相关方法
+具体关联关系如下:ContainerBase类实现了Container，继承的最上层为LifecycleBase(该类实现了Lifecycle),而对应的StandardContext、StandardHost、StandardWrapper等实现类都继承了ContainerBase。基于这个构造就有了Catalina启动后则从外至内各自启动自己的子容器,Catalina关闭时，则依次完成销毁操作。
+第7章日志记录器
+AccessLog(以前是Logger)接口的log(Request request, Response response, long time)方法
+第8章载入器
+WebappClassLoader,主要功能是与Context绑定，负责动态加载servlet，避免相同路径加载到applicationClassloader从而冲突。这块流程和双亲委派基本一致，唯一需要注意的是其余生命周期中的listen联动。
+第9章session管理
+org.apache.catalina.Session接口。org.apache.catalina.session.StandardSession。该类里面主要包含对单个session的管理比如maxInactiveInterval、isValid等过期相关的属性、expire()方法。全部session的管理则有org.apache.catalina.session.ManagerBase负责,其中Map<String, Session> sessions = new ConcurrentHashMap<>()则为其核心管理结构。值得一提的是它是支持序列化的，方便重启后使用以及多个tomcat之间进行复制。DistributedManager对复制进行管理，Store接口对各种持久化进行管理，包括jdbc、session等在2012年左右还有相关用法，ssm火了以后就消失了不再站看
+第10章安全性
+领域相关
+org.apache.catalina.Realm、org.apache.catalina.Role等用户权限相关，在user-tomcat.xml中进行设置,因为正常都是不使用tomcat的用户模式就不展开
+第11章StandardWrapper
+查看org.apache.catalina.core.StandardWrapperValve方法中的invoke则可以看到filterChain.doFilter(request.getRequest(),response.getResponse());的调用。
+valve与相应组件调用顺序为父valve调用本组件。举例StandardContextValve中会调用StandardWrapper的invoke()方法。代码片段如下:wrapper.getPipeline().getFirst().invoke(request, response);
+singleThreaModel:这个是早期servlet单例实现STM，但是实际上线程并不安全。
+StandardWrapperFacade:该方法的构造方法需要传入StandardWrapper
+第12章StandardContext
+除了前面已经提过的根据url找servlet的功能外。还有一个重要方法backgroundProcess()，用于载入其它相关组件其中包块前面提到的Manager类业绩session管理。
+第13章Host和Engine
+Host和context干的事情类似，不过是解析最前面的path,一般作为最顶层的容器，其支持了一个tomcat下部署多个项目并且互相不干扰的核心实现之一。不过目前springboot都是一个项目，其意义有限。
+engine:虚拟主机，正常使用就是localhost，使用场景非常有限。
+第14章服务器组件和服务组件
+org.apache.catalina.Server接口的实例表示Catalina的整个引擎。
+org.apache.catalina.Service接口则是connector和comtaier的引擎。
+以上两个接口的实现类均实现了生命周期管理
+第15章Digester
+一个开源库，在tomcat中负责将server.xml转为java对象。
+ContextConfig则负责将web.xml转为java对象。
+第16章关闭钩子
+当程序关闭时有时候需要进行清理或序列化等善后工作，以便于下次启动。但可能会直接关闭程序。java中提供了关闭钩子，关闭钩子在检测到关闭后永远会优先执行，使用方法为Runtime的addShutdownHook()
+第17章启动Tomcat
+打开脚本发现其启动程序为Bootstrap
+第18章部署器
+tomcat支持的war，由HostConfig中的deployWARs()方法执行
+第19章Manager应用程序的servlet
+负责生成tomcat的管理界面的servlet，为了避免安全问题其并没有较多的使用空间。
+第20章基于JMX的管理
+功能与上一节类似但提供了扩展工嗯呢该，此处不再展开。
