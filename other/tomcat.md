@@ -61,13 +61,29 @@ org.apache.catalina.Session接口。org.apache.catalina.session.StandardSession�
 领域相关
 org.apache.catalina.Realm、org.apache.catalina.Role等用户权限相关，在user-tomcat.xml中进行设置,因为正常都是不使用tomcat的用户模式就不展开
 第11章StandardWrapper
-查看org.apache.catalina.core.StandardWrapperValve方法中的invoke则可以看到filterChain.doFilter(request.getRequest(),response.getResponse());的调用
+查看org.apache.catalina.core.StandardWrapperValve方法中的invoke则可以看到filterChain.doFilter(request.getRequest(),response.getResponse());的调用。
+valve与相应组件调用顺序为父valve调用本组件。举例StandardContextValve中会调用StandardWrapper的invoke()方法。代码片段如下:wrapper.getPipeline().getFirst().invoke(request, response);
+singleThreaModel:这个是早期servlet单例实现STM，但是实际上线程并不安全。
+StandardWrapperFacade:该方法的构造方法需要传入StandardWrapper
 第12章StandardContext
+除了前面已经提过的根据url找servlet的功能外。还有一个重要方法backgroundProcess()，用于载入其它相关组件其中包块前面提到的Manager类业绩session管理。
 第13章Host和Engine
+Host和context干的事情类似，不过是解析最前面的path,一般作为最顶层的容器，其支持了一个tomcat下部署多个项目并且互相不干扰的核心实现之一。不过目前springboot都是一个项目，其意义有限。
+engine:虚拟主机，正常使用就是localhost，使用场景非常有限。
 第14章服务器组件和服务组件
+org.apache.catalina.Server接口的实例表示Catalina的整个引擎。
+org.apache.catalina.Service接口则是connector和comtaier的引擎。
+以上两个接口的实现类均实现了生命周期管理
 第15章Digester
+一个开源库，在tomcat中负责将server.xml转为java对象。
+ContextConfig则负责将web.xml转为java对象。
 第16章关闭钩子
+当程序关闭时有时候需要进行清理或序列化等善后工作，以便于下次启动。但可能会直接关闭程序。java中提供了关闭钩子，关闭钩子在检测到关闭后永远会优先执行，使用方法为Runtime的addShutdownHook()
 第17章启动Tomcat
+打开脚本发现其启动程序为Bootstrap
 第18章部署器
+tomcat支持的war，由HostConfig中的deployWARs()方法执行
 第19章Manager应用程序的servlet
+负责生成tomcat的管理界面的servlet，为了避免安全问题其并没有较多的使用空间。
 第20章基于JMX的管理
+功能与上一节类似但提供了扩展工嗯呢该，此处不再展开。
