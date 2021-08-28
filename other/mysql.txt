@@ -69,13 +69,97 @@
 	整形:TINYINT,SMALLINT,MEDIUMINT,INT,BIGINT，分别使用8，16，24，32，64位存储空间，其可以设置UNSIGNED表示不允许负值，虽然mysql可以为其指定宽度，但其实是没有意义的
 	实数:DECIMAL、FLOAT、DOUBLE等,DECIMAL可以存储比BIGINT还打的整数。对于DECIMAL(18,9)表示小数点左边最大9，右边最大9
 	字符串:varchar和char。前者可变，后者定长。需要注意的是varchar虽然可变,存储空间虽然不同但是临时表消耗的内存开销是不一样的
-	大文本:BLOB和TEXT。如果对齐使用排序，务必使用order by sustring(colume, length)，其并不支持索引。如果没有这样使用name就会导致磁盘临时表，这是非常消性能的(explain 计划的extra会包含 using temporary。如果在排序中出现了文件排序则说明为重新构建排序，性能极差)
+	大文本:BLOB和TEXT。如果对齐使用排序，务必使用order by sustring(colume, length)，其并不支持索引。如果没有这样使用name就会导致磁盘临时表，这是非常消性能的(explain 计划的extra会包含 using temporary。如果在排序中出现了文件排序则说明为重新构建排序，性能极差)(文件排序不一定会生成文件)
+	枚举:enum，虽然其可以有更高的性能，但是会带来其它麻烦，如果排序则会根据定义顺序，而非字符串顺序,在新增类型时还需啊哟修改表结构。如果使用则不可定义数字，因为其实际值就是按照数字存储的避免混淆。为了其良好的扩展性，应使用自身系统的字典类对其进行定义。
+	时间类型:优先使用timestamp，其存储空间更小。
+	位:bit,虽然在某些情况很好用，但为了系统的可读性和扩展性还是避免使用。
+物化视图:
+	利用Flixviews的物化视图往往可以比缓存表或汇总表带来更好的扩展性和有效性。
+alert table
+	一般而言，大部分alert table操作导致mysql服务中断。alter column则不会发生该情况
 第5章 创建高性能的索引
+B-Tree
+	B-Tree通常意味着所有的值都是按顺讯存储的，并且每一个叶子页到根的距离相同
+	【TODO P149图5-1】
+	(https://www.cnblogs.com/aspirant/p/11475295.html b+树与跳表的区别，主要为一个是高度通常为3平衡二叉树扩展，另一个是每层宽度通常为3连表扩展)
+	【页 key1 页】，左侧子页数据都小于key1，有侧子页大于等于key1，两个子页之间也会有指针，一页在InnoDB中为16k，最终在最底层的页子节点指向被引用的数据。也即根节点和叶子节点之间有多层节点页。
+	以这种结构存储的索引揭示了全职匹配、左前缀、范围可以使用索引的原因
+哈希索引
+	在等值匹配时为O(1)的速度，值得一提的是InnoDB在发现某个值被匹配很频繁时，会自动建立哈希索引。
+合适的索引
+	分情况建立联合索引和单列索引，如果使用联合索引则为其安排合适的顺序，值得注意的是有了索引下推后联合索引则没必要太纠结顺序。
+	聚簇索引
+		聚簇就是把数据行和响铃的键值保存在一起。因为无法同时吧数据行存放在两个不同的地方，所以一个表只能有一个聚簇索引。即叶子页会包含所有数据。被引用的列就是主键列，如果没有定义主键会选自唯一非空索引，如果也没有则会隐式创建。
+		缺点:如果不是按顺序插入则会可能面临"页分裂"问题(当行的主键插入到某个已经满了的页)。在使用二级索引时会查询两次数据。
+	【TODO p167 5-9 聚簇和非聚簇对比图】
+|表名|行数|时间(秒)索引大小(MB)|
+|--|--|--|--|
+|userinfo|1 000 000|137|342|
+|userino_uuid|1 000 000|180|544|
+|userinfo|3 000 000|1233|1036|
+|userino_uuid|3 000 000|3525|1707|
+覆盖索引
+	目前只有InnoDB的b+tree可以使用该功能，即使用where查出小表selct id后再自关联自己，效率可以成几何式提升。
+排序
+	索引不止是在where中是用，sort和group中也可以使用索引
+重复索引
+	应当避免建立重复索引，这会使得mysql在索引优化时耗费更长的时间
+【TODO索引下推以及位置交换】
 第6章 查询性能优化
+1.是否返回了不必要的数据
+2.是否扫描额外的记录,通常发生在全表扫描，如果使用索引则会范围扫描
+3.切分查询，有时候多个查询可能是更好的
+【TODO 6-1查询执行路径】
+查询优化处理
+	语法解析器和预处理:将sql解析成一个树验证sql是否正确
+	查询优化器:一条sql有多种查询方式，选择最优返回(使用 shoow  statuss like 'last_query_cost'可以查询扫描了多少个数据页)，查询优化分为静态和动态优化例如min(id)，那么只需要查询索引最左侧即可。
+	提前中智查询、子查询优化、等值传播等等
+	优化提示:因为mysql有很多优化方案，你可以使用指定的方式，但最好不要这么做，这会让mysql升级后变更优化方案时让新版本的优化策略失效。
 第7章 mysql高级特性
+	分区表:一般情况下更建议直接使用分库，便于横向扩展
+	视图:在重构表的时候非常适合使用视图，避免大规模重构代码
+	存储过程、函数、触发器:不建议使用，对于切换数据库非常不友好。
+	全文搜索:正常情况下还是使用es
+	分布式(XA)事务:性能较差，建议使用seata等第三方工具
+	缓存:建议关掉走mybaties和redis的方式。
 第8章 优化服务器设置
 第9章 操作系统和硬件优化
 第10章 复制
+	复制基本工作:
+		1.在主库上把数据更改记录到二进制日志(Binart Log)中
+		2.备库将主库上的日志复制到自己的中级日志(Relay Log)中
+		3.备库读取中继日志中的时间，将其重放到备库数据之上。
+	设置主库和备库:
+		明确服务器ID，可以选择ip地址的末8位保证其有意义且唯一
+		主库:
+			log_bin = /var/lib/mysql/mysql-bin
+			server_id=10
+			# 安全相关
+			sync_binlog=1
+			innodb_flush_logs_at_at_trx_commit
+			innodb_support_xa=1
+			innodb_safe_binlog
+			#5.5以后添加
+			sync_master_info = 1
+			sync_relay_log=1
+			sync_relay_log_info =1
+		备库:
+			log_bin = /path/to/logs/relay-bin
+			server_id = 2
+			relay_log = /var/lib/mysql/mysql-relay-bin
+			log_slave_updates=1
+			read_only=1
+			skip_slave_start
+		启动复制:
+		mysql>CHANGE MASTER TO MASTER_HOST = 'server1',
+		->MASTER_USER ='repl',
+		->MASTER_PASSWORD='password',
+		->MASTER_LOG_FILE='mysql-bin.000001',
+		->MASTER_LOG_POS=0
+		->SHOW SLAVE STATUS
+		->START SLAVE
+		->SHOW PROCESSLIST(查看线程列表，主库可以看到连接线程，备库可以看到IO线程和SQL线程)
+		【TODO 分布式复制】
 第11章 可扩展的mysql
 第12章 可用性
 第13章 云端的mysql
