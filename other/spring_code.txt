@@ -1,0 +1,36 @@
+spring的结构组成
+	核心类介绍
+		DefaultListableBeanFactory:XmlBeanFactory继承其。DefaultListableBeanFactory是整个bean加载的核心部分，XmlBeanFactory使用了自定义的XML读取器XmlBeanDefinitionReader
+		AliasRegistry:定义对alias的简单增删改等操作，
+		SimpleAliasRegistry：主要使用map作为alias的缓存，并对接口AliasRegistry实现。
+		SingletonBeanRegistry:定义对单例的注册及获取
+		BeanFactory:定义获取bean及bean 的各种属性
+		DefaultSingletonBeanRegistry:对接口SingletonBeanRegistry的实现
+		HierarchicalBeanFactory:继承BeanFactory,增加了对parentFactory的支持。
+		BeanDefinitionRegistry:定义对BeanDefinition的各种操作
+		FactoryBeanRegistrySupport:在DefaultSingletonBeanRegistry基础上增加特殊处理
+		ConfigureableBeanFactory:提供配置Factory的各种方法
+		ListableBeanFactory:根据各种条件获取bean的配置清单
+		AbstractBeanFactory:综合FactoryBeanRegistrySupport和ConfigyrableBeanFactory的功能
+		AutowireCapableBeanFactory:提供bean的自动注入、bean的后置处理器
+	2.6使用dtd或xsd校验文件，通过sax解析为bean
+	2.7使用EntityResolver离线检查DTD
+	2.8在解析中会遇到自定义标签和spring标签，通过node.getNamespaceURI()获取命名空间，与文档进行对比
+	3.1对import、alias、bean、beans等分别解析，最后发出响应事件
+	3.1.1解析BenaDefinition,根据id、name等转为对象，解析look-up、replaced-method并对其特殊处理
+	3.1.4注册极细的BeanDefinition：所有解析结构被注册到BeanDefinitionRegistry类型的实例registry中。其注册分为beanName注册和，通过别名注册。通知监听器注册完成
+	3.3import标签的解析:通过resource获取路径，解析路径中国的系统属性，如${user.dir},计算路径位置并递归调用
+	4.自定义标签的解析
+	5.bean的加载:
+		1.转换对于的beanName例如带&，则要去掉
+		2.尝试从缓存中加载单例，如果没有则进行递归，同时避免循环依赖
+		3.bean的实例化
+		4.原型模式的依赖检查
+		7寻找以来
+		8针对不同的scop进行bean的创建
+		9类型转换
+	5.2缓存中获取单例bean，首先冲sinletonObjects里面获取实例，如果获取不到再从earlySingletonObjects里面获取，再尝试从sinletonFactories进行创建，并放到earlySingletonObjects中，并且从sinletonFactories进行remove掉
+	sinletonObjects：用于保存BeanName和创建bean实例之间的关系，bean name -->bean instacne
+	sinletonFactories：用于保存eanName和创建bena的工厂的关系，bean name -->ObjectFactory
+	earlySingletonObjects：也是保存BeanName和创建bean实例之间的关系，不同之处在于前者是创建完毕的，后者则是创建过程中用于检测循环引用
+	registeredSingletons:用来保存当前所有已注册的bean
