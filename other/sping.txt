@@ -1,0 +1,99 @@
+spring高级编程第五版
+【TODO spring4.x版本图】
+AOP、aspects、beans、beans-groovy、context、context-indexer、context-support、core、expression、instrument、jdbc、jms、orm、oxm、test、tx、web、web-reactive、web-mvc、webSocket
+IOC和DI
+	控制反转的类型
+		查找:
+			依赖拉取:将所有对象放入注册中央注册表，spring使用的是这种模式
+			上下文依赖查找:从上至下一直查找子容器，如tomcat
+		注入:
+			构造方法
+			setter
+	spring的依赖注入
+		bean和BeanFactory
+			在spring中BeanFactory负责管理bean，应用程序可以通过BeanFactory访问bean。虽然BeanFactory可以通过编程式配置，但更多的做法是由BeanDefinition接口的实例保存bean配置信息。通过使用 PropertiesBeanDefinitionReader和XMLBeanDefinitionReader从配置文件中读取BeanDefinition数据,前者为propertiese后者为xml。所以在BeanFactory为每一个bean分配一个ID、一个名称或两者兼具。或者说一个bean一定有一个名称，可能会有别名。
+		ApplicationContext
+			在Spring中ApplicationContext是BeanFactory的一个扩展。除了DI服务其还提供了其它服务，例如AOP、i18n等，一般建议使用ApplicationContext与spring进行交互。在tomcat项目中通ContextLoaderListener来支持其启动。
+		ApplicationContext注入bean:目前spring支持各种姿势注入、使用java配置(@Bean)、使用setter配置、使用字段注入、使用构造函数注入、使用SpEL注入,甚至还可以为list、map、set注入，以及使用cglib动态字节码方法增强的方法替换注入。
+			bean的名称:在早期xml版本时，id和name是不同的属性，但该属性依然被保留了下来，至于别名是在项目进入运维阶段时避免大规模改代码可以使用的功能。
+			bean的实例化模式:默认情况下，spring维护的都是单例，但如果设置里@Scope("prototype")，在用ApplicationContext.getBean()获取时就会变成多例
+		bean的作用域：单例、原型(多例，每次请求都会创建)、请求作用域(每个HTTP请求完成时销毁)、会话作用域(每个HTTP的session完成时销毁)、线程作用域(一个新的线程创建)、自定义作用域(自行通过Scope注册并定义)
+		解析依赖项
+			如果一个bean依赖另一个bean，spring是不可能提前感知到的，所以@DependsOn，等同于xml版本的depends-on。但是srping通过设计模式很好的处理了该问题以及循环依赖问题。
+		自动装配bean
+			byname模式:就是注解里面写了名称
+			byType:优先选择，但需要无参的构造方法。什么参数都没有就会使用
+			构造函数模式:与byType类似，但支持有参构造函数
+
+			当有byTpe多个bean的时候处理方案,当有两个的时候可以添加@Primary,当有多个时则使用byname的模式。在spring 的命名规则中，普通bean为第一个字母小写，如果是@Bean方式，则还会有一个方法名是bean的名称。
+		继承
+			parent,可以直接继承另一个bean的属性值，不过在注解上并没有被支持，未被广泛使用
+SpringBean
+	sprringBean的生命周期
+		【TODO4-1 Spring bean 的生命周期】
+		------Bean实例和DI---------
+		1.扫描XML/注解/properties等
+		2.创建bean实例
+		3.注入bean依赖
+		------检查spring aware---------
+		4.如果bean实现了BeanNameAware则调用setBeanName()(修改bean名称)
+		5.如果bean实现BeanClassLaderWare则调用setBeanClassLoader()(让bean通过自定义类加载器加载外部类)
+		6.如果实现了ApplicationContextAware,则调用ApplicationContextAware()
+		------准备bean回调---------
+		7.如果存在@PostConstruct,则调用
+		8.如果实现InitializingBean,则调用aferPopreties()
+		9.如果bean定义包含init-Method或@Bean(initMethod="")则调用
+		------销毁bean---------
+		10.如果存在@PreDestroy,则调用
+		11.如果实现DisposableBean,则调用destroy()
+		12.如果bean定义包含destroy-method或@Bean(destroyMethod="").则调用
+		bean的创建(尽管bean提供了依赖项配置，但更多的还是实用默认方式检查依赖项)，尽管spring提供了多种bean回调方案但实际使用应统一规范，建议使用注解并将其归在同一个包中。如果应用程序有多种情况的初始化，可以采用不同的初始化机制，其顺序的不同可以规避一定的问题。
+		bean的销毁，在应用中往往会有多个关闭点，但是spring自身并没有去实现java的关闭钩子，所以在一定要清除时，需要自行实现关闭钩子registerShutdownHook(),其会调用destroy()。
+	FactoryBean
+		尽管spring提供了各种姿势创建bean，但是实际业务场景往往复杂的可怕。FactoryBean不仅仅可以用于构建spring组件，在构建自己的应用程序也是有用武之地的。
+		MessageDigest md5 = MessageDigest.getinstance ("MD5"); // 该段代码中MessageDigest没有无参构造方法，且其为一个工厂类,即MessageDigest不是实体类。
+		// 通过如下代码则可以很好的处理该问题，注意这里是FactoryBean用于实例化bean的方式
+		public class MessageDigestFactoryBean implements FactoryBean<MessageDigest>{
+			public MessageDigest getObject(){
+				return MessageDigest.getinstance ("MD5");
+			}
+			// ......
+		}
+		值得注意的是使用该方式创建的为代理对象，如果需要返回原对象则在名称后面加"＆",例如"＆messageDigestFactoryBean",但实际上无论如何都没有使用的地方。还有一种比较少的使用场景，例如实例化方法在jar包中，可以利用xml的<bean id="123" calss="...MessageDigestFactoryBean"><bean id="1234" factory-bean = "123" Factory-method= "getObject">当然次方法不用实现FactoryBean。
+	PropertyEditor
+		在spring注入属性中，是只能输入文本的，很明显不能注入日期等对象。spring内置了大量的PropertyEditor用于文本转换。用户自定义扩展则继承PropertyEditorSupport。然后在customEditorConfigurer中将其注册即可。
+	MessageSource
+		在spring中，对国际化做了很多支持，尽管它很好用，但是实际使用场景总是复杂的，国际化资源文件可能是分布式加载的,可能支持用户手动配置等等，定制化成都非常高。
+		applicationContext.getmessage("msg",null,Lcale.ENGLISH)// 如果是英文，配置文件命名labels_en.properties
+		applicationContext.getmessage("msg",new Object[]{"1","2"},Lcale.ENGLISH)// properties使用{0}，{1}进行传参
+	Environment和PropertySource对象
+		jvm获取系统变量
+			在jvm启动后我们有时还需要获取系统变量。
+			System.getenv("JAVA_HOME")
+			applicationContext.getEnviroment().getProperty("JAVA_HOME")
+		有时候需要将系统变量注入到xml中，则会有${"JAVA_HOME"}的写法
+		applicationContext.getEnviroment().getPropertySources().addFirst(new MapPropertySource(("prospring5_MAP", new HashMap(){{put("JAVA_HOME","123");}})))。可以覆盖原先的变量
+	非sping注解
+		做IOC和DI的不止spring，我们可以使用JSR-330的其它注解，未来可以做迁移，比如@NAME。当然其在spring中也得到了支持。但是请不要使用，使用统一规范。
+	第三方注册
+		spreing的bean注册还支持第三方，例如Groovy脚本。使用GroovyBeanDefinitonReader进行注册
+AOP
+	aop的类型:静态aop(传统的proxy接口)、动态代理(springAop动态)
+	springaop架构
+		如果被代理对象有具体实现接口则默认JDK动态代理，否则选择cglib
+		切面:Advisor接口表示切面其有两个子接口，PointcutAdvisor、IntroductionAdvisor。可以使用ProxyFactory.addAdvisor()对其进行扩展，但通常没有这个必要性。
+		ProxyFactory:控制织入和代理创建过程通过addVice()将通知传入到DefaultPointcutAdvisor(PointcutAdvisor的标准实现中的一个)。可以使用相同的实例创建多个代理，也可以通过removeAdvice()进行删除。
+		6种通知:前置通知、后置返回通知(不报错才会有)、后置通知、环绕通知、异常通知、引入通知
+		8个pointCut
+		|实现类|描述|
+		|--|--|
+		|org.springframework.aop.support.annotation.AnnotationMatchingPointcut|支持注解匹配|
+		|org.springframework.aop.aspectj.AspectJExpressionPointcut|支持aspectJ语法|
+		|org.springframework.aop.aspectj.ComposablePointcut|支持union()等、intersection()联合操作语法,前者为or后者为and|
+		|org.springframework.aop.aspectj.ControlFlowPointcut|支持控制流切入点，场景比较特殊，可以控制只有来自特定的方法调用才会触发，否则不会触发|
+		|org.springframework.aop.aspectj.DynamicMethodMatcherPointcut|构建动态切入的基类|
+		|org.springframework.aop.aspectj.JdkRegexpMethαlPointcut|支持正则表达式|
+		|org.springframework.aop.aspectj.NameMatchMethodPointcut|支持方法名|
+		|org.springframework.aop.aspectj.StaticMethodMatcherPointcut|静态方法|
+		@PeclareParents，非常强大的引入注解，可以将原先类没有的方法，加入一个方法进去。在不改变源代码的情况下继承了一个类。
+SpringJDBC
