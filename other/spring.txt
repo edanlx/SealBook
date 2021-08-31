@@ -46,7 +46,7 @@ SpringBean
 		------销毁bean---------
 		10.如果存在@PreDestroy,则调用
 		11.如果实现DisposableBean,则调用destroy()
-		12.如果bean定义包含destroy-method或@Bean(destroyMethod="").则调用
+		12.如果bean定义包含de1stroy-method或@Bean(destroyMethod="").则调用
 		bean的创建(尽管bean提供了依赖项配置，但更多的还是实用默认方式检查依赖项)，尽管spring提供了多种bean回调方案但实际使用应统一规范，建议使用注解并将其归在同一个包中。如果应用程序有多种情况的初始化，可以采用不同的初始化机制，其顺序的不同可以规避一定的问题。
 		bean的销毁，在应用中往往会有多个关闭点，但是spring自身并没有去实现java的关闭钩子，所以在一定要清除时，需要自行实现关闭钩子registerShutdownHook(),其会调用destroy()。
 	FactoryBean
@@ -97,3 +97,38 @@ AOP
 		|org.springframework.aop.aspectj.StaticMethodMatcherPointcut|静态方法|
 		@PeclareParents，非常强大的引入注解，可以将原先类没有的方法，加入一个方法进去。在不改变源代码的情况下继承了一个类。
 SpringJDBC
+	数据库连接和数据源
+		DataSource是spring管理数据库连接的，同时可以谷阿莫里Connection，org.springframework.jdbc.datasource.DriverManagerDataSource是其最简单的实现，不支持连接池。
+		迁入式数据库使用<jdbc:embedded-database>来声明，默认支持HSQL。
+		jdbcTemplate,通常使用方式为在dataSource初始化将其初始化,对jdbcTemplate进行操作，封装了查询、回滚事务等方法，如queryForObject(),其支持批量操作batchUpdate()而不用写批量操作的sql在编写代码时可以提高效率,其核心即编译一次执行多次(但是该方法mybaties并没有直接支持，在mybaties-plus中有直接支持)。
+	springBoot
+		使用spring-boot-starter-jdbc配置dataSource，还会自动注册jdbcTemplate、NamedParameterJdbcTemplate等
+Hibernate
+	虽然SSH已经退出历史舞台，但是其基于注解的ORM映射让很多工具进行了借鉴，其难点在于业务系统的sql往往会比较复杂，且经常性改动，使用注解+HQL的方式则显得没那么灵活。其核心为配置Hibernate的SessionFactory
+JPA
+	以Hibernate为首的使用注解的方式访问数据库称之为JPA，spring中需要配置EntityManagerFactory。spring中使用的JPA注解与Hibernate中基本相同。
+	这部分功能比较繁琐就直接带过，实际生产上sql写的溜就可以了。
+事务管理
+	TransactionDefinition:事务最关键的即ACID,spring将这些封装在TransactionDefinition接口中。该接口被用于spring的事务支持的核心接口，即PlatformTransactionManager接口，该接口在不同的平台有不同的实现。TransactionDefinition包括getTimeOut()(必须完成的时间)、isReadOnly()(事务是否只读)、getName()(方法返回事务的名称)、getIsolationLevel()(获取隔离级别即mysql的四种级别+默认级别共5种)、getPropagationBehavior()(获取事务传播类型，即spring定义的7种传播类型)
+	TransactionStatus接口:负责控制事务的执行，包含isNewTransaction()、hasSavePoint()(是否有保存点)、setRollbackOnly()(它会导致回滚并结束活动事务)、flush()、isCompleted()等
+	编程式事务处理，虽然spring对于事务的处理已经很方便，但还是有应对更复杂情况的方法，将TransactionTemplate注入到service层。
+	全局事务，这部分spring仅支持XA，数据量数据库数量少的时候好用，多了就有问题，但是数据库数量少的时候往往不会有分布式事务。所以应对分布式事务还是借助其它框架比较好。
+类型转换和格式化验证
+	类型格式化:在配置文件章节中，spring有专门的string数据格式处理。在web层则是使用Convert，(注这里是form提交或者get提交,如果是json格式就需要扩展相应的json工具)，扩展也是实现+注册的方式即可。
+	字段格式化:org.springframework.format.Formatter<T>。使用时继承FormattingConversionServiceFactoryBean。常用方式为在添加注解的字段上去除前后空格。
+	验证:在web层可以直接进行拦截例如@Notnull等，其对于json格式、form表单格式都可以生效。实现Validator即可，在使用的时候通常会在外部定义全局捕获异常对其进行格式化方便前端处理。也可以使用AssertTrue()实现复杂验证。
+任务调度
+	spring支持三种任务调度:JDK定时器、Quartz、Spring TaskSchedular。目前主流使用的是第三种，注解支持使用简单。
+	使用@EnableScheduling注解可以检测@Scheduled注解，其支持cron表达式
+	@Async注解可以支持异步执行任务，使用@EnableAync全局开启
+	可选择使用的线程池如下:SimpleAyncTaskExecutor(每次调用时创建新线程)、SyncTaskExecutor(由调用线程统一执行)、SimpleThreadTaskExecutor(quartz共享线程池)
+Spring远程调用
+	在远程处理方面，HTTP、JMS、RESTful web、AMQP(rabbitmq使用的协议)等都是有支持的，但是除了HTTP其它的都可以使用第三方自身的集成，HTTP主要是spring cloud就是集成。RESTful使用方式即注入restTemplate即可，调用getForObject()等。
+spring测试
+	支持注解非常多，但测试大公司有大公司的逻辑小公司压根不写，所以这块内容意义不大。
+spring脚本支持
+	Groovy等。脚本本身支持上也比较灵活，可以走shell命令等方式所以也并不局限。
+SpringMVC
+	springMVC贴心的提供了CharacterEncodingFilter用于指定字符编码。在web3.0以来spring可以通过webApplicationContext来取消对web.xml的依赖。配置DispatcherServlet为期转发核心类，可通过@EnableWebMvc启用，并实现webConfigure
+websocket
+	虽然websocket很好用，但是在服务量起来的时候单机版明显不够看，spring的集成则显得很鸡肋，依然需要借助其它框架。使用方式非常简单，@EnableWebSocket和实现WebSocketConfigure

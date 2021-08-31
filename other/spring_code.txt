@@ -1,0 +1,210 @@
+spring的结构组成
+1.核心类介绍
+	DefaultListableBeanFactory:XmlBeanFactory继承其。DefaultListableBeanFactory是整个bean加载的核心部分，XmlBeanFactory使用了自定义的XML读取器XmlBeanDefinitionReader
+	AliasRegistry:定义对alias的简单增删改等操作，
+	SimpleAliasRegistry：主要使用map作为alias的缓存，并对接口AliasRegistry实现。
+	SingletonBeanRegistry:定义对单例的注册及获取
+	BeanFactory:定义获取bean及bean 的各种属性
+	DefaultSingletonBeanRegistry:对接口SingletonBeanRegistry的实现
+	HierarchicalBeanFactory:继承BeanFactory,增加了对parentFactory的支持。
+	BeanDefinitionRegistry:定义对BeanDefinition的各种操作
+	FactoryBeanRegistrySupport:在DefaultSingletonBeanRegistry基础上增加特殊处理
+	ConfigureableBeanFactory:提供配置Factory的各种方法
+	ListableBeanFactory:根据各种条件获取bean的配置清单
+	AbstractBeanFactory:综合FactoryBeanRegistrySupport和ConfigyrableBeanFactory的功能
+	AutowireCapableBeanFactory:提供bean的自动注入、bean的后置处理器
+2.6使用dtd或xsd校验文件，通过sax解析为bean
+2.7使用EntityResolver离线检查DTD
+2.8在解析中会遇到自定义标签和spring标签，通过node.getNamespaceURI()获取命名空间，与文档进行对比
+3.1对import、alias、bean、beans等分别解析，最后发出响应事件
+3.1.1解析BenaDefinition,根据id、name等转为对象，解析look-up、replaced-method并对其特殊处理
+3.1.4注册极细的BeanDefinition：所有解析结构被注册到BeanDefinitionRegistry类型的实例registry中。其注册分为beanName注册和，通过别名注册。通知监听器注册完成
+3.3import标签的解析:通过resource获取路径，解析路径中国的系统属性，如${user.dir},计算路径位置并递归调用
+4.自定义标签的解析
+5.bean的加载:
+	1.转换对于的beanName例如带&，则要去掉
+	2.尝试从缓存中加载单例，如果没有则进行递归，同时避免循环依赖
+	3.bean的实例化
+	4.原型模式的依赖检查
+	7寻找依赖
+	8针对不同的scop进行bean的创建
+	9类型转换
+5.2缓存中获取单例bean，首先冲sinletonObjects里面获取实例，如果获取不到再从earlySingletonObjects里面获取，再尝试从sinletonFactories进行创建，并放到earlySingletonObjects中，并且从sinletonFactories进行remove掉
+sinletonObjects：用于保存BeanName和创建bean实例之间的关系，bean name -->bean instacne
+sinletonFactories：用于保存eanName和创建bena的工厂的关系，bean name -->ObjectFactory
+earlySingletonObjects：也是保存BeanName和创建bean实例之间的关系，不同之处在于前者是创建完毕的，后者则是创建过程中用于检测循环引用
+registeredSingletons:用来保存当前所有已注册的bean
+5.3从bean的实例中获取对象。在getBean方法中getObjectForBeanInstance获取，可能是走缓存也可能是调取bean对应的FactoryBean实例中的getObject()。不过此处只能得到bean的初始状态，但实际上需要的是bean定义的factory-method方法中返回的bean。
+	1.对factroyBean正确行的验证
+	2.对非FactoryBean不作处理
+	3.对bean转换
+	4.将从factory中解析bean 的工作委托给getObjectFromFactoryBean
+5.4获取单例
+	1.检查是否已经加载过
+	2.若没有加载，则记录beanName的为正在加载状态
+	3.加载单例前记录加载状态
+	4.通过调用参数传入的ObjectFactory的个体Object方法实例化bean
+	5.通过单例后的处理方法调用
+	6.将结果记录至缓存并删除加载bean过程中所记录的各种辅助状态
+	7.返回结果
+5.5准备创建bean
+	1.根据设置的class属性或者根据className来解析Class
+	2.对Override属性进行标记及验证
+	3.应用初始化前的后处理器
+	4.创建bean
+5.6循环依赖
+	根据记录进行检测并抛出异常
+5.7创建bean
+	1.如果是单例则清除缓存
+	2.实例化bean将BeanDefinition转化为BeanWrapper
+		2.1如果错在工厂方法使用工厂方法进行初始化
+		2.2根据参数选择构造函数
+		2.3都没有则使用默认的构造函数
+	3.MergedBeanDefinfitionPostProcessor的应用:bean合并后的处理，Autowired的预解析
+	3.依赖处理
+	5.属性填充
+	6.循环依赖检查
+	7.注册DisposableBean
+	8.完成创建并返回
+6.容器的扩展功能
+	6.1设置配置路径
+	6.2扩展功能
+		1.初始化前的准备工作
+		2.初始化BeanFactory
+		3.对BeanFactory进行功能填充(@Autowired)
+		4.子类覆盖方法处理
+		5.激活各种eanFactory处理器
+		6.注册拦截bean创建的bean处理器
+		7.为上下文初始化Message资源
+		8.初始化应用消息广播器
+		9.留给子类来初始化其它Bean
+		10.在所有注册的bean中查找listener bean注册到消息广播器中
+		11.初始化剩下的单实例
+		12.完成刷新过程，同种生命周期处理器刷新过程，同时发出ContextRefreshEvent
+	6.3环境验证
+		使用不同的applicationContext的校验
+	6.4加载BeanFactory
+		1.创建DefaultListableBeanFacory
+		2.指定序列化Id
+		3.定制BeanFacory
+		4.加载BeanDefinition
+		5.使用全局变量记录BeanFactory类实例
+	6.5功能扩展
+		进入函数prepareBeanFactory前，spring已经完成了对配置的解析
+		增加对SPEL语言的支持
+			在bean初始化的时候会有属性填充，会调用AbstractCapableBeanFacory类的applyPrpertyVlues完成SPEL解析
+		增加对属性编辑器的支持
+			即Editor
+		增加对一些内置类，比如EnvironmentAware信息的注入
+		设置了依赖功能可忽略的接口
+			一些aware不是普通的bean
+		增加AspectJ的支持
+		将相关环境变量及属性变量以单例模式注册
+	6.6beanFactory的后处理
+		6.6.1激活注册的BeanFactoryPostProcessor
+		6.6.2注册BeanPsotProcessor
+		6.6.3初始化消息资源
+		6.6.4初始化ApplicationEnventMulticaster
+		6.6.5注册监听器
+	6.7初始化非延迟加载单例
+	6.8fiishRefresh
+7.aop
+	7.1aop使用示例
+	7.2动态aop自定义标签
+	7.3创建aop代理
+	7.4静态aop使用示例
+	7.5创建aop静态代理
+	aop实际上就是生成代理类进行注入，值得注意的是this或者内部直接调用方法指针都是指向原对象
+	【TODO aop和spring的生命周期】
+8.jdbc
+	8.1使用
+	8.2save/update功能实现
+		1.获取数据库连接
+		2.应用用户设定的输入参数
+		3.调用回调函数
+		4.警告处理
+		5.资源释放
+	8.3query功能的实现
+		preparedStatement实例包含已编译的sql，执行速度更快
+	8.4queryforObject
+		根据不同的类型机械能转换
+9.mybaties
+	9.1mybaties独立使用
+		mybaties使用sqlSessionFactory管理session，可以使用该对象调用openSession()
+		独立使用的时候<mappers/>标签要指定mapper对应的xml路径
+		通过sqlSession.getMapper()获取MapperDao，接着调用insert()等方法
+	9.2整合mybaties
+		可以使用注入的dao直接调用insert()等方法
+	9.3源码分析
+		9.3.1sqlSessionFactory创建
+			1.sqlSessionFactoryBean的初始化
+				在org.mybatis.Spring.SqlSessionFactoryBean(传统xml中有该bean的注入，包括dataSource也注入该类)中实现了InitializingBean以及FactoryBean,将spring的配置文件注入到mybaties中
+		9.3.2MapperFactoryBean的创建
+			1.MapperFactoryBean的初始化
+				在org.mybatis.Spring.mapper.MapperFactoryBean(配置文件中所有的dao中的class都是用该类创建，其内属性mapperInterface的value为原dao的Interface路径,一同注入的还有sqlSessionFactory)从而创建代理类
+			2获取MapperFactoryBean的实例
+				因该接口实现了FactoryBean
+		9.3.3MapperScannerConfigurer
+			如果dao没有单独配置，那就是选择是用org.mybatis.Spring.mapper.MapperScannerConfigurer进行批量创建，其内部属性basePackge配置dao包路径。该接口虽然实现了InitializingBean但不可能是该逻辑，因为如果是该逻辑name其它类在依赖dao的时候则会找不到因为根本没有bean定义的创建。所以直接看其实现的BeanDefinitionRegistryPostProcessor其继承Bean工厂后置处理器
+			1.processPropertyPlaceHolders属性的处理
+				BeanDefinitionRegistries会在应用启动的时候调用，并且会早于BeanFactoryPostProcessors的调用，这就意味着PropertyResourceConfigures还没有被加载所有对于属性文件的引用将会失效，为避免这种情况发生，此方法手动地找出定义的PropertyResourceConfigureers并进行提前调用。举例说明${basePackage}这样的写法此时还没有被加载到内存中，为了解决该问题，spring引入了该机制
+			2.根据配置属性生成过滤器
+				在postProcessBeanDefinitionRegistry方法中可以看到，配置中支持很多属性的设置，属性设置后通过在scanner,registerFilters()代码中生成对于的过滤器来控制扫描结果
+					1.annotationClass属性处理:保证只接受有注解的文件
+					2.markerInterface不为空:保证扫描到的是接口
+					3.全局默认处理:spring默认处理
+					4.package-info.java将其排除
+			3.扫描JAVA文件
+				扫描工作由ClassPathMapperScanner类型，其中最重要的是excludeFilters、includeFilters。由metadataReader接收
+10.事务
+	10.1jdbc方式下的事务使用示例
+	10.2事务自定义标签
+		事务启用标签<tx:annotation-driven>那么就可以从该关键字入手，在TxNamespaceHandler类中的init方法
+		根据自定义标签的使用规则可知，在遇到该配置开头时Spring会使用AnnotationDrivenBeanDefinitionParser类的parse方法进行解析，根据配置mode是否使用aspectj即aop
+		10.2.1注册InfrastructureAdvisorAutoProxyCreator
+			进入AopAutoProxyConfigurer类的configureAutoProxyCreator,其注册了三个bean和代理类
+			```
+			AopNmaespaceUtils.registerAutoProxyCreatorIfNecessary(parserContext, element)
+			RootBeanDefinition sourceDef = new RootBeanDefinition(AnnotationTransactionAttributeSource.class)
+			RootBeanDefinition interceptorDef = new RootBeanDefinition(TransactionInterceptor.class)// 该类是事务的核心逻辑
+			RootBeanDefinition advisorDef = new RootBeanDefinition(BeanFactoryTransactionAttributeSourceAdvisor.class)
+			advisorDef.getPropertyValues().add("transactionAttributeSource", new RuntimeBeanReference(sourceNmae))
+			advisorDef.getPropertyValues().add("adviceBeanName", interceptorName)
+			parserContext.getRefistry().registerBeanDefinition(txAdvisorBeanName, advisorDef)
+			```
+			这里可以看到两个bean被注册到了advisorDef
+		10.2.2获取对应class/method的增强器
+			1.寻找候选增强器：通过BeanFactoryUtils获取所有的Advisor.class，这里需要注意的是前面注册的BeanFactoryTransactionAttributeSourceAdvisor,其也实现了Advisor接口
+			2.候选增强器中寻找到匹配项，即循环需要匹配的class判断其是否需要该增强方法
+			3.提取事务标签:如果方法中存在事务属性则使用，否则使用类上的属性
+	10.3事务增强器
+		1.获取事务的属性
+		2.加载配置中配置的TransactionManager
+		3.不同的事务处理方式使用不同的逻辑:主要处理声明式事务
+		4.在目标方法执行前获取事务并收集事务信息
+		5.执行目标方法
+		6.一旦出现异常，尝试异常处理:默认RuntimeException
+		7.提交事务前的事务信息清除
+		8.提交事务
+		10.3.1创建事务
+			1)使用DelegatingTransactionAttribute封装传入的TransactionAttribute实例
+			2)获取事务
+				1.获取事务
+				2.如果当前线程存在失误，则转向嵌套事务处理
+				3.事务超时设置验证
+				4.事务propagationBehavior属性的设置验证
+				5.构建DefaultTransactionStatus
+				6.完善transaction,包括设置ConnectionHolder、隔离级别、timeout
+			3)构建事务信息TransactionInfo返回
+				处理事务
+				处理回滚/提交
+11.springMVC
+	11.1.springMVC的使用
+	11.2.ContextLoaderListener
+		1.servletContext启动之后会调用contextInitialized方法，其中调用initWebApplicationContext，创建WebApplicationContext,其会先判断是否有重复加载根据ServletContext是否包含APPLICATION_CONTEXT_ATTRIBUTE。加载过程中读取ContextLoader同级目录下的ContextLoader.properties
+		2.根据其中的配置提取将要实现WebApplicationContext接口的实现类，并根据这个实现类通过反射的方式进行实例的创建
+		3.将实例记录在servletContext中
+		4.映射当前的类加载器与创建的实例到全局变量currentContextPerThread中
+	11.3DispatcherServlet
+12.远程服务
+13.spring消息
