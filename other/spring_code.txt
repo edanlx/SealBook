@@ -206,5 +206,18 @@ registeredSingletons:用来保存当前所有已注册的bean
 		3.将实例记录在servletContext中
 		4.映射当前的类加载器与创建的实例到全局变量currentContextPerThread中
 	11.3DispatcherServlet
+		servlet初始化、运行、销毁，其中运行阶段调用service方法
+		11.3.1servlet的使用
+		11.3.2DispatcherServlet的初始化:其主要是将nameSpace等属性注入到该servlet中，在web.xml中配置
+			1.封装及验证初始化参数
+			2.将当前servlet实例转化成BeanWrapper实例
+			3.注册相对于Resource的属性编辑器
+			4.属性注入
+			5.servletBean的初始化
+		11.3.3WebApplicationContext初始化
+			1.寻找或创建对应的WebApplicationContext实例
+			2.configureAndRefreshWebApplicationContext进行配置文件加载
+			3.刷新:初始化各种参数
+
 12.远程服务
 13.spring消息
