@@ -218,6 +218,15 @@ registeredSingletons:用来保存当前所有已注册的bean
 			1.寻找或创建对应的WebApplicationContext实例
 			2.configureAndRefreshWebApplicationContext进行配置文件加载
 			3.刷新:初始化各种参数
+				1.初始化MultipartResolver(文件上传)
+				2.初始化LocaleResolver(国际化)
+				3.初始化ThemeResolver(主题)
+				4.初始化HandlerMappings(DsipatcherServlet将request交给其，其返回相应的controller，可以存在多个，优先使用优先级高的)
+				5.初始化HandlerAdapters(Http请求处理适配器、注解方式处理适配器、简单控制器处理适配器)
+				6.初始化HandlerExceptionResolvers(返回modelAndView异常时处理)
+				7.初始化RequestToViewNameTranslator(没有返回东西时的处理)
+				8.初始化ViewResolvers(负责选择合适的视图渲染)
+				9.初始化FlashMapManager()
 
 12.远程服务
 13.spring消息
