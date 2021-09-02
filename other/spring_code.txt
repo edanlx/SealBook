@@ -218,6 +218,35 @@ registeredSingletons:用来保存当前所有已注册的bean
 			1.寻找或创建对应的WebApplicationContext实例
 			2.configureAndRefreshWebApplicationContext进行配置文件加载
 			3.刷新:初始化各种参数
-
+				1.初始化MultipartResolver:文件处理
+				2.初始化LocaleResolver:国际化
+				3.初始化ThemeResolver:主题资源，一组静态文件
+				4.初始化HandlerMappings:根据所有的handler优先级进行处理，默认采取DispatcherServlet.properties重定义的
+				5.初始化HandlerAdapters:HTTP请求处理器适配器、简单控制器处理器适配器、注解方法处理器适配器
+				6.初始化HandlerExceptionResolves:ModelAndView异常处理
+				7.初始化RequestToViewNameTranslator:在没有返回任何对象且response没有写入内容时处理
+				8.初始化ViewResolvers:选择合适的View对象如JSP等
+				9.初始化FlashMapManager:重定向暂存属性
+		11.4DispatcherServlet的逻辑处理
+			1)为了保证当前线程的LocaleContext以及RequestAttributes可以在当前请求后还能恢复，提取当前线程的两个属性
+			2)根据当前request创建对应的LocaleContext和RequestAttributes,并绑定到当前线程
+			3)委托给doService方法进一步处理
+			4)请求处理结束后恢复线程到初试状态
+			5)发布事件通知
+			11.4.1MultipartContet类型的request处理
+				转换为MultipartHttpServletRequst对象
+			11.4.2根据request寻找对应的Handler
+				1.一般就是找到相应的controller以及相应的method
+				2.加入拦截器到执行链	
+			11.4.3没找到对应的Handler的错误处理
+			11.4.4根据当前的Handler寻找对应的HandlerAdapter
+			11.4.5缓存处理
+				LastModified机制，只需要实现LastModified接口
+			11.4.6HandlerInterceptor
+				拦截器处理
+			11.4.7逻辑处理
+				即调用我们写的逻辑handler.handleRequest(request,response)
+			11.4.8异常视图的处理
+			11.4.9根据视图跳转页面
 12.远程服务
 13.spring消息
