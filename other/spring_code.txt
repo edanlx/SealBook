@@ -237,7 +237,7 @@ registeredSingletons:用来保存当前所有已注册的bean
 				转换为MultipartHttpServletRequst对象
 			11.4.2根据request寻找对应的Handler
 				1.一般就是找到相应的controller以及相应的method
-				2.加入拦截器到执行链	
+				2.加入拦截器到执行链
 			11.4.3没找到对应的Handler的错误处理
 			11.4.4根据当前的Handler寻找对应的HandlerAdapter
 			11.4.5缓存处理
