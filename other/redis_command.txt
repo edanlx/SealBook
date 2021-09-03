@@ -1,0 +1,178 @@
+通用类解释
+nx是not exists的意思，无则新增，有则不修改
+ex是expire exists。一条命令同时进行覆盖和有效期设置
+m批量操作
+h开头的为hashMap类操作
+l开头为list操作
+s开头为set操作
+z开头为有序set
+2.2strings类型及操作
+	2.2.1set
+	2.2.2setnx:nx是not exists的意思，无则新增，有则不修改
+	2.2.3setex:ex是expire exists。一条命令同时进行覆盖和有效期设置
+	2.2.4setrange:setrange name 8 gmail.com。其中name是key，8代表从第8位(包含8)开始替换。
+	2.2.5mset:mset key1 HongWan1 key2 HongWan。一次执行多册set命令
+	2.2.6msetnx:需要注意的是如果有存在的则会全部回滚。
+	2.2.7get
+	2.2.8getset:返回旧值并设置新值进去
+	2.2.9getrange: getrange name 0 6。字符串左边0开始，右边-1开始，超过则以最大值为准
+	2.2.10mget:获取多个key
+	2.2.11incr:set age 20。incr age。连续执行这两条命令则会返回21
+	2.2.12incrby: incrby age 5。如果有则+1，没有则初始化5
+	2.2.13decr:减一
+	2.2.14decrby:减一
+	2.2.15append:append name @126.com。追加，返回新字符串的长度
+	2.2.16 strlen:返回字符串的长度
+2.3hashes
+	2.3.1hset:hset myhash field1 Hello,给一个key设置增加一个value即一个map
+	2.3.2 hsetnx
+	2.3.3 hmset,给一个key设置增多个value，即map塞入多个值
+	2.3.4 hget
+	2.3.5 hmget
+	2.3.6 hincrby
+	2.3.7 hexists:判断给key下的某个子key是否存在
+	2.3.8 hlen:指定hash的数量
+	2.3.9 hdel:删除子key
+	2.3.10 hkeys:返回所有的key
+	2.3.11 hvals:返回所有的value
+	2.3.12 hgetall:返回所有的key-value
+2.4 lists
+	2.4.1 lpush:在 key 对应 list 的头部添加字符串元素
+	2.4.2 rpush:在 key 对应 list 的尾部添加字符串元素
+	2.4.3 linsert:在 key 对应 list 的特定位置之前或之后添加字符串元素
+	2.4.4 lset:设置 list 中指定下标的元素值(下标从 0 开始)
+	2.5.5 lrem: lrem mylist7 0 "hello"。从 key 对应 list 中删除 count 个和 value 相同的元素。count=0删除全部指定的相同元素
+	2.4.6 ltrim:ltrim mylist8 1 -1。保留指定 key 的值范围内的数据。
+	2.4.7 lpop:从头部弹出一个元素
+	2.4.8 rpop:从尾部弹出一个元素
+	2.4.9 rpoplpush:rpoplpush mylist5 mylist6。从第一个 list 的尾部移除元素并添加到第二个 list 的头部,最后返回被移除的元素值
+	2.4.10 lindex:lindex mylist5 1。返回名称为 key 的 list 中 index 位置的元素
+	2.4.11 llen:返回 key 对应 list 的长度。和lrange联用可以获取全部
+2.5 sets
+	2.5.1 sadd:向名称为 key 的 set 中添加元素
+	2.5.2 srem:删除子key
+	2.5.3 spop:随机返回并删除名称为 key 的 set 中一个元素
+	2.5.4 sdiff:返回所有给定 key 与第一个 key 的差集。注意key1对key2的差集和key2对key1的差集意义不同
+	2.5.5 sdiffstore:sdiffstore myset4 myset2 myset3.返回所有给定 key 与第一个 key 的差集，并将结果存为另一个 key
+	2.5.6 sinter:sinter myset2 myset3.返回所有给定 key 的交集
+	2.5.7 sinterstore:返回所有给定 key 的交集，并将结果存为另一个 key
+	2.5.8 sunion:返回所有给定 key 的并集
+	2.5.9 sunionstore
+	2.5.10 smove:从第一个 key 对应的 set 中移除 member 并添加到第二个对应 set 中
+	2.5.11 scard:返回名称为 key 的 set 的元素个数
+	2.5.12 sismember:测试 member 是否是名称为 key 的 set 的元素
+	2.5.13 srandmember:随机返回名称为 key 的 set 的一个元素，但是不删除元素
+2.6 sorted sets
+	2.6.1 zadd:添加/更新
+	2.6.2 zrem:删除名称为 key 的 zset 中的元素 member
+	2.6.3 zincrby:如果在名称为 key 的 zset 中已经存在元素 member，则该元素的 score 增加 increment；否则向集合中添加该元素，其 score 的值为 increment
+		```
+		redis 127.0.0.1:6379> zadd myzset2 1 "one"
+		(integer) 1
+		redis 127.0.0.1:6379> zadd myzset2 2 "two"
+		(integer) 1
+		redis 127.0.0.1:6379> zincrby myzset2 2 "one"
+		"3"
+		redis 127.0.0.1:6379> zrange myzset2 0 -1 withscores
+		1) "two"
+		2) "2"
+		3) "one"
+		4) "3"
+		```
+	2.6.4 zrank:返回名称为 key 的 zset 中 member 元素的排名(按 score 从小到大排序)即下标
+		```
+		redis 127.0.0.1:6379> zrank myzset3 two
+		(integer) 1
+		```
+	2.6.5 zrevrank:返回名称为 key 的 zset 中 member 元素的排名(按 score 从大到小排序)即下标
+	2.6.6 zrevrange:返回名称为 key 的 zset（按 score 从大到小排序）中的 index 从 start 到 end 的所有元素
+	2.6.7 zrangebyscore:返回集合中 score 在给定区间的元素
+	2.6.8 zcount:返回集合中 score 在给定区间的数量
+	2.6.9 zcard:返回集合中元素个数
+	2.6.10 zscore:返回给定元素对应的 score
+	2.6.11 zremrangebyrank:删除集合中排名在给定区间的元素
+	2.6.12 zremrangebyscore:删除集合中 score 在给定区间的元素
+3.1 键值相关命令
+	3.1.1 keys:返回满足给定 pattern 的所有 key。keys *即全部
+	3.1.2 exists
+	3.1.3 del
+	3.1.4 expire
+	3.1.5 move：将当前数据库中的 key 转移到其它数据库中
+		```
+		redis 127.0.0.1:6379> select 0
+		OK
+		redis 127.0.0.1:6379> set age 30
+		OK
+		redis 127.0.0.1:6379> get age
+		"30"
+		redis 127.0.0.1:6379> move age 1
+		(integer) 1
+		redis 127.0.0.1:6379> get age
+		(nil)
+		redis 127.0.0.1:6379> select 1
+		OK
+		redis 127.0.0.1:6379[1]> get age
+		"30"
+		redis 127.0.0.1:6379[1]>
+		```
+	3.1.6 persist:移除给定 key 的过期时间
+	3.1.7 randomkey:随机返回 key 空间的一个 key
+	3.1.8 rename:重命名 key
+	3.1.9 type:返回值的类型
+3.2 服务器相关命令
+	3.2.1 ping:测试连接是否存活
+	3.2.2 echo:在命令行打印一些内容,测试记录使用，无实际意义
+	3.2.3 select：选择数据库。Redis 数据库编号从 0~15，我们可以选择任意一个数据库来进行数据的存取。
+	3.2.4 quit：退出连接。
+	3.2.5 dbsize：返回当前数据库中 key 的数目
+	3.2.6 info：获取服务器的信息和统计
+	3.2.7 monitor：实时转储收到的请求
+	3.2.8 config get：获取服务器配置信息。
+	3.2.9 flushdb：删除当前选择数据库中的所有 key。
+	3.2.10 flushall：删除所有数据库中的所有 key。
+4.1 安全性
+requirepass beijing
+4.2 主从复制
+当配置好 slave 后，slave 与 master 建立连接，然后发送 sync 命令。无论是第一次连接还是重新连接，master 都会启动一个后台进程，将数据库快照保存到文件中，同时 master 主进程会开始收集新的写命令并缓存。后台进程完成写文件后，master 就发送文件给 slave，slave将文件保存到硬盘上，再加载到内存中，接着 master 就会把缓存的命令转发给 slave，后续master 将收到的写命令发送给 slave。如果 master 同时收到多个 slave 发来的同步连接命令，master 只会启动一个进程来写数据库镜像，然后发送给所有的 slave。
+4.3 事务控制
+4.3.1 简单事务控制
+使用multi关键字，所有命令放入队列中执行
+```
+redis 127.0.0.1:6379> get age
+"33"
+redis 127.0.0.1:6379> multi
+OK
+redis 127.0.0.1:6379> set age 10
+QUEUED
+redis 127.0.0.1:6379> set age 20
+QUEUED
+redis 127.0.0.1:6379> exec
+1) OK
+2) OK
+redis 127.0.0.1:6379> get age
+"20"
+redis 127.0.0.1:6379>
+```
+4.3.2 如何取消一个事务
+我们可以调用 discard 命令来取消一个事务，让事务回滚
+4.3.3 乐观锁复杂事务控制
+如果事务中的一个命令失败了，并不回滚其他命令
+4.4 持久化机制
+redis 支持两种持久化方式，一种是 RedisDataBase（RDB）也是默认方式，另一种是 Append-only file（缩写 aof）的方式
+	4.4.1 snapshotting 方式
+	这种方式是就是将内存中数据以快照的方式写入到二进制文件中,默认的文件名为 dump.rdb.可以配置 redis在 n 秒内如果超过 m 个 key 被修改就自动做快照
+	下面介绍详细的快照保存过程:
+	1.redis 调用 fork,现在有了子进程和父进程。
+	2. 父进程继续处理 client 请求，子进程负责将内存内容写入到临时文件
+	3.当子进程将快照写入临时文件完毕后，用临时文件替换原来的快照文件，然后子进程退出
+	4.4.2 aof 方式
+	另外由于快照方式是在一定间隔时间做一次的，所以如果 redis 意外 down 掉的话，就会丢失最后一次快照后的所有修改。如果应用要求不能丢失任何修改的话，可以采用 aof 持久化方式。aof 比快照方式有更好的持久化性，是由于在使用 aof 持久化方式时,redis 会将每一个收到的写命令都通过 write 函数追加到文件中(默认是 appendonly.aof)
+	具体过程如下：
+	1、redis 调用 fork ，现在有父子两个进程
+	2、子进程根据内存中的数据库快照，往临时文件中写入重建数据库状态的命令
+	3、父进程继续处理 client 请求，除了把写命令写入到原来的 aof 文件中。同时把收到的写命令缓存起来。这样就能保证如果子进程重写失败的话并不会出问题。
+	4、当子进程把快照内容写入已命令方式写到临时文件中后，子进程发信号通知父进程。然后父进程把缓存的写命令也写入到临时文件。
+	5、现在父进程可以使用临时文件替换老的 aof 文件，并重命名，后面收到的写命令也开始往新的 aof 文件中追加。
+4.5 发布及订阅消息
+4.6 Pipeline 批量发送请求
+利用 pipeline 的方式从 client 打包多条命令一起发出，不需要等待单条命令的响应返回，而 redis 服务端会处理完多条命令后会将多条命令的处理结果打包到一起返回给客户端
