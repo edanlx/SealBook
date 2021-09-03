@@ -83,3 +83,195 @@ watch命令，可以监控多个key，一旦某个被监控的值被修改，当
 		9.2.1简单协议
 		9.2.2统一请求协议
 			AOF复制等都是该协议
+
+
+redis高级
+2.简单动态字符串
+	2.1SDS的定义
+		SDS，redis自己使用的字符串语言(simple dynamic string)，没有使用C字符串。
+		{
+			// 记录buf数量，SDS字符串长度
+			int len;
+			// 记录buf中未使用的数量
+			int free;
+			// 记录字符串
+			char buf[]
+		}
+	2.2SDS与C的区别
+		C的最后一个字符总是'\0'结束，难以判断该字符串是不是用户存储的
+		|C字符串|SDS|
+		|--|--|
+		|获取字符串长度的复杂度为O(N)|获取字符串长度的复杂度为O(1)|
+		|API不安全有可能造成缓冲区溢出|API安全|
+		|修改字符串长度N次必然要执行N次内存分配|修改字符串长度N次最多执行N次内存分配|
+		|只能保存文本数据|可以保存二进制数据|
+		|可以使用C库所有函数|只能使用C库部分函数|
+3.链表(list)
+	3.1链表的实现
+		listnode:{
+			// 前置节点
+			listnode prev;
+			// 后置节点
+			listnode next;
+			// 节点的值
+			void value
+		}
+		list:{
+			// 头节点
+			listnode head;
+			// 尾节点
+			listnode tail;
+			// 节点数量
+			unsigned long len;
+			...(match对比函数、dup复制函数、free释放函数等)
+		}
+		链表特性:
+		1.双端双向
+		2.无环
+		3.获取头部尾部、数量都是O(1)
+		4.多态，根据情况使用不同的函数，广泛用于多种场景，列表键(list)、发布与订阅、慢查询、监视器等
+4.字典(hash)
+	亦可称作map
+	4.1字典的实现
+		4.1.1哈希表
+		dictht{
+			//哈希表数组
+			dictEntry table
+			//哈希表大小
+			unsigned long size
+			//哈希表掩码
+			unsigned long sizemark
+			//哈希表亦有节点的数量
+			unsigned long used
+		}
+		4.1.2节点
+		dictEntry{
+			// 键
+			void key
+			// 值
+			union {
+
+			}v
+			// 下一个哈希节点形成链表
+			dictEntry next
+		}
+		4.1.3字典
+		dict{
+			//数据类型
+			dictType type
+			//rehash状态
+			int trehashidx
+			// 哈希表
+			dictht ht[2]
+		}
+	4.2哈希算法
+		MurmurHash2算法
+	4.3键冲突
+		使用链地址法，即后面跟链表
+	4.4rehash
+		每次将ht[0]向ht[1]迁移，完毕后ht[0]清空，再将ht[0]与ht[1]互换。扩张大小为2倍，缩小也是
+	4.5rehash渐进式
+		在rehash期间的所有操作都会在ht[0]执行完毕后rehash到ht[1]
+5.跳跃表(zset)
+	5.1跳跃表的实现
+		5.1.1跳跃表的节点
+		zskiplistnode{
+			// 层
+			zskiplistlevel{
+				// 前进指针
+				zskiplistnode forward
+				// 跨度
+				unsigned int span
+			}level[]
+			// 后退指针
+			zskiplistnode backward
+			//分值
+			double score
+			// 成员对象
+			robj obj
+		}
+		1.层:每个节点的level数组可以包含多个元素，每个元素都包含一个指向其它节点的指针。每次创建一个新跳表都会随机生成一个1~32之间的高度也即level数组的大小
+		2.前进指针:level[i].forward由当前节点(zskiplistnode)指向下一个节点(zskiplistnode)的表尾。例如遍历时根据这个属性判断有没有到底
+		3.跨度:两个节点之间的节点数
+		4.后退指针:指向上一个节点
+		5.分值和成员
+			节点按照分值大小排列。分值相同根据成员对象的字典中的排序，小的在前靠近表头
+	跳表是有序集合(zset)的底层实现之一，也是主要实现
+6.整数集合(set)
+	6.1整数集合的实现
+	intset{
+		// 编码方式
+		uint32_t encoding
+		// 元素数量
+		uint32_t length
+		// 保存元素的数组
+		int8_t contents[]
+	}
+	6.2升级
+		当添加的元素比现有的都要长时则进行升级(不支持降级)
+		1)扩展长度
+		2)转换所有元素类型
+		3)添加
+	整数集合是集合键(set)的实现之一
+7.压缩列表(list、map)
+	ziplist是列表键和哈希键的底层实现之一。当一个列表键只包含少量的整数或较短的字符串时，map同样情况时会选择该结构
+	|zlbytes(4字节)|zltail(4字节)|zllen(2字节)|entry1|...|entryn|zlend(1字节)|
+8.对象
+	8.1对象的类型与编码
+	即5个主要对象，sring、list、hash、set、zset。
+	|类型|编码|对象|
+	|--|--|--|
+	|REDIS_STRING|REDIS_ENCODING_INT|使用整数值实现的字符串对象|
+	|REDIS_STRING|REDIS_ENCODING_EMBSTR|使用embstr编码实现的字符串对象|
+	|REDIS_STRING|REDIS_ENCODING_RAW|使用简单动态字符串实现的字符串对象|
+	|REDIS_LIST|REDIS_ENCODING_ZIPLIST|使用压缩列表实现的列表对象|
+	|REDIS_LIST|REDIS_ENCODING_LINKEDLIST|使用双端链表实现的列表对象|
+	|REDIS_HASH|REDIS_ENCODING_ZIPLIST|使用压缩列表实现的哈希对象|
+	|REDIS_HASH|REDIS_ENCODING_HT|使用字典实现的哈希对象|
+	|REDIS_SET|REDIS_ENCODING_INTSET|使用整数集合实现的集合对象|
+	|REDIS_SET|REDIS_ENCODING_HT|使用字典实现的集合对象|
+	|REDIS_ZSET|REDIS_ENCODING_ZIPLIST|使用压缩列表实现的有序集合对象|
+	|REDIS_ZSET|REDIS_ENCODING_SKIPLIST|使用跳跃表实现的有序集合对象|
+	8.2字符串
+	embstr为只读，修改时则转为raw。长度小于32字节使用embstr
+	8.3列表
+	同时满足长度都小于64字节，元素数量小于512个使用压缩列表
+	8.4哈希对象
+	同上
+	8.5集合对象
+	同上，第一条调整为数值类型
+	8.6有序集合
+	长度64字节，元素数量小于128个时用压缩列表
+
+	补充：redis也会共享对象，0~9999的字符串对象
+9.数据库
+	数据库主要由dict和expire两个字典构成
+	redis使用定期删除和惰性删除两种策略
+	aof和rdb产生的新文件都不会包含过期key
+	从服务器不会删除键，会等待主节点发送删除命令
+10.RDB持久化
+	RDB文件格式
+	|REDIS|db_version|database|EOF|check_sum|
+	REDIS:5个字符，文件合法性
+	db_version：4个字节，RDB文件的版本和redis版本有关
+	database:多个数据库
+	check_sum:前多项的计算和，校验合法性
+11.AOF持久化
+混合持久化，文件开头为RDB,后面为AOF
+AOF文件通过保存所有修改数据库的写命令来记录服务器的数据状态
+所有命令都以Redis命令请求协议保存不同于RDB的二进制
+命令请求会先到缓冲区再定期同步到AOF文件
+12.事件
+redis使用IO多路复用器
+13.客户端
+14.服务器
+15.复制
+16.Sentinel
+17.集群
+18.发布与订阅
+19.事务
+20.Lua脚本
+21.排序
+22.二进制位数组
+23.慢查询日志
+24.监视器
