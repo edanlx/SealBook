@@ -1,0 +1,73 @@
+在application.properties配置debug=true可查看相关参数
+6.3日志
+	logging.file=/tmp
+	logging.level.org.springframework.web=DEBUG
+6.4profiles配置
+	spring.profiles.active=prod
+6.5.1运作原理
+	@SpringBootApplication是一个组合注解，其中核心功能由@EnableAutoConfiguration提供。该注解关键功能为@Import(EnableAutoConfigurationImportSelector)使用SpringFactoriesLoader.loadFactoryNames方法来扫描具有META-INF/spring.factories文件中的jar包
+6.5.2核心注解
+	打开上述的任意一个AutoConfiguration文件，一般都有下面的注解
+	@ConditionalOnBean:当容器里有指定Bean的情况下
+	@ConditionalOnClass:当容器里有指定类的情况下
+	@ConditionalOnExpression:基于SPEL表达式判断
+	@ConditionalOnJava:基于JVM版本
+	@ConditionalOnJndi:在JNDI存在的情况下查找指定位置
+	@ConditionalOnMisssingBean:当容器里没有指定Bean的情况下
+	@ConditionalOnMisssinClass:当容器里没有指定类的情况下
+	@ConditionalOnNWebAppliaction:当前项目是web的时候
+	@ConditionalOnNotWebAppliaction:当前项目不是web的时候
+	@ConditionalOnProperty:指定的属性有指定的值
+	@ConditionalOnResource:类路径有指定的值
+	@ConditionalOnSingleCandidate:指定首选Bean
+8.5缓存
+	8.5.1spring缓存支持
+		1.soring支持的CacheManager
+		|CacaheManager|描述|
+		|--|--|
+		|SimpleCacheManager|使用简单的Collection来存储缓存，主要用来做测试|
+		|ConcurrentMapCahcheManager|使用ConcurrentMap来存储缓存|
+		|NoOpCacheManager|仅测试使用|
+		|EhCacheCacheManager|使用EhCache|
+		|GuavaCacheManager|使用Guava|
+		|HazelcastCacheManager|使用Hazelcast|
+		|JCacheCacheManager|使用JCache|
+		|RedisCacheManager|使用Redis|
+		
+		使用
+		@Bean
+		public EhCacheCacheManager(CacheManager ehCacheCacheManager) {
+			return new EhCacheCacheManager(ehCacheCacheManager);
+		}
+		2.声明注解
+		@EnableCacheing启用
+		|注解|解释|
+		|--|--|
+		|@Cacheable|在方法执行前检查，没有则将数据放入缓存|
+		|@CachePut|无论怎样都将数据放入缓存|
+		|@CacheEvit|删除一条或多条缓存|
+		|@Caching|组合多个策略|
+		使用
+
+		@Cacheable(value="people",key="#Person.key")
+		pulic Person save(Person person){return new Person}
+
+		@CacheEvit(value="people")
+		pulic void delete(Long id){}
+11监控
+	11.1http
+		测试端点，依赖Actuator、HATEOAS
+		自定义health
+|名称|描述|
+|--|--|
+|DiskSpeaceHealthIndicator|检测磁盘空间|
+|DataSoureHealthIndicator|检测DataSource|
+|ElasticsearchHealthIndicator|检测es|
+|JmshHealthIndicator|检测jms|
+|MailhHealthIndicator|检测mail|
+|MongoHealthIndicator|检测mongo|
+|RabbitHealthIndicator|检测rabbitMq|
+|RedisHealthIndicator|检测redis|
+|SolrHealthIndicator|检测redis|
+
+实现HealthIndicato接口返回Health.up().build()为正常
