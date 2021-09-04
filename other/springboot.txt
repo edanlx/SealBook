@@ -1,3 +1,4 @@
+《JavaEE开发的颠覆者 Spring Boot实战》
 在application.properties配置debug=true可查看相关参数
 6.3日志
 	logging.file=/tmp

@@ -1,3 +1,4 @@
+《MySQL技术内幕  InnoDB存储引擎  第2版》
 日志
 	错误日志(error log)
 	二进制日志(binlog)

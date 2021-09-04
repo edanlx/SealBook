@@ -1,4 +1,5 @@
 通用类解释
+《Redis实战》
 nx是not exists的意思，无则新增，有则不修改
 ex是expire exists。一条命令同时进行覆盖和有效期设置
 m批量操作

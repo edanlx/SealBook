@@ -1,4 +1,5 @@
 spring的结构组成
+《Spring源码深度解析》
 1.核心类介绍
 	DefaultListableBeanFactory:XmlBeanFactory继承其。DefaultListableBeanFactory是整个bean加载的核心部分，XmlBeanFactory使用了自定义的XML读取器XmlBeanDefinitionReader
 	AliasRegistry:定义对alias的简单增删改等操作，

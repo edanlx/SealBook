@@ -1,4 +1,5 @@
 tomcat
+《深入剖析Tomcat》
 第1章 一个简单的web服务器
 1.创建客户端socket去访问服务端
 2.创建服务端ServerSocket，进行监听。具体为await方法对齐进行创建，等待accept()返回并循环。接收到请求后accept()可以获取InputStream和OutputStream。并创建new Request(input)，request.parse()进行解析。解析完毕后会new Response(output),接着response.setRequest(request)、response.sendStaticReponse()如果uri请求的路径存在则返回该静态资源并写入outputStream,若不存在则返回错误消息。最后判断是否结束循环根据uri关键字是否关闭。
