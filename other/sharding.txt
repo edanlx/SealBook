@@ -1,0 +1,102 @@
+4.1数据分片
+    4.1.1背景
+        垂直分片:按照业务将不同的数据表分布在不同的数据库以减轻压力，例如user一个库，order一个库
+        水平分片:按照固定规则分布在不同数据库。例如奇数在一个库，偶数在一个库
+    4.1.2挑战
+        基于XA的事务在大型互联网公司并不能得到满足，更多的是基于柔性事务保证最终一致性
+    4.1.3目标
+        尽量透明化数据库分库带来的影响，像使用单库一样操作简单
+    4.1.4核心概念
+        逻辑表：t_order_0~t_order_9统称为t_order
+        真实表：torder0
+        数据节点:数据分片的最小单元。由数据源名称和数据表组成，例：ds_0.t_order_0。
+        绑定表：例如：t_order 表和 t_order_item 表，均按照 order_id 分片
+        广播表：指所有的分片数据源中都存在的表，表结构和表中的数据在每个数据库中均完全一致。适用于数据量不大且需要与海量数据的表进行关联查询的场景，例如：字典表。
+        单表：指所有的分片数据源中只存在唯一一张的表。适用于数据量不大且不需要做任何分片操作的场景。
+        分片算法：目前提供 3 种分片算法。由于分片算法和业务实现紧密相关，因此并未提供内置分片算法，而是通过分片策略将各种场景提炼出来，提供更高层级的抽象，并提供接口让应用开发者自行实现分片算法。
+            标准分片算法(StandardShardingAlgorithm):用于处理使用单一键作为分片键的 =、IN、BETWEEN AND、>、<、>=、<= 进行分片的场景。需要配合 StandardShardingStrategy 使用。
+            复合分片算法(ComplexKeysShardingAlgorithm):用于处理使用多键作为分片键进行分片的场景,需要配合 ComplexShardingStrategy 使用
+            Hint 分片算法(HintShardingAlgorithm):用于处理使用 Hint 行分片的场景。需要配合 HintShardingStrategy 使用。
+        分片策略:
+            标准分片策略:对sql中where的id进行提取分片
+            复合分片策略:直接将分片键值组合以及分片操作符透传至分片算法，完全由应用开发者实现，提供最大的灵活度
+            Hint 分片策略：通过 Hint 指定分片值而非从 SQL 中提取分片值的方式进行分片的策略，往往由登录id决定。
+            不分片策略。
+        分片策略配置(两种方式完全相同)：
+            数据源分片策略：对应于 DatabaseShardingStrategy。用于配置数据被分配的目标数据源。
+            表分片策略：对应于 TableShardingStrategy。
+        自增主键生成策略
+            通过在客户端生成自增主键替换以数据库原生自增主键的方式，做到分布式主键无重复。
+        行表达式
+            实现动机：统一规范，有效动态增加
+            语法说明：Groovy 的语法
+                例如：
+                    ${begin..end} 表示范围区间
+                    ${[unit1, unit2, unit_x]} 表示枚举值
+                ${['online', 'offline']}_table${1..3}========》online_table1, online_table2, online_table3, offline_table1, offline_table2,offline_table3
+            配置数据节点：db${0..1}.t_order${0..1}或者db$->{0..1}.t_order$->{0..1}
+            配置分片算法:分为 10 个库，尾数为 0 的路由到后缀为 0 的数据源，尾数为 1 的路由到后缀为 1 的数据源，以此类推。ds${id % 10}
+        分布式主键
+            内置的主键生成器
+                UUID
+                SNOWFLAKE(默认算法)
+        强制分片路由
+            Hint
+    4.1.5内核剖析
+        ShardingSphere 的 3 个产品的数据分片主要流程是完全一致的。核心由 SQL 解析 => 执行器优化 =>SQL 路由 => SQL 改写 => SQL 执行 => 结果归并的流程组成。
+        SQL 解析
+            分为词法解析和语法解析。先通过词法解析器将 SQL 拆分为一个个不可再分的单词。再使用语法解析器对 SQL 进行理解，并最终提炼出解析上下文。解析上下文包括表、选择项、排序项、分组项、聚合函数、分页信息、查询条件以及可能需要修改的占位符的标记。
+        执行器优化
+            合并和优化分片条件，如 OR 等。
+        SQL 路由
+            根据解析上下文匹配用户配置的分片策略，并生成路由路径。目前支持分片路由和广播路由。
+        SQL 改写
+            将 SQL 改写为在真实数据库中可以正确执行的语句。SQL 改写分为正确性改写和优化改写。
+        SQL 执行
+            通过多线程执行器异步执行。
+        结果归并
+            将多个执行结果集归并以便于通过统一的 JDBC 接口输出。结果归并包括流式归并、内存归并和使用装饰者模式的追加归并这几种方式
+        【图 5: SQL 抽象语法树】
+        SQL 解析引擎
+            1.4以前使用 Druid 作为 SQL 解析器。之后使用自研，仅提炼需要的部分，目前使用visit
+            使用方式ParseTree tree = new SQLParserEngine(databaseType).parse(sql, useCache);
+        分片路由
+            直接路由
+                使用 HintAPI 直接指定路由至库表，并且只分库不分表才会使用
+            标准路由
+                当分片运算符是等于号时，路由结果将落入单库（表），当分片运算符是 BETWEEN或 IN 时，则路由结果不一定落入唯一的库（表），因此一条逻辑 SQL 最终可能被拆分为多条用于执行的真实 SQL。
+                例如:
+                    SELECT * FROM t_order o JOIN t_order_item i ON o.order_id=i.order_id WHERE order_id IN (1, 2);
+                    则可能被拆分成
+                    SELECT * FROM t_order_0 o JOIN t_order_item_0 i ON o.order_id=i.order_id WHERE order_id IN (1, 2);
+                    SELECT * FROM t_order_1 o JOIN t_order_item_1 i ON o.order_id=i.order_id WHERE order_id IN (1, 2);
+            笛卡尔积路由
+                在分片、绑定关系不明确时会使用
+        广播路由
+            全库表路由
+                遍历所有数据库中的所有表，即in 语句等
+            全库路由
+                全库路由用于处理对数据库的操作，包括用于库设置的 SET 类型的数据库管理命令
+            全实例路由
+                全实例路由用于 DCL 操作，授权语句针对的是数据库的实例。无论一个实例中包含多少个 Schema，每个数据库的实例只执行一次
+            单播路由
+                它仅需要从任意库中的任意真实表中获取数据即可。
+            阻断路由
+                USE order_db等语句;在jdbc中无需切换schema。
+        【图 6: 路由引擎结构】
+        改写引擎
+            标识符改写:将t_order表名改写成t_order_0
+            补列:单表查询的order某个字段是不需要查出来的，但是分库则需要合并结果集
+            批量拆分:分开在多个库执行
+        【图 9: 改写引擎结构】
+        连接模式(基于 maxConnectionSizePerQuery进行计算)
+            内存限制模式:多线程
+            连接限制模式:串行查询
+        归并引擎
+            遍历归并：只需将多个数据结果集合并为一个单向链表即可
+            排序归并:由于在 SQL 中存在 ORDER BY 语句，因此每个数据结果集自身是有序的，因此只需要将数据结果集当前游标指向的数据值进行排序即可。这相当于对多个有序的数组进行排序，归并排序是最适合此场景的排序算法。
+            分组归并
+                流式分组归并： SQL 的排序项与分组项的字段以及排序类型（ASC 或 DESC）必须保持一致
+                    SELECT name, SUM(score) FROM t_score GROUP BY name ORDER BY name;
+                和内存分组归并：反之
+                    SELECT name, SUM(score) FROM t_score GROUP BY name ORDER BY score DESC;
