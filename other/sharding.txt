@@ -109,7 +109,7 @@
             Oracle 和 SQLServer的子查询分页支持，不支持 rownum + BETWEEN
             SQLServer的OFFSET FETCH
             MySQL 和 PostgreSQL 都支持 LIMIT
-4.2分布式事务
+4.2分布式事务【简单点可以直接使用mysql官方的cluster】
     4.2.1背景
         支持ACID
         ||本地事务|两(三)阶段提交(XA)|柔性事务|
