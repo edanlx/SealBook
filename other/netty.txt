@@ -1,0 +1,401 @@
+《netty实战》《netty in action》
+一netty的概念及体系结构
+	netty是一款用于创建高性能网络应用程序的高级框架，使用netty比直接使用底层的 Java API 容易得多。Netty 推崇良好的设计实践，例如，将你的应用程序逻辑和网络层解耦。
+1.nettyy——异步和事件驱动
+	1.1java网络编程
+		早期的 Java API，只支持socket阻塞调用 serverSocket.accept()
+		1.1.1java NIO
+			目前已经能够支持非阻塞调用。
+				可以使用 setsockopt()方法配置套接字，在没有数据的时候立即返回
+				可以使用操作系统的事件通知 API②注册一组非阻塞套接字(即select()和poll()及其衍生高级方法)
+		1.1.2选择器
+			java.nio.channels.Selector是java的非阻塞I/O实现的关键(注Selector是管理一组多路复用的SelectableChannel对象)
+			【tomcat、java分了NIO\BIO\AIO，linux分了5中IO模型，Reactor 模式与IO多路复用比较像
+
+				Java中的IO还是借助操作系统的IO模型的，例如AIO在winodws上借助IOCP实现，在linux是epoll
+				操作系统5IO
+				阻塞IO:发起->阻塞
+				非阻塞IO:检查---检查。。。-->检查->就绪发起->阻塞->完成
+				IO复用->检查->阻塞->就绪发起->阻塞完成
+				信号驱动IO:通知发起->阻塞->完成
+				异步IO:发起->通知
+			】
+
+
+			【选择器模型如下，没行之间有线相连，图 1-2 使用 Selector 的非阻塞 I/O】
+			socket  socket  socket
+			 读/写    读/写   读/写
+			 		Selector
+			 		Thread
+
+			总体来看，与阻塞 I/O 模型相比，这种模型提供了更好的资源管理
+				使用较少的线程便可以处理许多连接，因此也减少了内存管理和上下文切换所带来开销；
+				当没有 I/O 操作需要处理的时候，线程也可以被用于其他任务。
+	1.2Netty简介
+		总会有更高的吞吐量和可扩展性的要求——在更低的成本的基础上进行交付
+		|分类|Netty的特性|
+		|设计|1.统一的API，支持多种传输类型，阻塞的和非阻塞的2.简单而强大的线程模型3.真正的无连接数据报套接字支持4.链接逻辑组件以支持复用|
+		|易于使用|1.详实的Javadoc和大量的示例集2.不需要超过JDK 1.6+③的依赖。|
+		|性能|1.拥有比 Java 的核心 API 更高的吞吐量以及更低的延迟2.得益于池化和复用，拥有更低的资源消耗3.最少的内存复制|
+		|健壮性|1.不会因为慢速、快速或者超载的连接而导致 OutOfMemoryError2.消除在高速网络中 NIO 应用程序常见的不公平读/写比率|
+		|安全性|1.完整的 SSL/TLS 以及 StartTLS 支持2.可用于受限环境下，如 Applet 和 OSGI|
+		|社区驱动|发布快速而且频繁|
+		1.2.1谁在使用netty
+		Apple、Twitter等各种大佬公司
+		1.2.3异步和事件驱动
+			非阻塞网络调用使得我们可以不必等待一个操作的完成。完全异步的 I/O 正是基于这个特性构建的，并且更进一步：异步方法会立即返回，并且在它完成时，会直接或者在稍后的某个时间点通知用户
+			选择器使得我们能够通过较少的线程便可监视许多连接上的事件
+	1.3Netty的核心组件
+		1.3.1Channel
+			可以把 Channel 看作是传入（入站）或者传出（出站）数据的载体。因此，它可以被打开或者被关闭，连接或者断开连接
+		1.3.2回调
+			一个回调其实就是一个方法。通过继承或实现来实现回调。
+		1.3.3Future
+			JDK 预置了 interface java.util.concurrent.Future，但是其所提供的实现，只允许手动检查对应的操作是否已经完成，或者一直阻塞直到它完成。这是非常繁琐的，所以 Netty提供了它自己的实现——ChannelFuture，用于在执行异步操作的时候使用。通过在其上面注册监听器实现。
+		1.3.4事件和ChannelHandler
+			Netty 使用不同的事件来通知我们状态的改变或者是操作的状态。每个事件都可以被分发给 ChannelHandler 类中的某个用户实现的方法。当然其已经预定义了大量开箱即用的实现。
+		1.3.5把它们放在一起
+			1.Future、回调和ChannelHandler
+				Netty的异步编程模型是建立在Future和回调的概念之上的
+			2.选择器、事件和 EventLoop
+				Netty 通过触发事件将 Selector 从应用程序中抽象出来，消除了所有本来将需要手动编写的派发代码。在内部，将会为每个 Channel 分配一个 EventLoop。
+				EventLoop 本身只由一个线程驱动，其处理了一个 Channel 的所有 I/O 事件，并且在该EventLoop 的整个生命周期内都不会改变
+	1.4小结
+2.你的第一款netty应用程序
+	2.1设置开发环境
+		2.1.1 获取并安装 Java 开发工具包
+		2.1.2 下载并安装 IDE
+		2.1.3 下载和安装 Apache Maven
+		2.1.4 配置工具集
+	2.2 Netty 客户端/服务器概览
+	2.3 编写 Echo 服务器
+		2.3.1 ChannelHandler 和业务逻辑
+			实现 ChannelInboundHandler 接口，用来定义响应入站事件的方法。简单的应用程序只需要用到少量的这些方法，所以继承 ChannelInboundHandlerAdapter 类也就足够了
+			```
+			@Sharable
+			public class EchoServerHandler extends ChannelInboundHandlerAdapter {
+				@Override
+				public void channelRead(ChannelHandlerContext ctx, Object msg) {
+					ByteBuf in = (ByteBuf) msg;
+					System.out.println("Server received: " + in.toString(CharsetUtil.UTF_8));
+					// 将收到的消息写给发送者，而不冲刷出站消息
+					ctx.write(in);
+				}
+				@Override
+				public void channelReadComplete(ChannelHandlerContext ctx) { 
+					// 将末消息刷到远程节点，并且关闭该channel
+					ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+				} 
+				@Override
+				public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { 
+					// 打印异常堆栈
+					cause.printStackTrace();
+					// 关闭channel
+					ctx.close();
+				} 
+			}
+			```
+		2.3.2 引导服务器
+			即main函数
+			```
+			public class EchoServer { 
+				private final int port;
+			    public EchoServer(int port) {
+			        this.port = port;
+			    }
+
+			    public static void main(String[] args) throws Exception {
+			        if (args.length != 1) {
+			            System.err.println("Usage: " + EchoServer.class.getSimpleName() + " <port>");
+			        }
+			        int port = Integer.parseInt(args[0]);
+			        // 设置端口并调用服务start
+			        new EchoServer(port).start();
+			    }
+
+			    public void start() throws Exception {
+			        final EchoServerHandler serverHandler = new EchoServerHandler();
+			        // 创建EventLoopGroup
+			        EventLoopGroup group = new NioEventLoopGroup();
+			        try {
+			            ServerBootstrap b = new ServerBootstrap();
+			            b.group(group)
+			            		// 指定所使用的NIO传输
+			                    .channel(NioServerSocketChannel.class)
+			                    // 使用指定的端口设置套接字
+			                    .localAddress(new InetSocketAddress(port))
+			                    // 添加一个EchoServerHandler到子Channel的 ChannelPipeline(ChannelInitializer,每个新连接都会创建channle)
+			                    .childHandler(new ChannelInitializer<SocketChannel>() {
+			                        @Override
+			                        public void initChannel(SocketChannel ch) throws Exception {
+			                        	// EchoServerHandler 被标注为@Shareable，所以我们可以总是使用同样的实例
+			                            ch.pipeline().addLast(serverHandler);
+			                        }
+			                    });
+			            // 异步绑定服务器
+			            ChannelFuture f = b.bind().sync();
+			            // 获取channel的closeFuture并且阻塞当前线程直到它完成
+			            f.channel().closeFuture().sync();
+			        } finally {
+			        	// 关闭 EventLoopGroup，释放所有资源
+			            group.shutdownGracefully().sync();
+			        }
+			    }
+			}
+			```
+
+
+	2.4 编写 Echo 客户端
+		2.4.1 通过 ChannelHandler 实现客户端逻辑
+			```
+			public class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> { 
+				@Override
+				public void channelActive(ChannelHandlerContext ctx) { 
+					// 当被通知 Channel是活跃的时候，发送一条消息
+					ctx.writeAndFlush(Unpooled.copiedBuffer("Netty rocks!",
+					CharsetUtil.UTF_8)); 
+				} 
+				@Override
+				public void channelRead0(ChannelHandlerContext ctx, ByteBuf in) { 
+					// 记录已接收消息的转储
+					System.out.println("Client received: " + in.toString(CharsetUtil.UTF_8));
+				} 
+				@Override
+				public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { 
+					cause.printStackTrace();
+					ctx.close();
+				} 
+			}
+			```
+		2.4.2 引导客户端
+		```
+			public class EchoClient { 
+				private final String host;
+				private final int port;
+				public EchoClient(String host, int port) { 
+					this.host = host;
+					this.port = port;
+				} 
+				public void start() throws Exception { 
+					EventLoopGroup group = new NioEventLoopGroup();
+					try { 
+						Bootstrap b = new Bootstrap();
+						b.group(group)
+						.channel(NioSocketChannel.class)
+						.remoteAddress(new InetSocketAddress(host, port))
+						.handler(new ChannelInitializer<SocketChannel>() { 
+							@Override
+							public void initChannel(SocketChannel ch) throws Exception { 
+								ch.pipeline().addLast(new EchoClientHandler());
+					 		} 
+						});
+						ChannelFuture f = b.connect().sync();
+						f.channel().closeFuture().sync();
+					} finally { 
+						group.shutdownGracefully().sync();
+					} 
+				} 
+				public static void main(String[] args) throws Exception { 
+					if (args.length != 2) { 
+						System.err.println("Usage: " + EchoClient.class.getSimpleName() +  " <host> <port>");
+						return;
+					} 
+					String host = args[0];
+					int port = Integer.parseInt(args[1]);
+					new EchoClient(host, port).start();
+				} 
+			}
+		```
+	2.5 构建和运行 Echo 服务器和客户端
+		2.5.1 运行构建
+		2.5.2 运行 Echo 服务器和客户端
+	2.6 小结
+3.netty的组件和设计
+	3.1 Channel、EventLoop 和 ChannelFuture
+		3.1.1 Channel 接口
+			基本的 I/O 操作（bind()、connect()、read()和 write()）依赖于底层网络传输所提供的原语。其基本的构造是Socket
+		3.1.2 EventLoop 接口
+			EventLoop 定义了 Netty 的核心抽象，用于处理连接的生命周期中所发生的事件
+			【图 3-1 Channel、EventLoop 和 EventLoopGroup】
+
+			一个 EventLoopGroup 包含一个或者多个 EventLoop；
+			一个 EventLoop 在它的生命周期内只和一个 Thread 绑定；
+			所有由 EventLoop 处理的 I/O 事件都将在它专有的 Thread 上被处理；
+			一个 Channel 在它的生命周期内只注册于一个 EventLoop；
+			一个 EventLoop 可能会被分配给一个或多个 Channel。
+		3.1.3 ChannelFuture 接口
+			可以将 ChannelFuture 看作是将来要执行的操作的结果的占位符
+	3.2 ChannelHandler 和 ChannelPipeline
+		3.2.1 ChannelHandler 接口
+			Netty 的主要组件是 ChannelHandler，它充当了所有处理入站和出站数据的应用程序逻辑的容器
+			举例来说，ChannelInboundHandler 是一个你将会经常实现的子接口。这种类型的ChannelHandler 接收入站事件和数据
+		3.2.2 ChannelPipeline 接口
+			ChannelPipeline 提供了 ChannelHandler 链的容器，并定义了用于在该链上传播入站和出站事件流的 API。当 Channel 被创建时，它会被自动地分配到它专属的 ChannelPipeline
+			例如：ChannelInboundHandler->ChannelInboundHandler->ChannelOutboundHandler->ChannelOutboundHandler
+		3.2.3 更加深入地了解 ChannelHandler
+			下面这些是编写自定义 ChannelHandler 时经常会用到的适配器类
+				ChannelHandlerAdapter
+				ChannelInboundHandlerAdapter
+				ChannelOutboundHandlerAdapter
+				ChannelDuplexHandler
+		3.2.4 编码器和解码器
+			当你通过 Netty 发送或者接收一个消息的时候，就将会发生一次数据转换。入站消息会被解 码；也就是说，从字节转换为另一种格式，通常是一个 Java 对象。如果是出站消息，则会发生相反方向的转换：它将从它的当前格式被编码为字节。这两种方向的转换的原因很简单：网络数据总是一系列的字节。
+			所有由 Netty 提供的编码器/解码器适配器类都实现了 ChannelOutboundHandler 或者 ChannelInboundHandler 接口。
+		3.2.5 抽象类 SimpleChannelInboundHandler
+			解码器扩展基类
+	3.3 引导
+		有两种类型的引导：一种用于客户端（简单地称为 Bootstrap），而另一种（ServerBootstrap）用于服务器。无论你的应用程序使用哪种协议或者处理哪种类型的数据，唯一决定它使用哪种引导类的是它是作为一个客户端还是作为一个服务器
+		Bootstrap：EventLoopGroup 的数目=1
+		ServerBootstrap：EventLoopGroup 的数目=2
+		服务器需要两组不同的Channel，第一组将只包含一个 ServerChannell，代表服务器自身的已绑定到某个本地端口的正在监听的套接字。而第二组将包含所有已创建的用来处理传入客户端连接（对于每个服务器已经接受的连接都有一个）的 Channel
+		运作关系如下:与 ServerChannel 相关联的 EventLoopGroup 将分配一个负责为传入连接请求创建Channel 的 EventLoop。一旦连接被接受，第二个 EventLoopGroup 就会给它的 Channel分配一个 EventLoop。
+	3.4 小结
+4.传输
+	4.1 案例研究：传输迁移
+		4.1.1 不通过 Netty 使用 OIO 和 NIO
+		4.1.2 通过 Netty 使用 OIO 和 NIO
+		4.1.3 非阻塞的 Netty 版本
+	4.2 传输 API
+	4.3 内置的传输
+		4.3.1 NIO——非阻塞 I/O
+		4.3.2 Epoll—用于 Linux 的本地非阻塞传输
+		4.3.3 OIO—旧的阻塞 I/O
+		4.3.4 用于 JVM 内部通信的 Local 传输
+		4.3.5 Embedded 传输
+	4.4 传输的用例
+	4.5小结
+5.ByteBuf
+	5.1 ByteBuf 的 API
+	5.2 ByteBuf 类——Netty 的数据容器
+		5.2.1 它是如何工作的
+		5.2.2 ByteBuf 的使用模式
+			1．堆缓冲区
+			2．直接缓冲区
+			3．复合缓冲区
+	5.3 字节级操作
+		5.3.1 随机访问索引
+		5.3.2 顺序访问索引
+		5.3.3 可丢弃字节
+		5.3.4 可读字节
+		5.3.5 可写字节
+		5.3.6 索引管理
+		5.3.7 查找操作
+		5.3.8 派生缓冲区
+		5.3.9 读/写操作
+		5.3.10 更多的操作
+	5.4 ByteBufHolder 接口
+	5.5 ByteBuf 分配
+		5.5.1 按需分配：ByteBufAllocator 接口
+		5.5.2 Unpooled 缓冲区
+		5.5.3 ByteBufUtil 类
+	5.6 引用计数
+	5.7小结
+6.ChannelHandler和ChannelPipline
+	6.1 ChannelHandler 家族
+		6.1.1 Channel 的生命周期
+		6.1.2 ChannelHandler 的生命周期
+		6.1.3 ChannelInboundHandler 接口
+		6.1.4 ChannelOutboundHandler 接口
+		6.1.5 ChannelHandler 适配器
+		6.1.6 资源管理
+	6.2 ChannelPipeline 接口
+		6.2.1 修改 ChannelPipeline
+		6.2.2 触发事件
+	6.3 ChannelHandlerContext 接口
+		6.3.1 使用 ChannelHandlerContext
+		6.3.2 ChannelHandler 和 ChannelHandlerContext 的高级用法
+	6.4 异常处理
+		6.4.1 处理入站异常
+		6.4.2 处理出站异常
+	6.5 小结
+7.EventLoop和线程模型
+	7.1 线程模型概述
+	7.2 EventLoop 接口
+		7.2.1 Netty 4 中的 I/O 和事件处理
+		7.2.2 Netty 3 中的 I/O 操作
+	7.3 任务调度
+		7.3.1 JDK 的任务调度 API
+		7.3.2 使用 EventLoop 调度任务
+	7.4 实现细节
+		7.4.1 线程管理
+		7.4.2 EventLoop/线程的分配
+			1．异步传输
+			2．阻塞传输
+	7.5 小结
+8.引导
+	8.1 Bootstrap 类
+	8.2 引导客户端和无连接协议
+		8.2.1 引导客户端
+		8.2.2 Channel 和 EventLoopGroup 的兼容性
+	8.3 引导服务器
+		8.3.1 ServerBootstrap类
+		8.3.2 引导服务器
+	8.4 从 Channel 引导客户端
+	8.5 在引导过程中添加多个 ChannelHandler
+	8.6 使用 Netty 的 ChannelOption 和属性
+	8.7 引导 DatagramChannel
+	8.8关闭
+	8.9小结
+9.单元测试
+	9.1 EmbeddedChannel 概述
+	9.2 使用 EmbeddedChannel 测试 ChannelHandler
+		9.2.1 测试入站消息
+		9.2.2 测试出站消息
+	9.3 测试异常处理
+	9.4 小结
+二部分编解码器
+10.编解码器框架
+	10.1 什么是编解码器
+	10.2 解码器
+		10.2.1 抽象类 ByteToMessageDecoder
+		10.2.2 抽象类 ReplayingDecoder
+		10.2.3 抽象类 MessageToMessageDecoder
+		10.2.4 TooLongFrameException 类
+	10.3 编码器
+		10.3.1 抽象类 MessageToByteEncoder
+		10.3.2 抽象类 MessageToMessageEncoder
+	10.4 抽象的编解码器类
+		10.4.1 抽象类 ByteToMessageCodec
+		10.4.2 抽象类 MessageToMessageCodec
+		10.4.3 CombinedChannelDuplexHandler 类
+	10.5 小结
+11.预置的ChannelHandler和解码器
+	11.1 通过 SSL/TLS 保护 Netty 应用程序
+	11.2 构建基于 Netty 的 HTTP/HTTPS 应用程序
+		11.2.1 HTTP 解码器、编码器和编解码器
+		11.2.2 聚合 HTTP 消息
+		11.2.3 HTTP 压缩
+		11.2.4 使用 HTTPS
+		11.2.5 WebSocket
+	11.3 空闲的连接和超时
+	11.4 解码基于分隔符的协议和基于长度的协议
+		11.4.1 基于分隔符的协议
+		11.4.2 基于长度的协议
+	11.5 写大型数据
+		11.6 序列化数据
+			11.6.1 JDK 序列化
+			11.6.2 使用 JBoss Marshalling 进行序列化
+			11.6.3 通过 Protocol Buffers 序列化
+		11.7 小结
+三网络协议
+12.websocket
+	12.1 WebSocket 简介
+	12.2 我们的 WebSocket 示例应用程序
+	12.3 添加 WebSocket 支持
+		12.3.1 处理 HTTP 请求
+		12.3.2 处理 WebSocket 帧
+		12.3.3 初始化 ChannelPipeline
+		12.3.4 引导
+	12.4 测试该应用程序
+		如何进行加密
+	12.5 小结
+13.使用UDP广播
+	13.1 UDP 的基础知识
+	13.2 UDP 广播
+	13.3 UDP 示例应用程序
+	13.4 消息 POJO: LogEvent
+	13.5 编写广播者
+	13.6 编写监视器
+	13.7 运行 LogEventBroadcaster 和 LogEventMonitor
+	13.8 小结
+四部分案例研究
