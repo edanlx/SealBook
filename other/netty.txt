@@ -253,88 +253,286 @@
 4.传输
 	4.1 案例研究：传输迁移
 		4.1.1 不通过 Netty 使用 OIO 和 NIO
+			基本上内部逻辑被大改
 		4.1.2 通过 Netty 使用 OIO 和 NIO
+			```
+			public class NettyOioServer { 
+				public void server(int port) throws Exception { 
+				final ByteBuf buf = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer("Hi!\r\n", Charset.forName("UTF-8")));
+				// 使用 OioEventLoopGroup
+				EventLoopGroup group = new OioEventLoopGroup();
+				try { 
+					ServerBootstrap b = new ServerBootstrap();
+					b.group(group)
+					.channel(OioServerSocketChannel.class)
+					.localAddress(new InetSocketAddress(port))
+					.childHandler(new ChannelInitializer<SocketChannel>() { 
+						@Override
+						public void initChannel(SocketChannel ch) throws Exception { 
+							ch.pipeline().addLast(new ChannelInboundHandlerAdapter() { 
+								@Override
+								public void channelActive(ChannelHandlerContext ctx) throws Exception { 
+									ctx.writeAndFlush(buf.duplicate()).addListener(ChannelFutureListener.CLOSE);
+							 	} 
+						 	});
+						} 
+					});
+					ChannelFuture f = b.bind().sync();
+					f.channel().closeFuture().sync();
+				} finally { 
+					group.shutdownGracefully().sync();
+				} 
+			} 
+}
+			```
 		4.1.3 非阻塞的 Netty 版本
+			在上述代码修改
+			EventLoopGroup group = new OioEventLoopGroup();->EventLoopGroup group = new NioEventLoopGroup();
+			.channel(OioServerSocketChannel.class)->.channel(NioServerSocketChannel.class)
+			调整变得非常方便
 	4.2 传输 API
+		每个 Channel 都将会被分配一个 ChannelPipeline 和 ChannelConfig。ChannelConfig 包含了该 Channel 的所有配置设置，并且支持热更新。
+		ChannelPipeline 持有所有将应用于入站和出站数据以及事件的 ChannelHandler 实例，这些 ChannelHandler 实现了应用程序用于处理状态变化以及数据处理的逻辑。也即过滤器
+		ChannelHandler 的典型用途包括：
+			将数据从一种格式转换为另一种格式；
+			提供异常的通知；
+			提供 Channel 变为活动的或者非活动的通知；
+			提供当 Channel 注册到 EventLoop 或者从 EventLoop 注销时的通知；
+			提供有关用户自定义事件的通知。
+		Netty 的 Channel 实现是线程安全的，因此你可以存储一个到 Channel 的引用，并且每当你需要向远程节点写数据时，都可以使用它，即使当时许多线程都在使用它。
 	4.3 内置的传输
+		|名称|包|描述|
+		|--|--|--|
+		|NIO|io.netty.channel.socket.nio|使用 java.nio.channels 包作为基础——基于选择器的方式|
+		|Epoll|io.netty.channel.epoll|由 JNI 驱动的 epoll()和非阻塞 IO。这个传输支持只有在Linux上可用的多种特性，如SO_REUSEPORT， 比 NIO 传输更快，而且是完全非阻塞的|
+		|OIO|io.netty.channel.socket.oio|使用 java.net 包作为基础——使用阻塞流|
+		|Local|io.netty.channel.local|可以在 VM 内部通过管道进行通信的本地传输|
+		|Embedded|io.netty.channel.embedded|Embedded 传输，允许使用 ChannelHandler 而又不需要一个真正的基于网络的传输。这在测试你的ChannelHandler 实现时非常有用|
 		4.3.1 NIO——非阻塞 I/O
+			NIO 提供了一个所有 I/O 操作的全异步的实现。它利用了自 NIO 子系统被引入 JDK 1.4 时便可用的基于选择器的 API。
+			选择器运行在一个检查状态变化并对其做出相应响应的线程上，在应用程序对状态的改变做出响应之后，选择器将会被重置，并将重复这个过程。
+			|名称|描述|
+			|--|--|
+			|OP_ACCEPT|请求在接受新连接并创建 Channel 时获得通知|
+			|OP_CONNECT|请求在建立一个连接时获得通知|
+			|OP_READ|请求当数据已经就绪，可以从 Channel 中读取时获得通知|
+			|OP_WRITE|请求当可以向 Channel 中写更多的数据时获得通知。这处理了套接字缓冲区被完全填满时的情况，这种情况通常发生在数据的发送速度比远程节点可处理的速度更快的时候|
+
+			【图 4-2 选择并处理状态的变化】
+			1.新的channel注册到选择器
+			2.选择器处理状态变化的通知
+			3.之前已注册的channle
+			4.Selector.select()将会阻塞,直到接收新的状态变化或者配置的超时时间已过时
+			5.检查是否有状态变化
+			6.处理所有的状态变化
+			7.在选择器运行的同一线程中执行其他任务
 		4.3.2 Epoll—用于 Linux 的本地非阻塞传输
+			正如我们之前所说的，Netty 的 NIO 传输基于 Java 提供的异步/非阻塞网络编程的通用抽象。虽然这保证了 Netty 的非阻塞 API 可以在任何平台上使用，但它也包含了相应的限制，因为 JDK为了在所有系统上提供相同的功能，必须做出妥协。
+			Linux作为高性能网络编程的平台，其重要性与日俱增，这催生了大量先进特性的开发，其中包括epoll——一个高度可扩展的I/O事件通知特性。提供了比旧的POSIX select和poll系统调用更好的性能，同时现在也是Linux上非阻塞网络编程的事实标准。Linux JDK NIO API使用了这些epoll调用
+
+			Netty为Linux提供了一组NIO API，其以一种和它本身的设计更加一致的方式使用epoll，并且以一种更加轻量的方式使用中断。
 		4.3.3 OIO—旧的阻塞 I/O
+			是由于它 是建立在 java.net 包的阻塞实现之上的，所以它不是异步的。但是，它仍然非常适合于某些用途。
+			例如:你可能需要移植使用了一些进行阻塞调用的库(如JDBC)的遗留代码，而将逻辑转换为非阻塞的可能也是不切实际的。
+			Netty利用了SO_TIMEOUT这个Socket标志，它指定了等待一个I/O操作完成的最大毫秒数。如果操作在指定的时间间隔内没有完成，则将会抛出一个SocketTimeout Exception。
 		4.3.4 用于 JVM 内部通信的 Local 传输
+			用于在同一个 JVM 中运行的客户端和服务器程序之间的异步通信。
 		4.3.5 Embedded 传输
+			测试使用
 	4.4 传输的用例
+		|传输|TCP|UDP|SCTP|UDT|
+		|--|--|—--|--|--|
+		|NIO|√|√|√|√|
+		|Epoll（仅 Linux）|√|√|×|×|
+		|OIO|√|√|√|√|
+
+
+		|应用程序的需求|推荐的传输|
+		|非阻塞代码库或者一个常规的起点|NIO（或者在 Linux 上使用 epoll）|
+		|阻塞代码库|OIO|
+		|在同一个 JVM 内部的通信|Local|
+		|测试 ChannelHandler 的实现|Embedded|
 	4.5小结
 5.ByteBuf
 	5.1 ByteBuf 的 API
+	下面是一些 ByteBuf API 的优点：
+		它可以被用户自定义的缓冲区类型扩展；
+		通过内置的复合缓冲区类型实现了透明的零拷贝；
+		容量可以按需增长（类似于 JDK 的 StringBuilder）；
+		在读和写这两种模式之间切换不需要调用 ByteBuffer 的 flip()方法；
+		读和写使用了不同的索引；
+		支持方法的链式调用；
+		支持引用计数；
+		支持池化。
 	5.2 ByteBuf 类——Netty 的数据容器
+		因为所有的网络通信都涉及字节序列的移动，所以高效易用的数据结构明显是必不可少的。Netty 的 ByteBuf 实现满足并超越了这些需求
 		5.2.1 它是如何工作的
+			ByteBuf 维护了两个不同的索引：一个用于读取，一个用于写入。当你从 ByteBuf 读取时，它的 readerIndex 将会被递增已经被读取的字节数。同样地，当你写入 ByteBuf 时，它的writerIndex 也会被递增。初始索引都是0。双指针算法。
 		5.2.2 ByteBuf 的使用模式
 			1．堆缓冲区
+				它能在没有使用池化的情况下提供快速的分配和释放。
 			2．直接缓冲区
+				“接缓冲区的内容将驻留在常规的会被垃圾回收的堆之外。”这也就解释了为何直接缓冲区对于网络数据传输是理想的选择。如果你的数据包含在一个在堆上分配的缓冲区中，那么事实上，在通过套接字发送它之前，JVM将会在内部把你的缓冲区复制到一个直接缓冲区中。
+				直接缓冲区的主要缺点是，相对于基于堆的缓冲区，它们的分配和释放都较为昂贵。如果你正在处理遗留代码，你也可能会遇到另外一个缺点：因为数据不是在堆上，所以你不得不进行一次复制，
 			3．复合缓冲区
+				CompositeByteBuf。可能同时包含直接内存分配和非直接内存分配。
+				在使用HTTP时因为我们不想为每个消息都重新分配这两个缓冲区(HTTP的头部和主体)，所以使用 CompositeByteBuf 是一个完美的选择。
 	5.3 字节级操作
 		5.3.1 随机访问索引
+			第一个字节的索引是0，最后一个字节的索引总是 capacity() - 1。
+			需要注意的是，使用那些需要一个索引值参数的方法（的其中）之一来访问数据既不会改变readerIndex 也不会改变 writerIndex。如果有需要，也可以通过调用 readerIndex(index)或者 writerIndex(index)来手动移动这两者。
 		5.3.2 顺序访问索引
+			虽然 ByteBuf 同时具有读索引和写索引，但是 JDK 的 ByteBuffer 却只有一个索引，这也就是为什么必须调用 flip()方法来在读模式和写模式之间进行切换的原因。
+			其三个区域按顺序排列：可丢弃字节、可读字节、可写字节。
 		5.3.3 可丢弃字节
+			标记为可丢弃字节的分段包含了已经被读过的字节。通过调用 discardReadBytes()方法，可以丢弃它们并回收空间。虽然你可能会倾向于频繁地调用 discardReadBytes()方法以确保可写分段的最大化，但是请注意，这将极有可能会导致内存复制，因为可读字节必须被移动到缓冲区的开始位置。
 		5.3.4 可读字节
+			ByteBuf 的可读字节分段存储了实际数据。
 		5.3.5 可写字节
+			可写字节分段是指一个拥有未定义内容的、写入就绪的内存区域。
 		5.3.6 索引管理
+			JDK 的 InputStream 定义了 mark(int readlimit)和 reset()方法，这些方法分别被用来将流中的当前位置标记为指定的值，以及将流重置到该位置。同样，可以通过调用 markReaderIndex()、markWriterIndex()、resetWriterIndex()和 resetReaderIndex()来标记和重置 ByteBuf 的 readerIndex 和 writerIndex。
 		5.3.7 查找操作
+			在ByteBuf中有多种可以用来确定指定值的索引的方法。最简单的是使用indexOf()方法。
 		5.3.8 派生缓冲区
+			派生缓冲区为 ByteBuf 提供了以专门的方式来呈现其内容的视图。每个这些方法都将返回一个新的 ByteBuf 实例，它具有自己的读索引、写索引和标记索引。其内部存储和 JDK 的 ByteBuffer 一样也是共享的。这使得派生缓冲区的创建成本是很低廉的，但是这也意味着，如果你修改了它的内容，也同时修改了其对应的源实例，所以要小心。
+			如果需要一个现有缓冲区的真实副本，使用copy()
 		5.3.9 读/写操作
+			get()和 set()操作，从给定的索引开始，并且保持索引不变；
+			read()和 write()操作，从给定的索引开始，并且会根据已经访问过的字节数对索 引进行调整。
 		5.3.10 更多的操作
 	5.4 ByteBufHolder 接口
+		我们经常发现，除了实际的数据负载之外，我们还需要存储各种属性值。HTTP 响应便是一个很好的例子，除了表示为字节的内容，还包括状态码、cookie 等。为了处理这种常见的用例，Netty 提供了 ByteBufHolder。ByteBufHolder 也为 Netty 的高级特性提供了支持，如缓冲区池化，其中可以从池中借用 ByteBuf，并且在需要时自动释放。
 	5.5 ByteBuf 分配
 		5.5.1 按需分配：ByteBufAllocator 接口
+			为了降低分配和释放内存的开销，Netty 通过 interface ByteBufAllocator 实现了(ByteBuf 的）池化。
+			常用方法:buffer(基于堆或直接内存)、heapBuffer(堆内存)、directBuffer(直接内存)
+			Netty提供了两种ByteBufAllocator的实现：PooledByteBufAllocator和UnpooledByteBufAllocator。前者池化了ByteBuf的实例以提高性能并最大限度地减少内存碎片。
 		5.5.2 Unpooled 缓冲区
+			可能某些情况下，你未能获取一个到 ByteBufAllocator 的引用。对于这种情况，Netty 提供了一个简单的称为 Unpooled 的工具类，它提供了静态的辅助方法来创建未池化的 ByteBuf实例。
 		5.5.3 ByteBufUtil 类
+			ByteBufUtil 提供了用于操作 ByteBuf 的静态的辅助方法。例如boolean equals(ByteBuf, ByteBuf)，它被用来判断两个 ByteBuf实例的相等性。
 	5.6 引用计数
+		Netty 在第 4 版中为 ByteBuf 和 ByteBufHolder 引入了引用计数技术，它们都实现了 interface ReferenceCounted。当活动引用的数量减少到 0 时，该实例就会被释放。
 	5.7小结
 6.ChannelHandler和ChannelPipline
 	6.1 ChannelHandler 家族
 		6.1.1 Channel 的生命周期
+			|状态|描述|
+			|--|--|
+			|ChannelUnregistered|Channel 已经被创建，但还未注册到 EventLoop|
+			|ChannelRegistered|Channel 已经被注册到了 EventLoop|
+			|ChannelActive|Channel 处于活动状态（已经连接到它的远程节点）。它现在可以接收和发送数据了|
+			|ChannelInactive|Channel 没有连接到远程节点|
 		6.1.2 ChannelHandler 的生命周期
+			|类型|描述|
+			|handlerAdded|当把 ChannelHandler 添加到 ChannelPipeline 中时被调用|
+			|handlerRemoved|当从 ChannelPipeline 中移除 ChannelHandler 时被调用|
+			|exceptionCaught|当处理过程中在 ChannelPipeline 中有错误产生时被调用|
 		6.1.3 ChannelInboundHandler 接口
+			ChannelHandler 子接口，处理入站数据以及各种状态变化
+			|类型|描述|
+			|--|--|
+			|channelRegistered|当 Channel 已经注册到它的 EventLoop 并且能够处理 I/O 时被调用|
+			|channelUnregistered|当 Channel 从它的 EventLoop 注销并且无法处理任何 I/O 时被调用|
+			|channelActive|当 Channel 处于活动状态时被调用；Channel 已经连接/绑定并且已经就绪|
+			|channelInactive|当Channel 离开活动状态并且不再连接它的远程节点时被调用|
+			|channelReadComplete|当Channel上的一个读操作完成时被调用|
+			|channelRead|当从 Channel 读取数据时被调用|
+			...
+			通常使用SimpleChannelInboundHandler自动释放资源
 		6.1.4 ChannelOutboundHandler 接口
+			ChannelHandler 子接口，处理出站数据并且允许拦截所有的操作
+			|类型|描述|
+			|--|--|
+			|bind|当请求将 Channel 绑定到本地地址时被调用|
+			...
 		6.1.5 ChannelHandler 适配器
+			可以使用 ChannelInboundHandlerAdapter 和 ChannelOutboundHandlerAdapter类作为自己的 ChannelHandler 的起始点
 		6.1.6 资源管理
+			每当通过调用 ChannelInboundHandler.channelRead()或者 ChannelOutboundHandler.write()方法来处理数据时，你都需要确保没有任何的资源泄漏。
+			Netty 目前定义了 4 种泄漏检测级别
+			|级别|描述|
+			|DISABLED|禁用泄漏检测。只有在详尽的测试之后才应设置为这个值|
+			|SIMPLE|使用 1%的默认采样率检测并报告任何发现的泄露。这是默认级别，适合绝大部分的情况|
+			|ADVANCED|使用默认的采样率，报告所发现的任何的泄露以及对应的消息被访问的位置|
+			|PARANOID|类似于 ADVANCED，但是其将会对每次（对消息的）访问都进行采样。这对性能将会有很大的影响，应该只在调试阶段使用|
 	6.2 ChannelPipeline 接口
+		Netty 总是将 ChannelPipeline 的入站口(入站处理器)作为头部，而将出站口(出站处理器)作为尾端
 		6.2.1 修改 ChannelPipeline
+			AddFirstaddBeforeaddAfteraddLast、remove等方法
 		6.2.2 触发事件
+			ChannelPipeline 保存了与 Channel 相关联的 ChannelHandler；
+			ChannelPipeline 可以根据需要，通过添加或者删除 ChannelHandler 来动态地修改；
+			ChannelPipeline 有着丰富的 API 用以被调用，以响应入站和出站事件。
 	6.3 ChannelHandlerContext 接口
+		ChannelHandlerContext 代表了 ChannelHandler 和 ChannelPipeline 之间的关联，每当有 ChannelHandler 添加到 ChannelPipeline 中时，都会创建 ChannelHandlerContext。
+		使用方法与ChannelHandler、ChannelPipeline 类似。调用位于 ChannelHandlerContext上的相同方法，则将从当前所关联的 ChannelHandler 开始，并且只会传播给位于该ChannelPipeline 中的下一个能够处理该事件的 ChannelHandler。
 		6.3.1 使用 ChannelHandlerContext
+			【 6-4 Channel、ChannelPipeline、ChannelHandler 以及ChannelHandlerContext 之间的关系】
 		6.3.2 ChannelHandler 和 ChannelHandlerContext 的高级用法
+			 ChannelHandler 必须要使用@Sharable 注解标注；否则，试图将它添加到多个 ChannelPipeline 时将会触发异常
 	6.4 异常处理
 		6.4.1 处理入站异常
+			重写lic void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
 		6.4.2 处理出站异常
+			每个出站操作都将返回一个 ChannelFuture。注册到 ChannelFuture 的 ChannelFutureListener 将在操作完成时被通知该操作是成功了还是出错了。
+			ChannelPromise setSuccess();
+			ChannelPromise setFailure(Throwable cause);
 	6.5 小结
 7.EventLoop和线程模型
 	7.1 线程模型概述
+		事件/任务的执行顺序 事件和任务是以先进先出（FIFO）的顺序执行的。这样可以通过保证字节内容总是按正确的顺序被处理，消除潜在的数据损坏的可能性。
 	7.2 EventLoop 接口
 		7.2.1 Netty 4 中的 I/O 和事件处理
+			由 I/O 操作触发的事件将流经安装了一个或者多个ChannelHandler 的 ChannelPipeline。传播这些事件的方法调用可以随后被 ChannelHandler 所拦截，并且可以按需地处理事件。在Netty 4 中，所有的I/O操作和事件都由已经被分配给了EventLoop的那个Thread来处理
 		7.2.2 Netty 3 中的 I/O 操作
+			 Netty 3 的模型中，由于这是一个入站事件，需要在调用线程中执行代码，然后将事件移交给 I/O 线程去执行，然而这将带来额外的上下文切换
 	7.3 任务调度
+		一个常见的用例是，发送心跳消息到远程节点，以检查连接是否仍然还活着
 		7.3.1 JDK 的任务调度 API
+			虽然 ScheduledExecutorService API 是直截了当的，但是在高负载下它将带来性能上的负担。
 		7.3.2 使用 EventLoop 调度任务
+			ScheduledExecutorService 的实现具有局限性，例如，事实上作为线程池管理的一部分，将会有额外的线程创建。如果有大量任务被紧凑地调度，那么这将成为一个瓶颈。
+			Netty的EventLoop扩展了ScheduledExecutorService。(因为本身就会建立channel没必要再起线程)
 	7.4 实现细节
 		7.4.1 线程管理
+			如果（当前）调用线程正是支撑 EventLoop 的线程，那么所提交的代码块将会被（直接）执行。否则，EventLoop 将调度该任务以便稍后执行，并将它放入到内部队列中。
+			注意，每个 EventLoop 都有它自已的任务队列，独立于任何其他的 EventLoop。
+			【 图7-3 EventLoop 的执行逻辑】
 		7.4.2 EventLoop/线程的分配
 			1．异步传输
+				所有的EventLoop都是由EventLoopGroup分配
+				每个EventLoop将处理分配给它的所有Channel的所有事件和任务
+				在每个Channel的整个生命周期内，所有操作都由相同的Thread执行(一个EventLoop 通常会被用于支撑多个 Channel)
 			2．阻塞传输
+				如果是阻塞传输一个EventLoop只会有一个channel
 	7.5 小结
 8.引导
 	8.1 Bootstrap 类
+		服务器致力于使用一个父 Channel 来接受来自客户端的连接，并创建子 Channel 以用于它们之间的通信
+		而客户端将最可能只需要一个单独的、没有父 Channel 的 Channel 来用于所有的网络交互(如 UDP，因为它们并不是每个连接都需要一个单独的 Channel)
 	8.2 引导客户端和无连接协议
 		8.2.1 引导客户端
+			Bootstrap 类负责为客户端和使用无连接协议的应用程序创建 Channel
 		8.2.2 Channel 和 EventLoopGroup 的兼容性
+			对于 NIO 以及 OIO 传输两者来说，都有相关的 EventLoopGroup 和Channel 实现,不能混用
 	8.3 引导服务器
 		8.3.1 ServerBootstrap类
+			ServerBootstrap 类
 		8.3.2 引导服务器
+			ServerBootstrap 在 bind()方法被调用时创建了一个 ServerChannel，并且该 ServerChannel 管理了多个子 Channel
 	8.4 从 Channel 引导客户端
+		当有channel的时候，可以从channel直接创建性能会胜于直接使用bootstrap创建
 	8.5 在引导过程中添加多个 ChannelHandler
+		ChannelInboundHandlerAdapter，在特殊情况只能使用一个ChannelHandler的时候，其可以作为pipline的替代品
 	8.6 使用 Netty 的 ChannelOption 和属性
+		可以使用 option()方法来将 ChannelOption 应用到引导。你所提供的值将会被自动应用到引导所创建的所有 Channel
 	8.7 引导 DatagramChannel
+		有多种DatagramChannel 的实现，用于无连接的协议。唯一区别就是，不再调用 connect()方法，而是只调用 bind()方法
 	8.8关闭
+		调用 EventLoopGroup.shutdownGracefully()方法,但它是异步的
+		显式地在所有活动的 Channel 上调用 Channel.close()方法。但是在任何情况下，都请记得关闭EventLoopGroup 本身。
 	8.9小结
 9.单元测试
 	9.1 EmbeddedChannel 概述
@@ -346,36 +544,120 @@
 二部分编解码器
 10.编解码器框架
 	10.1 什么是编解码器
+		编码器操作出站数据，而解码器处理入站数据
 	10.2 解码器
 		10.2.1 抽象类 ByteToMessageDecoder
+			将字节解码为消息
 		10.2.2 抽象类 ReplayingDecoder
+			将字节解码为消息
+			如果使用 ByteToMessageDecoder 不会引入太多的复杂性，那么请使用它；否则，请使用 ReplayingDecoder。
+
+			io.netty.handler.codec.LineBasedFrameDecoder—这个类在 Netty 内部也有使用，它使用了行尾控制字符（\n 或者\r\n）来解析消息数据；
+			io.netty.handler.codec.http.HttpObjectDecoder—一个 HTTP 数据的解码器。
 		10.2.3 抽象类 MessageToMessageDecoder
+			将一种消息类型解码为另一种
 		10.2.4 TooLongFrameException 类
+			由于 Netty 是一个异步框架，所以需要在字节可以解码之前在内存中缓冲它们。因此，不能让解码器缓冲大量的数据以至于耗尽可用的内存。
+			为了解除这个常见的顾虑，Netty 提供了TooLongFrameException 类，其将由解码器在帧超出指定的大小限制时抛出。
+			某些协议（如 HTTP）可能允许你返回一个特殊的响应。而在其他的情况下，唯一的选择可能就是关闭对应的连接。
 	10.3 编码器
 		10.3.1 抽象类 MessageToByteEncoder
+			将消息编码为字节
 		10.3.2 抽象类 MessageToMessageEncoder
+			消息编码为消息
 	10.4 抽象的编解码器类
 		10.4.1 抽象类 ByteToMessageCodec
+			ByteToMessageCodec 将为我们处理好这一切，因为它结合了ByteToMessageDecoder 以及它的逆向——MessageToByteEncoder
 		10.4.2 抽象类 MessageToMessageCodec
+			在两种不同的消息 API 之间来回转换数据。当我们不得不和使用遗留或者专有消息格式的 API 进行互操作时，我们经常会遇到这种模式。
 		10.4.3 CombinedChannelDuplexHandler 类
+			分别继承了解码器类和编码器类的类型，我们可以实现一个编解码器，而又不必直接扩展抽象的编解码器类
 	10.5 小结
 11.预置的ChannelHandler和解码器
 	11.1 通过 SSL/TLS 保护 Netty 应用程序
+		为了支持 SSL/TLS，Java 提供了 javax.net.ssl 包，它的 SSLContext 和 SSLEngine类使得实现解密和加密相当简单直接。Netty 通过一个名为 SslHandler 的 ChannelHandler实现利用了这个 API，其中 SslHandler 在内部使用 SSLEngine 来完成实际的工作。
+		在大多数情况下，SslHandler 将是 ChannelPipeline 中的第一个 ChannelHandler。这确保了只有在所有其他的 ChannelHandler 将它们的逻辑应用到数据之后，才会进行加密
 	11.2 构建基于 Netty 的 HTTP/HTTPS 应用程序
 		11.2.1 HTTP 解码器、编码器和编解码器
+			|名称|描述|
+			|--|--|
+			|HttpRequestEncoder|将HttpRequest、HttpContent 和 LastHttpContent 消息编码为字节|
+			|HttpResponseEncoder|将HttpResponse、HttpContent 和LastHttpContent 消息编码为字节|
+			|HttpRequestDecoder|将字节解码为HttpRequest、HttpContent 和 LastHttpContent 消息|
+			|HttpResponseDecoder|将字节解码为HttpResponse、HttpContent 和LastHttpContent 消息|
 		11.2.2 聚合 HTTP 消息
+			由于 HTTP 的请求和响应可能由许多部分组成，因此你需要聚合它们以形成完整的消息。为了消除这项繁琐的任务，Netty 提供了一个聚合器，它可以将多个消息部分合并为 FullHttpRequest 或者 FullHttpResponse 消息。通过这样的方式，你将总是看到完整的消息内容。
 		11.2.3 HTTP 压缩
+			当使用 HTTP 时，建议开启压缩功能以尽可能多地减小传输数据的大小。虽然压缩会带来一些 CPU 时钟周期上的开销，但是通常来说它都是一个好主意，特别是对于文本数据来说。Netty 为压缩和解压缩提供了 ChannelHandler 实现，它们同时支持 gzip 和 deflate 编码。
+			如果是客户端，则添加HttpContentDecompressor 以处理来自服务器的压缩内容
+			如果是服务器，则添加 HttpServerCodec
 		11.2.4 使用 HTTPS
+			启用 HTTPS 只需要将 SslHandler 添加到 ChannelPipeline 的ChannelHandler 组合中
 		11.2.5 WebSocket
 	11.3 空闲的连接和超时
+		|名称|描述|
+		|--|--|
+		|IdleStateHandler|当连接空闲时间太长时，将会触发一个 IdleStateEvent 事件。然后，你可以通过在你的 ChannelInboundHandler 中重写 userEventTriggered()方法来处理该 IdleStateEvent 事件|
+		|ReadTimeoutHandler|如果在指定的时间间隔内没有收到任何的入站数据，则抛出一个 ReadTimeoutException 并关闭对应的 Channel。可以通过重写你的ChannelHandler 中的 exceptionCaught()方法来检测该 ReadTimeoutException|
+		|WriteTimeoutHandler|如果在指定的时间间隔内没有任何出站数据写入，则抛出一个 WriteTimeoutException 并关闭对应的 Channel 。可以通过重写你的ChannelHandler 的 exceptionCaught()方法检测该 WriteTimeoutException|
+		发送心跳
+		```
+		public class IdleStateHandlerInitializer extends ChannelInitializer<Channel> { 
+			@Override
+			protected void initChannel(Channel ch) throws Exception { 
+				ChannelPipeline pipeline = ch.pipeline();
+				pipeline.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS));
+				// 将一个HeartbeatHandler添加到ChannelPipeline中
+				pipeline.addLast(new HeartbeatHandler());
+			} 
+			public static final class HeartbeatHandler extends ChannelInboundHandlerAdapter { 
+				private static final ByteBuf HEARTBEAT_SEQUENCE = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer("HEARTBEAT", CharsetUtil.ISO_8859_1));
+				@Override
+				public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception { 
+					if (evt instanceof IdleStateEvent) { 
+						// 发送心跳消息，并在发送失败时关闭该连接
+						ctx.writeAndFlush(HEARTBEAT_SEQUENCE.duplicate())
+						.addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
+		 			} else { 
+						super.userEventTriggered(ctx, evt);
+					} 
+		 		} 
+		 	} 
+		}
+		```
 	11.4 解码基于分隔符的协议和基于长度的协议
 		11.4.1 基于分隔符的协议
+			|名称|描述|
+			|--|--|
+			|DelimiterBasedFrameDecoder|使用任何由用户提供的分隔符来提取帧的通用解码器|
+			|LineBasedFrameDecoder|提取由行尾符（\n 或者\r\n）分隔的帧的解码器。这个解码器比 DelimiterBasedFrameDecoder 更快|
 		11.4.2 基于长度的协议
+			|名称|描述|
+			|--|--|
+			|FixedLengthFrameDecoder|提取在调用构造函数时指定的定长帧|
+			|LengthFieldBasedFrameDecoder|提根据编码进帧头部中的长度值提取帧；该字段的偏移量以及长度在构造函数中指定|
 	11.5 写大型数据
 		11.6 序列化数据
 			11.6.1 JDK 序列化
+				|名称|描述|
+				|--|--|
+				|CompatibleObjectDecoder|和使用 JDK 序列化的非基于 Netty 的远程节点进行互操作的解码器|
+				|CompatibleObjectEncoder|和使用 JDK 序列化的非基于 Netty 的远程节点进行互操作的编码器|
+				|ObjectDecoder|构建于 JDK 序列化之上的使用自定义的序列化来解码的解码器；当没有其他的外部依赖时，它提供了速度上的改进。否则其他的序列化实现更加可取|
+				|ObjectEncoder|构建于 JDK 序列化之上的使用自定义的序列化来编码的编码器；当没有其他的外部依赖时，它提供了速度上的改进。否则其他的序列化实现更加可取|
 			11.6.2 使用 JBoss Marshalling 进行序列化
+				|名称|描述|
+				|--|--|
+				|CompatibleMarshallingDecoder、CompatibleMarshallingEncoder|与只使用 JDK 序列化的远程节点兼容|
+				|MarshallingDecoder、MarshallingEncoder|适用于使用 JBoss Marshalling 的节点。这些类必须一起使用|
 			11.6.3 通过 Protocol Buffers 序列化
+				由Google公 司开发的、现在已经开源的数据交换格式
+				|名称|描述|
+				|--|--|
+				|ProtobufDecoder|使用 protobuf 对消息进行解码|
+				|ProtobufEncoder|使用 protobuf 对消息进行编码|
+				|ProtobufVarint32FrameDecoder|根据消息中的 Google Protocol Buffers 的“Base 128 Varints”整型长度字段值动态地分割所接收到的 ByteBuf|
+				|ProtobufVarint32LengthFieldPrepender| ByteBuf 前追加一个 Google Protocal Buffers 的“Base128 Varints”整型的长度字段值|
 		11.7 小结
 三网络协议
 12.websocket
@@ -399,3 +681,15 @@
 	13.7 运行 LogEventBroadcaster 和 LogEventMonitor
 	13.8 小结
 四部分案例研究
+
+零拷贝
+	零拷贝（zero-copy）是一种目前只有在使用 NIO 和 Epoll 传输时才可使用的特性。它使你可以快速高效地将数据从文件系统移动到网络接口，而不需要将其从内核空间复制到用户空间，其在像 FTP 或者HTTP 这样的协议中可以显著地提升性能。但是，并不是所有的操作系统都支持这一特性。特别地，它对于实现了数据加密或者压缩的文件系统是不可用的——只能传输文件的原始内容。反过来说，传输已被加密的文件则不是问题。通过mmap、sendfile实现。
+	传统数据传送
+		将磁盘文件，读取到操作系统内核缓冲区
+		将内核缓冲区的数据，拷贝到用户空间的缓冲区；
+		数据从用户空间缓冲区拷贝到内核的socket网络发送缓冲区；
+		数据从内核的socket网络发送缓冲区拷贝到网卡接口（硬件）的缓冲区，由网卡进行网络传输。
+	mmap优化
+		mmap通过内存映射，将文件映射到内核缓冲区，同时，用户空间可以共享内核空间的数据。这样，在进行网络传输时，就可以减少内核空间到用户空间的拷贝次数。->mmap 需要 4 次上下文切换，3 次数据拷贝
+	sendFile
+		其基本原理如下：数据根本不经过用户态，直接从内核缓冲区进入到Socket Buffer。->sendFile 需要 3 次上下文切换，最少 2 次数据拷贝
