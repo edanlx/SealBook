@@ -48,14 +48,150 @@
 	2.3 NameServer的路由注册、故障剔除
 		NameServer主要作用是为消息生产者和消息消费者提供关于主题 Topic 的路由信息，那么 NameServer不仅要存储路由的基础信息，还要能够管理Broker节点，包括路由路由删除等功能
 		2.3.1路由元信息
-
+			```
+			// Topic 消息队列路由信息，消息发送时根据路由表进行负 均衡
+			private final HashMap<String, List<QueueData> topicQueueTable;
+			// Broker 基础信息， brokerName 属集群名称 主备 Broker地址
+			private final HashMap<String /* brokerName */, BrokerData> brokerAddrTable; 
+			//  Broker 集群信息，存储集群中所有 Broker 名称
+			private final HashMap<String /* clusterName */, Set<String>clusterAddrTable; 
+			// Broker 状态信息 NameServer 每次收到心跳包时会该信息
+			private final HashMap<String/* brokerAddr */ , BrokerLiveinfo> brokerLiveTable; 
+			// filterServerTable : Broker 上的 FilterServer 列表，用于类模式消息 滤，
+			private final HashMap<String/* brokerAddr */ , List<String>/* Filter Server*/> filterServerTable;
+			```
 		2.3.2路由注册
+			1。Brocker发送心跳包
+			rocketMQ 路由注册是通过 Broker与Name Server 的心跳功能实现的 Broker 启动时集群中所有的 NameServer发送心跳语句，每隔30s向集群中所有NameServer 发送心跳包,NameServer 收到 Broker跳包时会更新 brokerLiveTabe 缓存中 brokerLiveInfo的lastUpdateTimestamp,然后 Nam Server 每隔 10s 扫描 brokerLiveTable,如果连续120s没有收到心跳包,NameServ将移除该Broker的路由信息同时关闭Socket 连接。
+
+			主要是遍历NameServer 表,Broker消息服务器依次向 NameServer发送心跳包
+			2.NameServer处理心跳包
+			org.apache rocketmq.namesrv processor.DefaultRequestProcessor网络处理器解析请求类型,如果请求类型为 RequestCode REGISTER_BROKER,则请求最终转发到 RoutelnfoManager#registerBroker
+			步骤
+				1.路由注册需要加写锁,防止并发修改RoutelnfoManager中的路由表。首先判断Broker所属集群是否存在,如果不存在,则创建，然后将 broker 名加入到集群 Broker集合中
+				2.维护 BrokerData ，首先从 brokerAddrTable 根据 BrokerNam 尝试获取Broker 信息,如果不存在,新建 BrokerData 并放入 brokerAddrTable,registerFirst设置为true;如果存在直接替换原先的,registerFirst设置 false ，表示非第一次注册
+				3.如果Broker为Master,并且 Broker Topic 配置信息发生变化或者是初次注册需要创建或更新Topic路由元数据，填充topicQueueTable 其实就是为默认主题自动注册路由信息,其中包 MixAll.DEFAULT_TOPIC的路由信息。当消息生产者发送主题时，如果该主题未创建并且Brokerconfig的autoCreateTopicenabl为true时,返回MiAll.DEFAULT TOPIC的路由信息
+				4.更新BrokerLivelnfo,存活 Broker 信息表， BrokeLivelnfo 是执行路由删除的重要依据
+				5.5 Broker 的过滤器 Server 地址列表 ，一个Broker会关联多个FilterServer消息过滤服务器；如果此 Broker为从节点，则需要查找Broker Master 的节点信息,并更新对应masterAddr属性
+
+			NameServer与Brocker保持长连接，收到心跳包串连执行
 		2.3.3路由删除
+			RocktMQ 两个触发点来触发路由删除
+			1.NameServer定时扫描brokerLiveTable检测上次心跳包与前系统时间的时间差，如果时间戳大于120s,则需要移除 Broker信息
+			2.Broker在正常被关闭的情况下,会执行unregisterBroker命令。
 		2.3.4路由发现
+			RocketMQ路由发现是非实时的，当Topic路由出现变化后,NameServer不主动推送给客户端是由客户端定时拉取主题最新的路由。根据主题名称拉取路由信息的命令编码为： GET_ROUTEINTO_BY_TOPIC
 3.rocketmq消息发送
+	3.1 漫谈RocketMQ消息发送
+		RocketMQ 支持 种消息发送方式 ：
+			同步（sync),等待服务器消息返回
+			异步（async）服务器消息返回后触发成功或失败回调函数
+			单向（oneway)只管发送不管投递结果
+	3.2 认识RocketMQ消息
+		RocketMQ 消息封装类是 org.apache.rocketmq common.message.Message
+		Message 的基础属性主要包括消息所属主题 topic 消息 Flag(RocketMQ 不做处理）、扩展属性、消息体
+		Message 扩展属性主要包含下面几个
+			tag ：消息 TAG ，用于消息过滤
+			keys: Message索引键，多个用空格隔开， RocketMQ 可以根据这些 key 快速检索到消息
+			waitStoreMsgOK ：消息发送时是否等消息存储完成后再返回
+			delayTimeLeve 消息延迟级别，用于定时消息或消息重试
+		这些扩展属性存储在 Message properties
+	3.3 生产者启动流程
+		消息生产者的代码都在 client 模块中，相对于 RocketMQ 来说，它就是客户端，也是消息的提供者
+		3.3.1 初识 DefaultMQProducer 消息发送者
+		3.3.2 消息生产者启动流程
+		DefaultMQProducerlmpl的start方法
+			1.检查 productGroup 是否符合要求；并改变生产者 instanceName 为进程 ID
+			2.创建MQClientInstance实例。整个JVM实例中只存在一个MQClientManager实例,维护一个MQClientInstance缓存表private ConcurrentMap<String/* clientId */, MQClientInstance> factoryTable =new ConcurrentHashMap<String, MQClientInstance>(),也就是同一个clientId只会创建一个MQClientInstance。(如果在同一台物理机部署两个应用程序，则会将ip替换为线程)
+			3: 向MQClientInstance注册,将当前生产者加入到MQClientInstance管理中,方便后续调用网络请求、进行心跳检测等。
+			4: 启动MQClientInstance,如果MQClientInstance已经启动,则本次启动不会真正执行。
+	3.4 消息发送基本流程
+		3.4.1 消息长度验证
+			最大4M
+		3.4.2 查找主题路由信息
+			消息发送之前，首先需要获取主题的路由信息，只有获取了这些信息我们才知道消息要发送具体Broker
+		3.4.3 选择消息队列
+			根据路由信息选择消息队列，返回的消息队列按照 broker 、序号排序。
+			举例说明，如果topicA在broker-a, broker-b上分别创建了4个队列。则总共返回8个list。一般根据对消息队列进行轮询获取一个消息队列。
+		3.4.4 消息发送
+			1.根据MessageQueue获取Brocker的网络地址。如果MQClientInstance的brokerAddrTable未缓存该Brocker的信息,则从NameServer主动更新一下topic的路由信息，如果还找不到则抛异常。
+			2.为消息分配全局唯一ID，如果消息体超过4K则进行ZIP压缩并设置消息的系统标记为MessageSysFlag.COMPRESSED_FLAG。如果是事务Prepared消息，则设置消息的系统标记为MessageSysFlag.TRANSACTION_PREPARED_TYPE
+			3.如果注册了消息发送钩子函数，则进行调用
+			4.构建消息发送包。主要包含如下重要信息：生产者组、主题名称、默认创建主题 Key 、该主题在单个Broker默认队列数、队列ID （队列序号）、消息系统标记( MessageSysFlag，消息发送时间 、消息标记（ RocketMQ 对消息中的 flag 不做任何处理供应用程序使用） 消息扩展属性 、消息重试次数、是否是批量消息
+			5.根据消息发送的3中方式进行发送，同步、异步、单向
+			6.如果注册了钩子函数，调用after
+			通过 DefaultMQProducer#retryTimesWhenSendAsyncFailed 属性来控制消息重试次数
+	3.5消息批量发送
+		基本逻辑与单条一致，消息体的长度变化而已。
 4.rocketmq消息存储
+	4.1存储概要设计
+		RocketMQ主要存储的文件包括Comitlog 文件、 ConsumeQueue文件、 IndexFile文件。RocketMQ将所有主题的消息存储在同一个文件 ，确保消息发送时顺序写文件
+		1.CommitLog ：消息存储文件，所有消息主题的消息都存储在 CommitLog 文件中
+		2.ConsumeQueue ：消息消费队列，消息到达 CommitLog 文件后，将异步转发到消息消费队列，供消息消费者消费
+		3.IndexFile ：消息索引文件，主要存储消息 Key Offset 的对应关系
+		4.事务状态服务：存储每条消息的事务状态
+		5.定时消息服务：每一个延迟级别对应一个消息消费队列，存储延迟队列的消息拉取进度
+	4.2初识消息存储
+		消息存储实现类： org.apache.rocketmq.store.DefaultMessageStore ，它是存储模块里面最重要的一个类
+	4.3 消息发送存储流程
+	4.4 存储文件组织与内存映射
+		4.4.1 MappedFileQueue 映射文件队列
+		4.4.2 MappedFile 内存映射文件
+		4.4.3 T1「ansientStorePool
+	4.5 RocketMQ 存储文件
+		4.5.1 Commitlog 文件
+		4.5.2 ConsumeQueue 文件
+		4.5.3 Index 索引文件
+		4.5.4 checkpoint 文件
+	4.6 实时更新消息消费队列 索引文件
+		4.6.1 根据消息更新 ConumeQueue
+		4.6.2 根据消息更新 Index 索引文件
+	4.7 消息队列与索引文件恢复
+		4.7.1 broker 正常停止文件恢复
+		4.7.2 Broker 异常停止文件恢复
+	4.8 文件刷盘机制
+		4.8.1 Broker 同步刷盘
+		4.8.2 Broker 异步刷盘
+	4.9 过期文件删除机制
 5.rocketmq消息消费
+	5.1 RocketMQ 消息消费概述
+	5.2 消息消费者初探
+	5.3 消费者启动流程
+	5.4 消息拉取
+		5.4.1 PullMessageService 实现机制
+		5.4.2 ProcessQueue 实现机制
+		5.4.3 消息拉取基本流程
+	5.5 消息队列负载与重新分布机制
+	5.6 消息消费过程
+		5.6.1 消息消费
+		5.6.2 消息确认（ACK)
+		5.6.3 消费进度管理
+	5.7 定时消息机制
+		5.7.1 load 方法
+		5.7.2 start方法
+		5.7.3 定时调度逻辑
+	5.8 消息过滤机制
+	5.9 顺序消息
+		5.9.1 消息队列负载
+		5.9.2 消息拉取
+		5.9.3 消息消费
+		5.9.4 消息队列锁实现
 6.消息过滤FilterServer
+	6.1 ClassFilter 运行机制
+	6.2 FilterServer 注册剖析
+	6.3 类过滤模式订阅机制
+	6.4 消息拉取
 7.rocketmq主从同步
+	7.1 RocketMQ 主从复制原理
+		7.1.1 HASe vice 整体工作机制
+		7.1.2 AcceptSocketSe vice 实现原理
+		7.1.3 oupTransferService 实现原理
+		7.1.4 HAClient 实现原理
+		7.1.5 HAConnection 实现原理
+	7.2 RocketMQ 读写分离机制
 8.rocketmq事务消息
+	8.1 事务消息实现思想
+	8.2 事务消息发送流程
+	8.3 提交或回滚事务
+	8.4 事务消息回查事务状态
 9.rocketmq实战
