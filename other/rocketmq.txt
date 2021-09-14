@@ -222,34 +222,112 @@
 		提供5种负载均衡算法
 	5.6 消息消费过程
 		5.6.1 消息消费
+			1.确认消息条数,consumeMessageBatchMaxSize
+			2.如果拉取的消息条数大于32则进行分页
+			3.进入具体消息消费时会先检查 processQueue dropped ，如果设置为 true该队列的消费丢弃
+			4.执行消息消费钩子函数 ConsumeMessageHook#conumeMessageBefore函数
+			5.判断消息的延时级别是否可以消费
+			6.执行具体的消费逻辑
+			7，执行消息消费钩子函数 ConsumeMessageHook#conumeMessageAfter函数
+			8.处理结束后再次判断dropped
+			9.根据消息监昕器返回的结果 计算 acklndex，如果返回CONSUME_SUCCESS,acklndex 设置为 msgs.size() ，如果返回 RECONSUME_LATER, acklndex -1
+			10.返回ACK消息
+			11.从 ProcessQueue 移除这批消息，
 		5.6.2 消息确认（ACK)
+			1.获取消费组的订阅配置信息，查看该消费组是否支持重试(消息最大重试次数默认6)
+			2.创建重试主题，重试主题名称 %RETRY%＋消费组名称，并从重试队列中随机选择一个队列 ，并构建 TopicConfig 主题配置信息
+			3.根据消息物理偏移量 commitlog 文件中获取消息， 同时将消息的主题存入属性中
+			4.设置消息重试次数，如果超过maxReconsumeTimes ，则进入DLQ队列中， RocketMQ 将不负责再次调度进行消费了， 需要人工干预
+			5.根据原先的消息创建一个新的消息对象，重试消息会有自己的唯一消息 ID
+			6.将消息存入到commitLog中
+			7.ACK 消息存入 CommitLog 文件后 ，将依托RocketMQ 定时消息机制在延迟时间到期后再次将消息拉取，提交消费线程池，发送失败会在5秒后重发
 		5.6.3 消费进度管理
+			1.广播模式消费进度存储
+				广播模式消息消费进度存储在消费者本地，其实 org.apache.rocketmq.client. consumer.store.LocalFileOffsetStore
+			2. 集群模式消费进度存储
+				集群模式消息进度存储文件存放在消息服务端Broker,每10s更新一次
 	5.7 定时消息机制
 		5.7.1 load 方法
+			该方法主要完成延迟消息消费队列消息进度的加载与 delayL velTable 数据的构造，延迟队列消息消费进度默认存储路径为${ROCKET_HOME}/store/config/delayOffst.json
 		5.7.2 start方法
+			1.根据延迟队列创建定时任务，遍历延迟级别
+			2.创建定时任务，每隔10s持久化一次延迟队列的消息消费进度
 		5.7.3 定时调度逻辑
+			SchduleMessageServic的start方法启动后，会为每一个延迟级别创建一个调度任务
+			1.根据队列ID与延迟主题查找消息消费队列，如果未找说明目前并不存在该延时级别的消息，忽略本次任务
+			2.根据 offse 从消息消费队列中获取当前队列中所有有效的消息 如果未找到，更新一下延迟队列定时拉取进度并创建定时任务待下一次继续尝试
+			3.遍历ConsumeQueue，解析偏移量、字节长度等信息
+			4.从commitlog中寻找
+			5.根据消息重新构建新的消息对象，清除消息的延迟级别属性（ delayLevel ）、并恢复消息原先的消息主题与消息消费队列，消息的消费次数 reconsumeTimes 并不会丢失
+			6.将消息再次存入commitLog
+			7.更新延迟队列拉取进度
 	5.8 消息过滤机制
+		tag和sql92
+		1.消费者订阅消息主题与消息过滤表达式 构建订阅信息并加入到 Rebancelmpl中，以便 Rebalancelmpl 进行消息队列负载
+		2.根据订阅消息构建消息拉取标记，设置subExpression、classFilter 等与消息过滤相关
+		3.根据主题、消息过滤表达式构建订阅消息实体
+		4.构建消息过滤对象
+		5.根据偏移量拉取消息后，首先根据 ConsumeQueue 条目进行消息过滤
+		6.再从commitLog获取消息根据tag过滤
 	5.9 顺序消息
 		5.9.1 消息队列负载
+			顺序消息消费与并发消息消费的第一个关键区别，顺序消息在创建消息队列拉取任务时需要在 Broker 服务器锁定该消息队列。
 		5.9.2 消息拉取
+			如果消息处理队列未被锁定，则延迟 3s 后再将 PullRequest 对象放入到拉取任务中，如果该处队列是第一次拉取任务，则首先计算拉取偏移量，然后 向消息服务端拉取消息
 		5.9.3 消息消费
+			1.ConsumeMessageOrderlyService 启动方法
+				1.ConcurrentMap< MessageQueue, Process Queue> processQueueTable 将消息队列按照Broker 组织成 Map<String/*brokerName*,Set<MessageQueue＞＞ ，方便下一步向Broker发送锁定消息队列请求
+				2.向 Broker ( Master节点）发送锁定消息队列， 方法返回成功被当前消费者锁定的消息消费队列
+				3.将成功锁定的消息消费队列相对应的处理队列设为锁定状态，同时更新加锁时间
+				4.遍历当前处理队列中的消息消费队列，如果当前消费者不持有该消息队列的锁将处理队列锁状态设置为 false ，暂停该消息消费队列的消息拉取与消息消费
+			2.ConsumeMessageOrderlyService 提交消费任务
+				。。。
 		5.9.4 消息队列锁实现
+			1.REBALANCE_LOCK_MAX_LIVE_TIME ：锁最大存活时间 可以通过,-Drocketmq.broker.rebalance.lockMaxLiveTime 设置，默认为 60s
+			2.ConcurrentMap<String/ * group*/，ConcurrentHashMap MessageQueue, LockEntry>> mqLockTable ：锁容器，以消息消费组分组，每个消息队列对应一个锁对象，表示当前该消息队列被消费组中哪个消费者所持有
 6.消息过滤FilterServer
 	6.1 ClassFilter 运行机制
+		基于类模式过滤是指在 Broker 端运行或多个消息过滤服务器（ FilterServer），消息消费者 FilterServer 拉取消息， FilterServer 将消息消费者的拉取命令转发到 Broker
 	6.2 FilterServer 注册剖析
 	6.3 类过滤模式订阅机制
 	6.4 消息拉取
+	6.5小结：
+		优势1.filter和brocker运行在同一台机器，不会性能浪费
+		2.减少服务器端过滤压力
 7.rocketmq主从同步
 	7.1 RocketMQ 主从复制原理
-		7.1.1 HASe vice 整体工作机制
-		7.1.2 AcceptSocketSe vice 实现原理
-		7.1.3 oupTransferService 实现原理
+		7.1.1 HAService 整体工作机制
+			1.主服务器启动，并在特定端口上监昕从服务器的连接
+			2.从服务器主动连接主服务器，主服务器接收客户端的连接，并建立相关TCP连接
+			3.从服务器主动向主服务器发送待拉取消息偏移 ，主服务器解析请求并返回消息给从服务器
+			4.从服务器保存消息并继续发送新的消息同步请求
+		7.1.2 AcceptSocketService 实现原理
+			基于NIO服务端标准实现，然后为每一个连接创建一个 HAConnection对象。 HAConnection 将负责 -S 数据同步逻辑
+		7.1.3GoupTransferService 实现原理
+			GroupTransferService 主从同步阻塞实现，如果是同步主从模式，消息发送者将消息刷写到磁盘后，需要继续等待新数据被传输到从服务器，从服务器数据的复制是在另一个线程 HAConnection 中去拉取
 		7.1.4 HAClient 实现原理
+			HAClient 是主从同步 Slave 端的核心实现类
+			1.连接master服务器
+			2.进行心跳，5s
+			3.向服务器反馈偏移量
+			4.进行事件选择
+			5.处理从amster服务器传回的消息
 		7.1.5 HAConnection 实现原理
+			1.分配内存
+			2.NIO写入内存
+			3.处理并发为顺序
+			4.读取不到信息则处于半关闭状态
 	7.2 RocketMQ 读写分离机制
+		RocketMQ 读写分离与 他中间件的实现方式完全不同， RocketMQ 是消费者首先向主服务器发起拉取消息请求，然后主服务器返回一批消息，然后根据主服务器负载压力与主从同步情况，向从服务器建议下次消息拉取是从主服务器还是从从服务器拉取
 8.rocketmq事务消息
 	8.1 事务消息实现思想
+		rocketmq的实现原理基于两阶段提交和定时事务状态回查来决定消息最终是提交还是回滚
 	8.2 事务消息发送流程
+		1.为消息添加属性
+		2.根据消息发送解雇执行动作
+		3.结束事务。根据返回结果进行提交或回滚
 	8.3 提交或回滚事务
+		事务的回滚与提交的唯一差别是无须将消息恢复原主题，直接删除 prepare 消息即可，同样是将预处理消息存储在 RMQ_SYS_TRANS_OP_HALF _TOPIC 主题中，表示已处理过该消息
 	8.4 事务消息回查事务状态
+		定时任务
 9.rocketmq实战
