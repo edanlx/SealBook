@@ -134,34 +134,92 @@
 	4.2初识消息存储
 		消息存储实现类： org.apache.rocketmq.store.DefaultMessageStore ，它是存储模块里面最重要的一个类
 	4.3 消息发送存储流程
+		1.如果当前 Broker 停止工作或 Broker SLAVE 角色或当前 Rocket 不支持写入则拒绝消息写入；如果消息主题长度超 256 个字符、消息属性长度超过 65536 个字符将拒绝该消息写人
+		2.如果消息的延迟级别大于0，将消息的原主题名称与原消息队列 ID 存入消息属性中，用延迟消息主题 SCHEDULE_TOPIC 、消息队列 ID 更新原先消息的主题与队列是并发消息消费重试关键的一步。
+		3.获取当前可以写入 Commitlog文件
+		4.在写入 CornrnitLog 之前，先申请 putMessageLock ，也就是将消息存储到CornrnitLog 文件中是串行的
+		5.设置消息的存储时间，如 rnappedFile 空，表明$ {ROCKET_HOME}/store/cornrnitlog 目录下不存在任何文件，说明本次消息是第一次消息发送，用偏移量 创建第一个 commit 文件，文件为 00000000000000000000 ，如果文件创建失败，抛出 CREATE_MAPEDFILE_FAILED ，很有可能是磁盘空间不足或权限不够
+		6.将消息追加到 MappedFile 首先先获取 MappedFile 当前写指针，如果currentPos大于或等于文件大小则 明文件已写满，抛出 AppendMessageStatus.UNKNOWN_ERROR 如果 currentPos 小于文件大小，通过 slice()方法创建一个与 MappedFile 的共享内存区，并设置 position 为当前指针
+		7.创建全局唯一消息 ID ，消息 ID 16 字节
+		8.获取该消息在消息队列的偏移量。CommitLog中保存了当前所有消息队列的当前待写入偏移量。
+		9.根据消息、体的长度、主题的长度、属性的长度结合消息存储格式计算消息的总长度
+		10.存入CommitLog
+		11.将消息内容存储到 ByteBuffer 中，然后创建 AppendMessageResult
+		12.更新消息队列逻辑偏移量
+		13.释放锁
+		14.将数据刷盘
 	4.4 存储文件组织与内存映射
 		4.4.1 MappedFileQueue 映射文件队列
+			MappedFileQueue是MappedFile的管理容器，包括存储目录等信息
 		4.4.2 MappedFile 内存映射文件
-		4.4.3 T1「ansientStorePool
+			MappedFile是RocketMQ 存映射文件的具体实现，文件大小，文件名称等，即CommitLog
+		4.4.3 TransientStorePool
+			TransientStorePool 短暂的存储池 RocketMQ 单独 建一个 MappedByteBuffer 内存缓存池，用来临 存储数据，数据先写人该 存映射中，然后由 commit 线程定时将数据从该内存复制到与目的物理文件对应的内存映射中。(直接内存)
 	4.5 RocketMQ 存储文件
 		4.5.1 Commitlog 文件
+			该目录下的文件主要存储消息，其特点是每一条消息长度不相同
 		4.5.2 ConsumeQueue 文件
+			RocketMQ 基于主题订阅模式实现消息消费，消费者关心的是一个主题下的所有消息，但由于同一主题的消息不连续地存储在 commitlog 文件中，试想一下如果消息消费者直接从消息存储文件（commitlog）中去遍历查找订阅主题下的消息，效率将极其低下，RocketMQ 为了适应消息消费的检索需求，设计了消息消费队列文件（Consumequeue），该文件可以看成是 Commitlog 关于消息消费的“索引”文件，
 		4.5.3 Index 索引文件
+			消息消费队列 RocketMQ 为消息订阅构建的索引，提高根据主题与消息队列检索消息的速度，另外 RocketMQ 入了 Hash索引机制为消息建立索引， HashMap包含两个基本点 Hash 槽与 Hash 的链表结
 		4.5.4 checkpoint 文件
-	4.6 实时更新消息消费队列 索引文件
+			checkpoint 作用是记录 Comitlog、ConsumeQueue、Index文件的刷盘时间点，
+	4.6 实时更新消息消费队列与索引文件
 		4.6.1 根据消息更新 ConumeQueue
+			CommitLogDispatcherBuildConsumeQueue
 		4.6.2 根据消息更新 Index 索引文件
+			CommitLogDispatcherBuildlndex
 	4.7 消息队列与索引文件恢复
 		4.7.1 broker 正常停止文件恢复
+			1.从倒数第三个文件开始恢复
+			2.计算偏移量
+			3.遍历commitlog
+			4.更新MappedFileQueue的内存指针
+			5.删除offest之后的文件
 		4.7.2 Broker 异常停止文件恢复
+			1.判断文件格式
+			2.判断文件大小
+			3.判断时间戳
+			..
 	4.8 文件刷盘机制
 		4.8.1 Broker 同步刷盘
+			同步刷盘，指的是在消息追加到内存映射文件的内存中后，立即将数据从内存刷磁盘文件，由CommitLog的handleDiskFlush 方法实现
 		4.8.2 Broker 异步刷盘
+			首先将消息追加到直接内存
 	4.9 过期文件删除机制
+		默认72小时，不关注是否全部被消费
 5.rocketmq消息消费
 	5.1 RocketMQ 消息消费概述
 	5.2 消息消费者初探
+		消费者每次拉取默认32条消息
 	5.3 消费者启动流程
+		1.构建主题订阅信息 SubscriptionData 并加入到 Rebalancelmpl 的订阅消息中
+		2.初始化 MQClientlnstance Rebalancelmple(负载均衡)
+		3.初始化消息进度 如果消息消费是集群模式，那么消息进度保存在 Broker 上；如果是广播模式，那么消息消费进度存储在消费端
 	5.4 消息拉取
 		5.4.1 PullMessageService 实现机制
+			PullRequest
+				String consumerGroup ：消费者组
+				MssageQueue messageQueue：待拉取消费队列
+				ProcessQueue processQueue ：消息处理队列，从 Broker 拉取到的消息先存人ProccessQueue， 然后再提交到消费者消费线程池消费
+				long nextOffset ：待拉取的 MessageQueue 偏移量
+				Boolean lockedFirst ：是否被锁定
 		5.4.2 ProcessQueue 实现机制
+			ProccessQueue 核心属性
+				TreeMap<Long, MessageExt>msgTreeMap ：消息存储容器,键为消息在ConsumeQueue中的偏移量，MessageExt ：消息实体
+				TreeMap<Long, MessageExt> msgTreeMapTemp ：消息临时存储容器，键为消息在ConsumeQueue 中的偏移量，MessageExt 为消息实体，该结构用于处理顺序消息，消息消费线程从ProcessQueue的msgTreeMap 中取出消息前，先将消息临时存储在 msgTreeMapTemp
+				ReadWriteLock lockTreeMap = new ReentrantReadWriteLock（）：读写锁
+				AtomicLong msgCount: ProcessQueue 中总消息总数
+				volatile long queueOffsetMax：当前 ProcessQueue 中包 最大队列偏移
+				volatile boolean dropped = false ：当前 ProccesQueue 是否被丢弃
+				volatile long lastPullTimestamp ：上次开始消息拉取时间戳
+				volatile long lastConsumeTime stamp ：上次消息消费时间戳
 		5.4.3 消息拉取基本流程
+			1.消息拉取客户端消息拉取请求封装
+			2.消息服务器查找找并返回消息
+			3.消息拉取客户端处理返回的消息
 	5.5 消息队列负载与重新分布机制
+		提供5种负载均衡算法
 	5.6 消息消费过程
 		5.6.1 消息消费
 		5.6.2 消息确认（ACK)
