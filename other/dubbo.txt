@@ -1,0 +1,336 @@
+《深入理解apache dubbo与实战》
+1. 高性能RPC通信框架
+	1.1应用架构演进过程
+		1.1.1单体应用
+			1. JAVAEE时期
+			2. MVC时期
+		1.1.2分布式应用
+			1. 早期SOA
+				每个组件通过网络协议对外提供服务。网络协议可以是TCP。通信方式。初期的通信方式通常为XML,由于XML有大量的冗余信息，后来被JSON取代。特点是并行
+			2. 微服务
+				特点是交叉组件化
+			3. 云原生
+				可伸缩
+	1.2 Dubbo 简介
+		1.2.1 Dubbo的发展历史
+			2018年2月，阿里把Dubbo捐献给Apache基金会，进入Apache孵化器，尝试借助社区的力量来不断完善Dubbo生态。
+		1.2.2 Dubbo 是什么
+			Dubbo是阿里SOA服务化治理方案的核心框架，每天为2000多个服务提供30多亿次访问量支持
+			|分类|Dubbo的特性|
+			|--|--|
+			|面向接口代理的高性能RPC调用|提供高性能的基于代理的远程调用能力，服务以接口为粒度，为开发者屏蔽远程调用底层细节|
+			|服务自动注册与发现|支持多种注册中心服务，服务实例上下线实时感知|
+			|运行期流量调度|内置条件、脚本等路由策略，通过配置不同的路由规则，轻松实现灰度发布、 同机房优先等功能|
+			|智能负载均衡|内置多种负载均衡策略，智能感知下游节点健康状况，显著减少调用延迟， 提高系统吞吐量|
+			|高度可扩展能力|遵循微内核+插件的设计思想，所有核心能力如Protocol、Transport、Serialization被设计为扩展点，平等对待内置实现和第三方实现|
+			|可视化的服务治理与运维|提供丰富服务治理、运维工具：随时查询服务元数据、服务健康状态及调用统计，实时下发路由策略、调整配置参数|
+		1.2.3 Dubbo解决什么问题
+			Dubbo可以让开发者像调用本地的方法一样调用远程服务，而不需要显式在代码中指定是远程调用。整个过程对上层开发者透明，Dubbo会自动完成后续的所有操作，例如：负载均衡、路由、协议转换、序列化等。开发者只需要接收对应的调用结果即可。
+		1.2.4谁在使用Dubbo
+			阿里巴巴、网易、中国电信、金蝶和滴滴
+		1.2.5 Dubbo后续的规划
+			模块化、大流量、元数据、大规模、路由策略、异步化、生态扩展、生态互通、云原生、多语言支持
+	1.3 Dubbo总体大图
+		1.3.1 Dubbo总体分层
+			Dubbo的总体分为业务层(Biz)、RPC层、Remote三层。也可以分为API层和SPI层
+			Service和Config两层可以认为是API层，主要提供给API使用者
+			后面所有的层级合在一起，可以认为是SPI层，主要提供给扩展者使用
+		1.3.2 Dubbo核心组件
+			|层次名|作用|
+			|--|--|
+			|Service|业务层。包括业务代码的接口与实现，即开发者实现的业务代码|
+			|config|配置层。主要围绕ServiceConfig （暴露的服务配置）和ReferenceConfig （引用的服务配置）两个实现类展开，初始化配置信息。可以理解为该层管理了整个Dubbo的配置|
+			|proxy|服务代理层。在Dubbo中，无论生产者还是消费者，框架都会生成一个代理类，整个过程对上层是透明的。当调用一个远程接口时，看起来就像是调用了一个本地的接口一样， 代理层会自动做远程调用并返回结果，即让业务层对远程调用完全无感|
+			|registry|注册层。负责Dubbo框架的服务注册与发现。当有新的服务加入或旧服务下线时，注册中心都会感知并通知给所有订阅方。整个过程不需要人工参与|
+			|cluster|集群容错层。该层主要负责：远程调用失败时的容错策略（如失败重试、快速失败）； 选择具体调用节点时的负载均衡策略（如随机、一致性Hash等）；特殊调用路径的路由策略（如某个消费者只会调用某个IP的生产者）|
+			|monitor|监控层。这一层主要负责监控统计调用次数和调用时间等|
+			|protocol|远程调用层。封装RPC调用具体过程，它可能是执行一个本地的接口实现，也可能是一个远程的实现，还可能一个集群实现|
+			|exchange|信息交换层。建立Request-Response模型，封装请求响应模式，如把同步请求转化为异步请求|
+			|transport|网络传输层。把网络传输抽象为统一的接口，如Mina和Netty虽然接口不一样，但是Dubbo在它们上面又封装了统一的接口。用户也可以根据其扩展接口添加更多的网络传输方式|
+			|Serialize|序列化层。如果数据要通过网络进行发送，则需要先做序列化，变成二进制流。序列化层负责管理整个框架网络传输时的序列化/反序列化工作|
+		1.3.3 Dubbo总体调用过程
+			首先，服务器端（服务提供者）在框架启动时,会初始化服务实例
+			通过Proxy组件调用具体协议（Protocol ）
+			把服务端要暴露的接口封装成Invoker
+			然后转换成Exporte
+			最后通过Registry把服务元数据注册到注册中心
+2. 开发第一款Dubbo应用程序
+	2.1配置开发环境
+	2.2基于XML配置实现
+	2.3基于注解实现
+	2.4基于API实现
+		在非spring场景下运行
+	2.5构建并运行
+3. Dubbo注册中心
+	3.1注册中心概述
+		3.1.1工作流程
+			服务提供者启动时，会向注册中心写入自己的元数据信息，同时会订阅配置元数据信息
+			消费者启动时，也会向注册中心写入自己的元数据信息，并订阅服务提供者、路由和配置元数据信息。
+			服务治理中心(dubbo-admin)启动时，会同时订阅所有消费者、服务提供者、路由和配置元数据信息。
+			当有服务提供者离开或有新的服务提供者加入时，注册中心服务提供者目录会发生变化，变化信息会动态通知给消费者、服务治理中心。
+			当消费方发起服务调用时,会异步将调用、统计信息等上报给监控中心 dubbo-monitor simple 。
+		3.1.2数据结构
+			常见zookeeper、redis、nacos
+		3.1.3 ZooKeeper 原理概述
+			Dubbo使用ZooKeeper作为注册中心时，只会创建持久节点和临时节点两
+
+			/dubbo/com.foo.BarService/providers是服务提供者在ZooKeeper注册中心的路径示例， 是一种树形结构，该结构分为四层
+			1.树的根节点是注册中心分组。分组值来自用户配置<dubbo:registry>中的 group 属性，默认是/dubbo
+			2.服务接口下包含4类子目录，分别是providers>这个路径是持久节点。
+			3.服务提供者目录(/dubbo/service/providers)下面包含的接口有多个服务者URL元数据信息
+			4.服务消费者目录(/dubbo/service/consumers)下面包含的接口有多个消费者URL元数据信息
+			5.路由配置目录(/dubbo/service/routers下面包含多个用于消费者路由策略URL元数据信息
+			6.动态配置目录(/dubbo/service/configurators))下面包含多个用于服务者动态配置URL元数据信息
+			在Dubbo框架启动时，会根据用户配置的服务，在注册中心中创建4个目录，在providers和consumers目录中分别存储服务提供方、消费方元数据信息，主要包括IP、端口、权重和应用名等数据。
+			|目录名称|存储值样例|
+			|/dubbo/service/providers|dubbo://192.168.0.1.20880/com.alibaba.demo.Service?key=value&...|
+			|/dubbo/service/consumers|consumer://192.168.0.1.5002/com.alibaba.demo.Service?key=value&...|
+			|/dubbo/service/routers|condition://0.0.0.0/com.alibaba.demo.Service?category=routers&key=value&..|
+			|/dubbo/service/configurators|override://0.0.0.0/com.alibaba.demo.Service?category=configurators&key=value&...|
+		3.1.4 Redis原理概述
+			Redis使用了 key/Map结构实现了这个需求，Root、Service、Type组合成Redis的key。Redis的value是一个Map结构
+	3.2订阅/发布
+		3.2.1 ZooKeeper 的实现
+			1.发布的实现
+				服务提供者和消费者都需要把自己注册到注册中心。ZooKeeper发布代码非常简单，只是调用了ZooKeeper的客户端库在注册中心上创建一个目录
+			2.订阅的实现
+				ZooKeeper注册中心采用的是“事件通知” + “客户端拉取”的方式，客户端在第一次连接上注册中心时，会获取对应目录下全量的数据。并在订阅的节点上注册一个watcher
+		3.2.2 Redis 的实现
+			1 .总体流程
+				订阅方首次连接上注册中心，会获取全量数据并缓存在本地内存中。后续的服务列表变化则通过publish/subscribe通道广播
+			2.发布的实现
+				服务提供者和消费者都会使用注册功能
+			3.订阅的实现
+				服务消费者、服务提供者和服务治理中心都会使用注册中心的订阅功能。在订阅时，如果是首次订阅，则会先创建一个Notifier内部类，这是一个线程类，在启动时会异步进行通道的订阅。在启动Notifier线程的同时，主线程会继续往下执行，全量拉一次注册中心上所有的服务信息。
+	3.3缓存机制
+		消费者或服务治理中心获取注册信息后会做本地缓存，磁盘上也会持久化一份文件，通过file对象引用。在AbstractRegistry抽象类中private final ConcurrentMap<URL> Map<Stringj List<URL>>> notified = new ConcurrentHashMap<URLMap<String> List<URL>>>();
+		3.3.1缓存的加载
+			在服务初始化的时候，AbstractRegistry构造函数里会从本地磁盘文件中把持久化的注册数据读到Properties对象里，并加载到内存缓存中
+		3.3.2缓存的保存与更新
+			缓存的保存有同步和异步两种方式
+	3.4重试机制
+		FailbackRegistry抽象类中定义了一个ScheduledExecutorService,每经过固定间隔(默认为5秒)调用FailbackRegistry#retry()方法
+		|集合名称|集合介绍|
+		|--|--|
+		|Set failedRegistered|发起注册失败的URL集合|
+		|Set failedUnregistered|取消注册失败的URL集合|
+		|ConcurrentMap> failedSubscribed|发起订阅失败的监听器集合|
+		|ConcurrentMap> failedUnsubscribed|取消订阅失败的监听器集合|
+		|ConcurrentMap» failedNotified|通知失败的URL集合|
+	3.5设计模式
+		3.5.1模板模式
+			整个注册中心的逻辑部分使用了模板模式
+			AbstractRegistry实现了 Registry接口中的注册、订阅、查询、通知等方法
+			FailbackRegistry又继承了 AbstractRegistry,重写了父类的注册、订阅、查询和通知等方法，并且添加了重试机制。此外，还添加了四个未实现的抽象模板方法
+		3.5.2工厂模式
+			所有的注册中心实现，都是通过对应的工厂创建的。
+4. Dubbo扩展点加载
+	4.1加载机制概述
+		4.1.1 Java SPI
+			Java SPI使用了策略模式，一个接口多种实现。我们只声明接口，具体的实现并不在程序中直接确定，而是由程序之外的配置掌控，用于具体实现的装配。具体步骤如下
+				1.定义一个接口及对应的方法。
+				2.编写该接口的一个实现类。
+				3.在META-INF/services/目录下，创建一个以接口全路径命名的文件，如com.test.spi.PrintService
+				4.文件内容为具体实现类的全路径名，如果有多个，则用分行符分隔。
+				5.在代码中通过java.util.ServiceLoader来加载具体的实现类。
+				```
+				ServiceLoader<PrintService> serviceServiceLoader = ServiceLoader.load(PrintService.class);
+				```
+		4.1.2扩展点加载机制的改进
+			Dubbo SPI自己实现了 IoC和AOP机制。一个扩展点可以通过setter方法直接注入其他扩展的方法。避免实例化不需要的类(传统的则会全部初始化)
+			为接口添加@SPI注解
+			ExtensionLoader.getExtensionLoader(PrintService.class)getDefaultExtension();
+		4.1.3扩展点的配置规范
+			Dubbo SPI和Java SPI类似，需要在META-INF/dubbo/下放置对应的SPI配置文件
+			Dubbo SPI配置规范
+			|规范名|规范说明|
+			|--|--|
+			|SPI配置文件路径|META-INF/services/> META-INF/dubbo/> META-INF/dubbo/intemal/|
+			|SPI配置文件名称|全路径类名|
+			|文件内容格式|key=value方式，多个用换行符分隔|
+		4.1.4扩展点的分类与缓存
+			Dubbo SPI可以分为Class缓存、实例缓存。这两种缓存又能根据扩展类的种类分为普通扩展类、包装扩展类（Wrapper类）、自适应扩展类（Adaptive类）等。
+				Class缓存：Dubbo SPI获取扩展类时，会先从缓存中读取。如果缓存中不存在，则加载配置文件，根据配置把Class缓存到内存中，并不会直接全部初始化。
+				实例缓存：基于性能考虑，Dubbo框架中不仅缓存Class,也会缓存Class实例化后的对象。每次获取的时候，会先从缓存中读取，如果缓存中读不到，则重新加载并缓存起来。这也是为什么Dubbo SPI相对Java SPI性能上有优势的原因，因为Dubbo的SPI缓存的Class并不会全部实例化，而是按需实例化并缓存，因此性能更好。
+			被缓存的Class和对象实例可以根据不同的特性分为不同的类别
+				1.普通扩展类。最基础的，配置在SPI配置文件中的扩展类实现。
+				2.包装扩展类。这种Wrapper类没有具体的实现，只是做了通用逻辑的抽象，并且需要在构造方法中传入一个具体的扩展接口的实现。属于Dubbo的自动包装特性
+				3.自适应扩展类。一个扩展接口会有多种实现类，具体使用哪个实现类可以不写死在配置或代码中，在运行时，通过传入URL中的某些参数动态来确定
+				4.其他缓存，如扩展类加载器缓存、扩展名缓存等
+		4.1.5扩展点的特性
+			1.自动包装
+				ExtensionLoader在加载扩展时，如果发现这个扩展类包含其他扩展点作为构造函数的参数，则这个扩展类就会被认为是Wrapper类
+			2.自动加载
+				除了在构造函数中传入其他扩展实例，我们还经常使用setter方法设置属性值。如果某个扩展类是另外一个扩展点类的成员属性，并且拥有setter方法，那么框架也会自动注入对应的扩展点实例。
+			3.自适应
+				在Dubbo SPI中，我们使用@Adaptive作为注解，可以动态地通过URL中的参数来确定要使用哪个具体的实现类。从而解决自动加载中的实例注入问题。
+				```
+				@SPI(nnetty")
+				public interface Transporter{
+					@Adaptive({Constants SERVER_KEY, Constants.TRANSPORTER_KEY})
+					Server bind(URL url, ChannelHandler handler) throws RemotingException;
+				}
+				```
+				当外部调用Transporter#bind方法时,会动态从传入的参数“URL”中提取key参数“server” 的value值,如果未匹配上则提取下一个。具体实现类为代理模式，生成Transporter$Adaptive类
+			4.自动激活
+				使用@Activate注解，可以标记对应的扩展点默认被激活启用。该注解还可以通过传入不同的参数，设置扩展点在不同的条件下被自动激活。主要的使用场景是某个扩展点的多个实现类需要同时启用
+	4.2扩展点注解
+		4.2.1扩展点注解：@SPI
+			@SPI注解可以使用在类、接口和枚举类上，Dubbo框架中都是使用在接口上。它的主要作用就是标记这个接口是一个Dubbo SPI接口，即是一个扩展点。运行时需要通过配置找到具体的实现类
+		4.2.2扩展点自适应注解：@Adaptive
+			通过@Adaptive注解中的两个key去寻找实现类的名称，根据URL中的参数，尝试获取真正的扩展点实现类，最终会调用具体扩展点实现类的#bind方法
+		4.2.3扩展点自动激活注解：@Activate
+			|参数名|效果|
+			|--|--|
+			|String[] group()|URL中的分组如果匹配则激活，则可以设置多个|
+			|String[] value()|查找URL中如果含有该key值，则会激活|
+			|String[] before()|填写扩展点列表，表示哪些扩展点要在本扩展点之前|
+			|String[] after()|同上，表示哪些需要在本扩展点之后|
+			|int order()|整型，直接的排序信息|
+	4.3 ExtensionLoader 的工作原理
+		ExtensionLoader是整个扩展机制的主要逻辑类，在这个类里面卖现了配置的加载、扩展类缓存、自适应对象生成等所有工作。
+		4.3.1工作流程
+			ExtensionLoader 的逻辑入口可以分为getExtension、getAdaptiveExtension、getActivateExtension三个。分别是获取普通扩展类、获取自适应扩展类、获取自动激活的扩展类。
+				getExtension->调用createExtension创建扩展类对象->加载扩展类配置信息->实例化扩展类->查找匹配的包装类，并注入扩展类实例
+				getAdaptiveExtension->加载扩展类配置信息->调用createAdaptiveExtension创建自适应类->生成自适应代码->获取类加载器、编译器、编译自适应类
+				getActivateExtension->初始化所有扩展类的集合->根据URL条件激活所有符合@Activate,并排序->根据用户URL配置顺序，调整扩展类顺序
+		4.3.2 getExtension 的实现原理
+			先检查缓存中是否有现成的数据
+			没有则调用createExtension开始创建，检查缓存中是否有配置信息
+			如果不存在扩展类，则会从 META-INF/services/> META-INF/dubbo/、META-INF/dubbo/internal/读取所有的配置文件
+			```
+			// 先尝试从缓存中获取classes,没有则调用
+			Map<Stringj Class<?>> classes = cachedClasses.get();
+			if (classes == null) {
+				classes = loadExtensionClasses();
+				cachedClasses.set(classes);
+			)
+
+			private Map<StringJ Class<?>> loadExtensionclasses() {
+				// 开始加载Class
+				final SPI defaultAnnotation = type.getAnnotation(SPI.class);
+				if (defaultAnnotation != null) (
+					// 检查是否有SPI注解。如果有，则获取注解中填写的名称，并缓存为默认实现名,如@SPI("impl")会保存impl为默认实现
+					...
+				}
+				// 加载路径下面的SPI配置文件
+				loadDirectory(extensionClassesJ DUBBO_INTERNAL_DIRECTORY, type.getName());
+				...
+			}
+
+
+			// loadDirectory方法加载配置
+			private void loadDirectory(Map<String? Class<?>> extensionclasses,String dir, String type) {
+				// 通过 getResources 或 getSystemResources得到配置文件
+				if (classLoader != null) {
+					urls = classLoader.getResources(fileName);
+				} else {
+					urls = ClassLoader.getSystemResources(fileName);
+				}
+				// 循环遍历urls,解析字符串，得到扩展实现类，并加入缓存
+				loadResource(extensionclasses, ClassLoader, resourceURL);
+			}
+			```
+			加载完扩展点配置后，再通过反射获得所有扩展实现类并缓存起来。注意，此处仅仅是把Class加载到JVM中，但并没有做Class初始化
+			扩展类的缓存分类
+				如果是自适应类(Adaptive )则缓存
+				如果是包装扩展类(Wrapper ),则直接加入包装扩展类的Set集合
+				如果有自动激活注解(Activate ),则缓存到自动激活的缓存中
+				不是自适应类型，也不是包装类型，剩下的就是普通扩展类了，也会缓存起来
+			根据传入的name找到对应的类并通过Class.forName方法进行初始化
+			injectExtension方法总体实现了类似Spring的IoC机制
+		4.3.3 getAdaptiveExtension 的实现原理
+			生成代码的逻辑主要分为7步，具体步骤如下：
+			1.生成package、import、类名称等头部信息。此处只会引入一个类ExtensionLoader。 为了不写其他类的import方法，其他方法调用时全部使用全路径。类名称会变为"接口名称+$Adaptive" 的格式。例如：Transporter 接口 会生成 Transporter$Adpative。
+			2.遍历接口所有方法，获取方法的返回类型、参数类型、异常类型等。为第3步判断是否为空值做准备。
+			3.生成参数为空校验代码，如参数是否为空的校验。如果有远程调用，还会添加Invocation参数为空的校验。
+		4.3.4 @Activate 的实现原理
+		4.3.5 ExtensionFactory 的实现原理
+	4.4扩展点动态编译的实现
+		4.4.1总体结构
+		4.4.2 Javassist动态代码编译
+		4.4.3 JDK动态代码编译
+5. Dubbo启停原理解析
+	5.1配置解析
+		5.1.1 基于schema设计解析
+		5.1.2 基于XML配置原理解析
+		5.1.3基于注解配置原理解析
+	5.2服务暴露的实现原理
+		5.2.1配置承载初始化
+		5.2.2远程服务的暴露机制
+		5.2.3本地服务的暴露机制
+	5.3服务消费的实现原理
+		5.3.1单注册中心消费原理
+		5.3.2多注册中心消费原理
+		5.3.3直连服务消费原理
+	5.4优雅停机原理解析
+6. Dubbo远程调用
+	6.1 Dubbo调用介绍
+	6.2 Dubbo协议详解
+	6.3编解码器原理
+		6.3.1 Dubbo协议编码器
+		6.3.2 Dubbo协议解码器
+	6.4 Telnet调用原理
+		6.4.1 Telnet指令解析原理
+		6.4.2 Telnet实现健康监测
+	6.5 ChannelHandler
+		6.5.1 核心Handler和线程模型
+		6.5.2 Dubbo 请求响应 Handler
+		6.5.3 Dubbo 心跳 Handler
+7. Dubbo集群容错
+	7.1 Cluster 层概述
+	7.2容错机制的实现
+		7.2.1容错机制概述
+	7.3 Directory 的实现
+		7.3.1 总体实现
+		7.3.2 RegistryDirectory 的实现
+	7.4路由的实现
+		7.4.1路由的总体结构
+		7.4.2条件路由的参数规则
+		7.4.3条件路由的实现
+		7.4.4文件路由的实现
+		7.4.5脚本路由的实现
+	7.5负载均衡的实现
+		7.5.1包装后的负载均衡
+		7.5.2负载均衡的总体结构
+		7.5.3 Random负载均衡
+		7.5.4 RoundRobin 负载均衡
+		7.5.5 LeastActive 负载均衡
+		7.5.6 一致性Hash负载均衡
+	7.6 Merger的实现
+		7.6.1总体结构
+		7.6.2 MergeableClusterlnvoker 机制
+8. Dubbo扩展点
+	8.1 Dubbo核心扩展点概述
+		8.1.1扩展点的背景
+		8.1.2扩展点整体架构
+	8.2 RPC层扩展点
+		8.2.1 Proxy层扩展点
+		8.2.2 Registry 层扩展点
+		8.2.3 Cluster层扩展点
+	8.3 Remote层扩展点
+		8.3.1 Protocol 层扩展点
+		8.3.2 Exchange 层扩展点
+		8.3.3 Transport 层扩展点
+		8.3.4 Serialize 层扩展点
+	8.4其他扩展点
+9. Dubbo高级特性
+	9.1 Dubbo高级特性概述
+	9.2服务分组和版本
+	9.3参数回调
+	9.4隐式参数
+	9.5异步调用
+	9.6泛化调用
+	9.7上下文信息
+	9.8 Telnet 操作
+	9.9 Mock 调用
+	9.10结果缓存
+10. Dubbo过滤器
+	10.1 Dubbo过滤器概述
+		10.1.1过滤器的使用
+		10.1.2过滤器的总体结构
+	10.2过滤器链初始化的实现原理
+	10.3服务提供者过滤器的实现原理
+	10.4消费者过滤器的实现原理
+11. Dubbo注册中心扩展实践
+12. Dubbo服务治理平台
