@@ -239,21 +239,40 @@
 				不是自适应类型，也不是包装类型，剩下的就是普通扩展类了，也会缓存起来
 			根据传入的name找到对应的类并通过Class.forName方法进行初始化
 			injectExtension方法总体实现了类似Spring的IoC机制
+			getExtension是其他两种Extension的基石
 		4.3.3 getAdaptiveExtension 的实现原理
 			生成代码的逻辑主要分为7步，具体步骤如下：
 			1.生成package、import、类名称等头部信息。此处只会引入一个类ExtensionLoader。 为了不写其他类的import方法，其他方法调用时全部使用全路径。类名称会变为"接口名称+$Adaptive" 的格式。例如：Transporter 接口 会生成 Transporter$Adpative。
 			2.遍历接口所有方法，获取方法的返回类型、参数类型、异常类型等。为第3步判断是否为空值做准备。
 			3.生成参数为空校验代码，如参数是否为空的校验。如果有远程调用，还会添加Invocation参数为空的校验。
-		4.3.4 @Activate 的实现原理
+			4.生成默认实现类名称。如果©Adaptive注解中没有设定默认值，则根据类名称生成,如YyylnvokerWrapper会被转换为yyy.invoker.wrappero生成的规则是不断找大写字母，并把它们用.连接起来。得到默认实现类名称后，还需要知道这个实现是哪个扩展点的。
+			5.生成获取扩展点名称的代码。根据@Adaptive注解中配置的key值生成不同的获取代码，例如：如果是@Adaptive(nprotocoln),则会生成 url.getProtocol()
+			6.生成获取具体扩展实现类代码。最终还是通过getExtension(extName)方法获取自适应扩展类的真正实现。如果根据URL中配置的key没有找到对应的实现类，则会使用第4步中生成的默认实现类名称去找。
+			7.生成调用结果代码。
+		4.3.4 @Activate的实现原理
+			1.检查缓存
+			2.遍历整个@Activate注解，根据传入URL匹配条件，得到所有符合激活条件的扩展类实现。然后根据@入"浦3七。中配置的before、after、order等参数进行排序
+			3.遍历所有用户自定义扩展类名称，根据用户URL配置的顺序
+			4.返回所有自动激活类集合。
 		4.3.5 ExtensionFactory 的实现原理
+			AdaptiveExtensionFactory,还有 SpiExtensionFactory 和 SpringExtensionFactory两个工厂。也就是说，我们除了可以从Dubbo SPI管理的容器中获取扩展点实例，还可以从Spring容器中获取。
+			SpringExtensionFactory的实现，该工厂提供了保存Spring上下文的静态方法，可以把Spring上下文保存到Set集合中,当调用getExtension获取扩展类时，会遍历Set集合中所有的Spring上下文，先根据名字依次从每个Spring容器中进行匹配
 	4.4扩展点动态编译的实现
 		4.4.1总体结构
+			Javassist编译器将作为默认编译器
 		4.4.2 Javassist动态代码编译
+			与cglib类似生成class文件
 		4.4.3 JDK动态代码编译
+			JdkCompiler是Dubbo编译器的另一种实现，使用了 JDK自带的编译器
 5. Dubbo启停原理解析
 	5.1配置解析
 		5.1.1 基于schema设计解析
+			Dubbo框架也直接集成了 Spring的能力，利用了Spring配置文件扩展出自定义的解析方式
 		5.1.2 基于XML配置原理解析
+			```
+				// 生成springBean定义
+				RootBeanDefinition beanDefinition = new RootBeanDefinition();
+			```
 		5.1.3基于注解配置原理解析
 	5.2服务暴露的实现原理
 		5.2.1配置承载初始化
@@ -267,6 +286,7 @@
 6. Dubbo远程调用
 	6.1 Dubbo调用介绍
 	6.2 Dubbo协议详解
+		其协议设计参考了现有TCP/IP协议，框架内部会创建Request对象，这个时候会被分配一个唯一 id
 	6.3编解码器原理
 		6.3.1 Dubbo协议编码器
 		6.3.2 Dubbo协议解码器
