@@ -1,0 +1,157 @@
+1.微服务的发展史
+1.1从单体架构到分布式架构的演进
+1.1.1单体架构
+1.1.2集群及垂直话
+1.1.3SOA
+1.1.4微服务架构
+1.2微服务架构带来的挑战
+1.2.1微服务架构的优点
+1.2.2微服务架构面临的挑战
+1.3如何实现微服务架构
+1.3.1微服务架构图
+1.3.2微服务架构下的技术挑战
+2.微服务解决方案之spring cloud
+2.1什么是springcloud
+2.2springcloud版本介绍
+2.3springcloud规范下的实现
+2.4springcloud netflix
+2.5spring cloud alibaba
+2.5.1spring cloud alibaba的优势
+spring cloud在webservice方面的服务治理缺失，而dubbo补足了相关内容，之后被整合进springcloud alibaba中，并经过双11的大规模挑战
+2.5.2spring cloud alibaba的版本
+3.spring cloud的核心之sping boot
+3.1重新认识spring boot
+3.1.1spring IOC/DI
+3.1.2bean装配的升级
+注解的广泛使用
+3.1.3spring boot的价值
+3.2快速构建spring boot应用
+3.3spring boot自动装配的原理
+3.3.1自动装配的实现
+3.3.2EnableAutoConfiguration
+3.3.3AutoConfigurationImportSelector
+3.3.4自动装配远离分析
+3.3.5@Conditional条件装配
+3.3.5.1@Conditional的使用
+3.3.5.2Springboot中的@Conditonal
+3.3.6spring-autoconfigure-metadata
+3.4手写实现一个Starter
+3.4.1Starter的命名规范
+3.4.2实现基于Redis的Starter
+4.微服务架构下的服务治理
+4.1如何理解Apache Dubbo
+4.2Apache Dubbo实现远程通信
+4.3SpringBoot集成Apache Dubbo
+4.4快速上手zookeeper
+4.4.1zookeeper的安装
+4.4.2zookeeper的数据结构
+4.4.3zookeeper的特性
+4.4.4watcher机制
+4.4.5常见引用场景分析
+4.5apache Dubbo集成Zookeeper实现服务注册
+4.5.1Apache Dubbo集成Zookeeper实现服务注册的步骤
+4.5.2zookeeper注册中心的原理
+4.6实战Dubbo SpringCLoud
+4.6.1实现Dubbo服务提供方
+4.6.2实现dubbo服务调用方
+4.7Apache Dubbo的高级应用
+4.7.1集群容错
+4.7.2负载均衡
+4.7.3服务降级
+Dubbo提供通过Mock配置实现服务降级
+4.7.4主机绑定规则
+4.8Apache Dubbo核心源码分析
+4.8.1Dubbo源码构建
+4.8.2Dubbo的核心之SPI
+ExtensionLoader.getExtensionLoader(XXX.class).getAdaptiveExtension()
+ExtensionLoader.getExtensionLoader(XXX.class).getExtension(name)
+ExtensionLoader.getExtensionLoader(XXX.class).getActivateExtension()
+分别是自适应扩展点、指定名称扩展点、激活扩展点
+4.8.2.1java SPI扩展实现
+4.8.2.2Dubbo自定义协议扩展点
+4.8.2.3Dubbo SPI扩展点源码分析
+4.8.3无处不在的自适应扩展点
+4.8.4dubbo中的Ioc和AOP
+4.8.4.1Ioc
+4.8.4.2AOP
+4.8.5Dubbo和spring完美集成的原理
+4.8.5.1@DubboComponentScan注解解析
+4.8.5.2ServiceAnnotationBeanPostProcessor
+5.服务注册与发现
+5.1什么是ALibaba Nacos
+5.2Nacos的基本使用
+5.2.1Nacos的安装
+5.2.2Nacos服务注册发现和API说明
+5.2.3Nacos集成Spring Boot实现服务注册与发现
+5.3Nacos的高可用部署
+5.3.1安装环境要求
+5.3.2安装包及环境准备
+5.3.3集群配置
+5.3.4配置mysql数据库
+5.3.5启动Nacos服务
+5.4Dubbi使用Nacos实现注册中心
+5.5Spring CLoud Alibaba Nacos Discovery
+5.5.1服务端开发
+5.5.2消费端开发
+5.6Nacous实现远离分析
+5.6.1Nacos架构图
+	Provider APP:服务提供者
+	Consumer APP:服务消费者
+	Name Server:通过DNS的方式实现Nacos高可用集群的服务路Raft算法
+	Nacos server:Nacos服务提供者
+	Nacos Console:控制台
+	整体来说,服务提供者通过VIP访问Nacos Server高可用集群，基于Open API完成服务的注册和服务的查询。Nacos Server本身可以支持主备模式，所以底层会采用数据一致性算法完成从节点的数据同步
+5.6.2注册中心的原理
+	1.服务提供方集群：使用OpenAPI发起服务注册
+	2.服务提供方集群:简历心跳机制,检测服务状态
+	3.服务消费方集群:查询服务提供方实例列表
+	4.服务消费方集群:定是任务，每10秒拉取一次
+	5.Nacos Server:检测到服务提供者异常，基于UDP洗衣推送更新
+5.7深入解读Nacos源码
+5.7.1Springcoud什么时候完成服务注册
+	Spring-CLoud-Common包中有一个类org.springframework.cloud.client.serviceregidtry.ServiceRegistry。它事故spring cloud提供的服务注册的组建。该接口有一个实现类是com.alibaba.cloud.nacos.registry.NacosServiceRegistry。基于子佛那个装配进行实现。
+	Spring cloud alibab dubbo alibaba集成Nacos的实现亦是如此
+5.7.2NacosServiceRegistry的实现
+	其中包含心跳检测，beatReactor.addBeatInfo实现的心跳机制。所谓心跳机制就是客户端(此处为服务提供者)通过schedule定时向服务端发送一个数据包，然后启动一个简称不断检测服务端的回应。Nacos服务端根据心跳包更新状态。
+5.7.3从源码层面分析Nacos服务注册的原理
+	对于服务注册，对外提供的服务借口地址为nacos/v1/ns/instance，实现代码在nacos-naming模块下的InstanceCOntroller中。从请求参数中活的serviceName(服务名)和namespaceId(命名空间Id)。调用registerInstacne实例。它的主要逻辑是初始化一个serviceMap，一个ConcurrentHashMap。根据namespaceId，serviceNmae从缓存中获取Service实现，如果为空则保存。
+	收到请求后1.保存到Map中2。是有那个定时任务对当前服务下的所有实例简历心跳检测机制。3.基于数据一致性i下而已降服务数据进行同步。
+5.7.4解密服务提供者查询
+	根据namespaceId、serviceName获得service实例
+	从service实例中基于srvIps得到所有服务提供者的实例信息
+	遍历组装JSON字符串并返回
+5.7.5fenxinacos服务地址动态感知原理
+	客户端发起事件订阅后，在HostReactor中有一个UpdateTask线程，每10秒发送一次Pull情趣，获取服务端最新的地址列表
+	对于服务端，它和服务提供者的实例之间维持了心跳检测，一旦服务提供者出现异常，则会发送一个Push消息给Nacos客户端，也就是服务消费者。
+	服务消费者收到请求之后，更新本地服务地址列表。
+6.nacosConfig实现统一配置管理
+6.1Nacos配置中心介绍
+6.2Nacos集成SpringBoot实现统一配置
+6.2.1项目准备
+6.2.2启动Nacos Server
+6.2.3创建配置
+6.2.4启动服务并测试
+6.3Spring cloud Alibaba Nacos Config
+6.3.3Nacos Config的基本应用
+6.3.2动态更新配置
+在main方法中启动完spring容器，会进入while(true)循环不断读取Info属性
+6.3.3基于Data ID配置YAML的文件扩展名
+nacos Config从Server中加载配置时，会匹配Data ID，在Spring cloud nacos的实现中，Data ID默认规则是${prefix}-${springprofile-active}.${file-extension}
+6.3.4不同环境的配置切换
+6.3.5nacos config自定义namespace和group
+namespace是不同的区域，group是不同的
+策略，dadaId也可以自行定义
+6.4nacos config实现原理解析
+6.4.1配置的CRUD
+6.4.2动态监听之Pull or Push
+nacos 采用的是pull模式，但并不是简单的pull，而是一种长轮询机制，它结合push和pull两者的优势
+6.5spring cloud如何实现配置的加载
+6.5.1propertySourceBootstrapConfiguration
+6.5.2PropertySourceLocator
+6.6nacos Config核心源码解析
+loadApplicationConfiguration－>loadNacosDataIfPresent->loadNacosPropertySource->build->loadNacosData。最终基于configService.getConfig从nacos配置中心加载配置进行填充。在NacosCOntextRefresh类中。它里面实现了一个ApplicationReaduEvent事件监听，也就是上下文已经准备完毕时触发这个事件。当监听到时间之后会调用registerNacosListenersForApplication方法来实现Nacos时间监听的注册。当收到配置变更的回调时会通过applicationContext。publishEvent发布一个REfreshEvent事件而这个事件的监听实现在RefreshEventLIstener类中
+保存进mysq
+7.sentenial
+8.seata
+9.rocketmq
+10.gateway
