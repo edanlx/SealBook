@@ -35,15 +35,23 @@
 			selete
 				InnoDB会根据一下两个条件检查每行记录:
 				a.InnoDB只查找版本早于当前事务版本的数据行(也就是，行的系统版本号小于或等于事务的系统版本号)，这样可以确保实物读取的行，要么是在事务开始之前已经存在的，要么是事务自身插入或者修改过的。
-				b.行的删除版本要么未定义，要么大于当前事务版本号。这可以确保实物读取到的行，在事务开始之前未被删除。
+				b.行的删除版本要么未定义，要么大于当前事务版本号。这可以确保事务读取到的行，在事务开始之前未被删除。
+				create_version <= current_version < delete_version
 			insert
 			 	InnoDB为新插入的每一行保存当前系统版本号作为行版本号
 			delete
 				InnoDB为删除的每一行保存当前系统版本号作为删除标识
 			update
 				InnoDB为插入一行新纪录，保存当前系统版本号作为行版本号,同时保存当前系统版本号到原来的行作为删除标识(注意新增和删除是两列版本号)
+		当事务A开启后，事务b再开启，事务b此时插入id=1，但是此时事务a依然查不到，但是如果更新id=1则成功
 		InnoDB的MVCC只能解决部分幻读问题，如果某事务在当前事务之前开始则会存在问题,以复杂的修改为例,原数据的创建版本未发生变化，但因为多出来一条数据，如果创建版本小于当前事务则会被查询出来，而原数据因为select.b规则所以不会被查询出来
+		对于select（快照读）不会产生幻读，但对于update（当前读）会产生幻读
 		【TODO】
+		在MySQL 8.0.3 中，tx_isolation 变量被 transaction_isolation 
+		SELECT @@global.tx_isolation;
+		SELECT @@session.tx_isolation;
+		SET [SESSION | GLOBAL] TRANSACTION ISOLATION LEVEL {READ UNCOMMITTED | READ COMMITTED | REPEATABLE READ | SERIALIZABLE}
+		【新版默认REPEATABLE-READ】
 存储引擎
 	在文件系统中，mysql将每个数据库(schema)保存位数据目录下的一个子目录。创建表时，mysql会在数据库子目录下创建一个和表名相同名的.frm文件保存表的定义。
 	使用show table status命令可以查询表的信息。
