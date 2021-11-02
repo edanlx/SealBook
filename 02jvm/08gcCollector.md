@@ -32,7 +32,7 @@ Concurrent Mark Sweep跨时代的老年代回收器，后面的垃圾回收器�
 
 * **初始标记(STW)** ：记录下gc roots直接能引用的对象，速度很快
 * **并发标记** ：沿着root向下寻找，时间最长
-* **重新标记** ：写屏障 + 增量更新(保存写后数据)。对并发过程中有重新赋值的进行重新标记触发STW，
+* **重新标记(STW)** ：写屏障 + 增量更新(保存写后数据)。对并发过程中有重新赋值的进行重新标记触发STW，
 * **并发清理** ：对白色的垃圾进行清理
 * **并发重置** ：重置标记进入下一轮循环
 
@@ -42,12 +42,12 @@ Concurrent Mark Sweep跨时代的老年代回收器，后面的垃圾回收器�
 4. -XX:CMSFullGCsBeforeCompaction:多少次FullGC之后压缩一次，默认是0，代表每次FullGC后都会压缩一 次
 5. -XX:CMSInitiatingOccupancyFraction: 当老年代使用达到该比例时会触发FullGC(默认是92，这是百分比) 6. -XX:+UseCMSInitiatingOccupancyOnly:只使用设定的回收阈值(-XX:CMSInitiatingOccupancyFraction设 定的值)，如果不指定，JVM仅在第一次使用设定值，后续则会自动调整
 7. -XX:+CMSScavengeBeforeRemark:在CMS GC前启动一次minor gc，目的在于减少老年代对年轻代的引 用，降低CMS GC的标记阶段时的开销，一般CMS的GC耗时 80%都在标记阶段
-8. -XX:+CMSParallellnitialMarkEnabled:表示在初始标记的时候多线程执行，缩短STW
 9. -XX:+CMSParallelRemarkEnabled:在重新标记的时候多线程执行，缩短STW;
 
 ### 2.7.G1收集器
 JDK9默认使用收集器，保留了分代收集理论但将内存分为2048个格子，每个格子可以在不同的时机充当不同的区域。主要分为四区：伊甸园，s区，老年区，大对象区。G1的过程与CMS基本一致，不同的是它是全代收集且算法更为复杂。整体上标记整理算法，小区上为标记复制
 写屏障 + 原始快照(SATB)(保存写前数据)
+初始标记(STW)->根区间扫描->并发标记->最终标记(STW)->筛选回收(STW)
 
 1. -XX:+UseG1GC:使用G1收集器
 2. -XX:ParallelGCThreads:指定GC工作的线程数量 -XX:G1HeapRegionSize:指定分区大小(1MB~32MB，且必须是2的N次幂)，默认将整堆划分为2048个分区 -XX:MaxGCPauseMillis:目标暂停时间(默认200ms)
