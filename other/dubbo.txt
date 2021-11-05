@@ -354,3 +354,7 @@
 	10.4消费者过滤器的实现原理
 11. Dubbo注册中心扩展实践
 12. Dubbo服务治理平台
+
+解析服务： 
+1）、基于dubbo.jar内的Meta-inf/spring.handlers配置，spring在遇到dubbo名称空间时，会回调DubboNamespaceHandler类。 
+2）、所有的dubbo标签，都统一用DubboBeanDefinitionParser进行解析，基于一对一属性映射，将XML标签解析为Bean对象。

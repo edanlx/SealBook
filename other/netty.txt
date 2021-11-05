@@ -693,3 +693,7 @@
 		mmap通过内存映射，将文件映射到内核缓冲区，同时，用户空间可以共享内核空间的数据。这样，在进行网络传输时，就可以减少内核空间到用户空间的拷贝次数。->mmap 需要 4 次上下文切换，3 次数据拷贝
 	sendFile
 		其基本原理如下：数据根本不经过用户态，直接从内核缓冲区进入到Socket Buffer。->sendFile 需要 3 次上下文切换，最少 2 次数据拷贝
+
+心跳与重连(https://www.jianshu.com/p/1a28e48edd92)
+心跳IdleStateHandler( pipeline.addLast(new IdleStateHandler(3, 0, 0, TimeUnit.SECONDS));)
+重写ChannelInboundHandler#channelInactive
