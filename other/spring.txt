@@ -113,6 +113,16 @@ JPA
 	TransactionStatus接口:负责控制事务的执行，包含isNewTransaction()、hasSavePoint()(是否有保存点)、setRollbackOnly()(它会导致回滚并结束活动事务)、flush()、isCompleted()等
 	编程式事务处理，虽然spring对于事务的处理已经很方便，但还是有应对更复杂情况的方法，将TransactionTemplate注入到service层。
 	全局事务，这部分spring仅支持XA，数据量数据库数量少的时候好用，多了就有问题，但是数据库数量少的时候往往不会有分布式事务。所以应对分布式事务还是借助其它框架比较好。
+事务传播
+	|关键字|含义|
+	|--|--|
+	|PROPAGATION_REQUIRED|存在就继承，否则创建|
+	|PROPAGATION_SUPPORTS|如果有事务就继承，没有就非事务执行|
+	|PROPAGATION_MANDATORY|如果存在就继承，没有抛异常|
+	|PROPAGATION_REQUIRES_NEW|开启新事物|
+	|PROPAGATION_NOT_SUPPORTED|非事务执行，有事务则将事务挂起|
+	|PROPAGATION_NEVER|非事务执行，有事务则抛异常|
+	|PROPAGATION_NESTED|嵌套事务|
 类型转换和格式化验证
 	类型格式化:在配置文件章节中，spring有专门的string数据格式处理。在web层则是使用Convert，(注这里是form提交或者get提交,如果是json格式就需要扩展相应的json工具)，扩展也是实现+注册的方式即可。
 	字段格式化:org.springframework.format.Formatter<T>。使用时继承FormattingConversionServiceFactoryBean。常用方式为在添加注解的字段上去除前后空格。

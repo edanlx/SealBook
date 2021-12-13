@@ -6,7 +6,7 @@
 6.4profiles配置
 	spring.profiles.active=prod
 6.5.1运作原理
-	@SpringBootApplication是一个组合注解，其中核心功能由@EnableAutoConfiguration提供。该注解关键功能为@Import(EnableAutoConfigurationImportSelector)使用SpringFactoriesLoader.loadFactoryNames方法来扫描具有META-INF/spring.factories文件中的jar包
+	@SpringBootApplication是一个组合注解，其中核心功能由@EnableAutoConfiguration提供。该注解关键功能为@Import(EnableAutoConfigurationImportSelector)使用SpringFactoriesLoader.loadFactoryNames方法来扫描具有META-INF/spring.factories文件中的jar包，里面都是AutoConfigration文件，随意打开一个则会有@Conditional等注解
 6.5.2核心注解
 	打开上述的任意一个AutoConfiguration文件，一般都有下面的注解
 	@ConditionalOnBean:当容器里有指定Bean的情况下
