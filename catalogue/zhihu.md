@@ -11,7 +11,7 @@
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
   1. 优雅代码
-        1. [lombok(最简单的简化代码注解)](https://zhuanlan.zhihu.com/p/158917674)
+        1. [lombok(lombok精选注解及原理)](https://zhuanlan.zhihu.com/p/158917674)
         2. [使用get、set方法避免魔法值(java传个方法你会吗,不是Method对象)](https://zhuanlan.zhihu.com/p/161688525)
         3. [Optional杜绝NPE(看完这个就不要再写空指针了)](https://zhuanlan.zhihu.com/p/269325677)
         4. [1行代码完成多线程，别再写runnable了](https://zhuanlan.zhihu.com/p/269659427)

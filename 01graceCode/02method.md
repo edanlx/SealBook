@@ -7,7 +7,7 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/reflect)  
 * [视频讲解](https://www.bilibili.com/video/BV1ok4y1q7Be)   
-* [上一篇](./01lombok.md)lombok精选注解
+* [上一篇](./01lombok.md)lombok精选注解及原理
 * [下一篇](./03optional.md)optional杜绝空指针异常
 
 ## 1.背景介绍
