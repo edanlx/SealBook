@@ -7,7 +7,7 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/optional)  
 * [视频讲解](https://www.bilibili.com/video/BV1oy4y1r7r1/)   
-* [上一篇](./02method.md)java传递方法
+* [上一篇](./02junit.md)优雅测试代码
 * [下一篇](./04thread.md)1行代码完成多线程
 
 ## 1.建立Child、Parent、GrandParent的层级
@@ -118,7 +118,7 @@ null
 C
 ```
 ## 3.其它优秀杜绝空指针异常的优秀方法
-首先是lombok的@NonNull，这个可以作用于方法参数上，如果传入空则直接抛异常，并在日志精准打印出异常位置及情况，非常适合校验参数，增加代码简洁性
+首先是lombok的@NonNull，这个可以作用于方法参数上，如果传入空则直接抛异常，并在日志精准打印出异常位置及情况，非常适合校验参数，增加代码简洁性。非空指针的校验方式可以看[优雅和前端交互](https://github.com/edanlx/SealBook/blob/master/01graceCode/10front.md)
 
 当然刚才写的类还是返回了null，但是没关系，可以用以下工具类，在各种情况下都可以抛出自定义异常或直接return出去
 ```java

@@ -221,8 +221,8 @@ public static ErrorCodeEnum get(String value) {
     }
 }
 ```
-```
-* 序列化，对象转string时
+
+序列化，对象转string时
 ```java
 /**
  * 自定义序列化
@@ -396,3 +396,4 @@ public class SwaggerConfig {
 2. yapi
 * [github](https://github.com/YMFE/yapi)
 与swagger不同的是，这个有权限控制，这对于整个大团队维护一份文档则显得尤为重要，其支持多种格式的导入，包括上面提到的swagger。
+## 8.方法间使用valid

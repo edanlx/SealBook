@@ -7,7 +7,7 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/lombok) 
 * [视频讲解](https://www.bilibili.com/video/BV1yC4y1877R/)
-* [下一篇](./02method.md)java传递方法
+* [下一篇](./02junit.md)自动化工具合集介绍
 
 ## 1.背景介绍
 在日常开发中免不了进行一些繁琐的代码自动生成，虽然ide的功能已然非常强大但是并不能够做到动态，lombok可以非常好的解决这个问题。它会在生成class文件时将其进行编译成平常所写的代码,这里介绍一些我个人觉得比较好用的注解
