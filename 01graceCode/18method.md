@@ -1,4 +1,4 @@
-# 【优雅代码】02-java传个方法你会吗,不是Method对象
+# 【优雅代码】18-反射与序列换联合使用(你没用过的反射技巧-上)
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [gitee目录](https://gitee.com/seal_li/SealBook)
@@ -7,8 +7,8 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/reflect)  
 * [视频讲解](https://www.bilibili.com/video/BV1ok4y1q7Be)   
-* [上一篇](./01lombok.md)lombok精选注解及原理
-* [下一篇](./03optional.md)optional杜绝空指针异常
+* [上一篇](./17generic.md)当泛型遇上多态
+* [下一篇](./18treeMap.md)optional杜绝空指针异常
 
 ## 1.背景介绍
 在日常代码中有时候近乎避免不了的使用魔法值，但是如果使用传入方法这种方式可以极大的降低魔法值出现的频率并且不用创建静态值。该方法主要参考了mybatisPlus，并在此基础上进行了扩展。  

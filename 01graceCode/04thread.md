@@ -16,15 +16,18 @@
 ```java
 public class ThreadEntity {
     private int num;
+    private int price;
     public int countPrice(){
-        int a = RandomUtils.nextInt();
+        price = RandomUtils.nextInt();
         try {
+            System.out.println(num);
+            // 随机等待1~10秒
             Thread.sleep(RandomUtils.nextInt(1, 10) * 1000);
             System.out.println(num);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return a;
+        return price;
     }
 }
 ```
@@ -124,44 +127,126 @@ public class ThreadPoolManager {
 parallel是并行核心可以发现内部是多线程运行，但是经过collect以后会排好序所以不用担心，小项目可以使用，大项目的话建议老老实实用自己的线程池，JDK自带的fork/join并不贴合业务
 ```java
 System.out.println(Stream.of(1, 2, 3, 4, 5, 6).parallel().map(l -> {
-            System.out.println(l);
-            return l;
-        }).collect(Collectors.toList()));
+    System.out.println(l);
+    return l;
+}).collect(Collectors.toList()));
 ```
-
+输出如下，因为多线程所以随机输出，但因为使用collect收集则最终结果并未发生改变
+```text
+2
+6
+4
+5
+3
+1
+[1, 2, 3, 4, 5, 6]
+```
 ### 2.2.同步代码
 这个可以不用再去实现线程的接口，不过还是要考虑一下队列满了的丢弃情况
 ```java
-List<ThreadEntity> listEntity = IntStream.range(0, 10).mapToObj(x -> new ThreadEntity(x)).collect(Collectors.toList());
-        List<CompletableFuture<Integer>> listCompletableFuture = listEntity.stream().map(x -> {
-            try {
-                return CompletableFuture.supplyAsync(() -> x.countPrice(),
-                        ThreadPoolManager.getInstance().getPool());
-            } catch (RejectedExecutionException e) {
-                System.out.println("reject" + x);
-                log.error("", e);
-                return null;
-            }
-        }).collect(Collectors.toList());
-        List<Integer> result = listCompletableFuture.stream().map(CompletableFuture::join).collect(Collectors.toList());
-        System.out.println(result);
+List<ThreadEntity> listEntity = IntStream.range(0, 10).mapToObj(x -> ThreadEntity.builder().num(x).build()).collect(Collectors.toList());
+List<CompletableFuture<Integer>> listCompletableFuture = listEntity.stream().map(x -> {
+    try {
+        // 此处ThreadPoolManager.getInstance().getPool()如果不传该参数则使用默认commonPool，无特殊需求的话trycatch一般不写
+        return CompletableFuture.supplyAsync(() -> x.countPrice(),
+                ThreadPoolManager.getInstance().getPool());
+    } catch (RejectedExecutionException e) {
+        System.out.println("reject" + x);
+        log.error("", e);
+        return null;
+    }
+}).collect(Collectors.toList());
+List<Integer> result = listCompletableFuture.stream().map(CompletableFuture::join).collect(Collectors.toList());
+System.out.println(result);
+System.out.println(listEntity);
 ```
+输出如下可以看到运行是以多线程的方式进行，但是结果和原先是保持一致的
+```text
+start6
+start9
+start0
+start3
+start2
+start1
+start8
+start5
+start4
+start7
+end3
+end8
+end5
+end7
+end9
+end1
+end2
+end6
+end0
+end4
+[131523688, 1491605535, 222657954, 132274662, 1134597171, 2057763841, 1168687436, 1842194861, 1264173480, 56446450]
+[ThreadEntity(super=com.example.demo.lesson.grace.thread.ThreadEntity@7d6f201, num=0, price=131523688), ThreadEntity(super=com.example.demo.lesson.grace.thread.ThreadEntity@58e825f3, num=1, price=1491605535), ThreadEntity(super=com.example.demo.lesson.grace.thread.ThreadEntity@d458bb1, num=2, price=222657954), ThreadEntity(super=com.example.demo.lesson.grace.thread.ThreadEntity@7e26830, num=3, price=132274662), ThreadEntity(super=com.example.demo.lesson.grace.thread.ThreadEntity@43a0a2b8, num=4, price=1134597171), ThreadEntity(super=com.example.demo.lesson.grace.thread.ThreadEntity@7aa70ac1, num=5, price=2057763841), ThreadEntity(super=com.example.demo.lesson.grace.thread.ThreadEntity@45a8d047, num=6, price=1168687436), ThreadEntity(super=com.example.demo.lesson.grace.thread.ThreadEntity@6dcdb8e3, num=7, price=1842194861), ThreadEntity(super=com.example.demo.lesson.grace.thread.ThreadEntity@4b59d119, num=8, price=1264173480), ThreadEntity(super=com.example.demo.lesson.grace.thread.ThreadEntity@35d5d9e, num=9, price=56446450)]
+```
+如果IntStream.range(0, 10)改成(0, 1000)则会有如下拒绝报错
+```text
+java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.CompletableFuture$AsyncSupply@5af97850 rejected from java.util.concurrent.ThreadPoolExecutor@491666ad[Running, pool size = 64, active threads = 64, queued tasks = 256, completed tasks = 0]
+    at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2063)
+    at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:830)
+    at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1379)
+    at java.util.concurrent.CompletableFuture.asyncSupplyStage(CompletableFuture.java:1618)
+    at java.util.concurrent.CompletableFuture.supplyAsync(CompletableFuture.java:1843)
+    at com.example.demo.lesson.grace.thread.TestMain.lambda$threadEx1$2(TestMain.java:34)
+    at java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:193)
+    at java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1384)
+    at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:482)
+    at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:472)
+    at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
+    at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+    at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
+    at com.example.demo.lesson.grace.thread.TestMain.threadEx1(TestMain.java:41)
+    at com.example.demo.lesson.grace.thread.TestMain.main(TestMain.java:26)
+rejectThreadEntity(super=com.example.demo.lesson.grace.thread.ThreadEntity@1a9, num=366)
+```
+### 2.3.异步代码
+以下代码可以直接简写成一行，在处理异步任务变得异常方便  
+CompletableFuture.runAsync(() -> fun())  
 
- ### 2.3.异步代码
- 以下代码可以直接简写成一行，在处理异步任务变得异常方便  
- CompletableFuture.runAsync(() -> fun())  
-
- ```java
- List<ThreadEntity> listEntity = IntStream.range(0, 500).mapToObj(x -> new ThreadEntity(x)).collect(Collectors.toList());
-        List<CompletableFuture> listCompletableFuture = listEntity.stream().map(x -> {
-            try {
-                return CompletableFuture.runAsync(() -> x.countPrice(), ThreadPoolManager.getInstance().getPool());
-            } catch (RejectedExecutionException e) {
-                System.out.println("reject" + x);
-                return null;
-            }
-        }).collect(Collectors.toList());
-        listCompletableFuture.stream().map(CompletableFuture::join);
-        System.out.println("1234");
-
- ```
+```java
+List<ThreadEntity> listEntity = IntStream.range(0, 500).mapToObj(x -> ThreadEntity.builder().num(x).build()).collect(Collectors.toList());
+List<CompletableFuture> listCompletableFuture = listEntity.stream().map(x -> {
+    try {
+        // 此处ThreadPoolManager.getInstance().getPool()如果不传该参数则使用默认commonPool，无特殊需求的话trycatch一般不写
+        return CompletableFuture.runAsync(() -> x.countPrice(), ThreadPoolManager.getInstance().getPool());
+    } catch (RejectedExecutionException e) {
+        System.out.println("reject" + x);
+        return null;
+    }
+}).collect(Collectors.toList());
+listCompletableFuture.stream().map(CompletableFuture::join);
+System.out.println("1234");
+// 一行多线程异步执行写法
+CompletableFuture.runAsync(() -> System.out.println(1));
+```
+输出如下，可以看到主线程已经结束了其它子线程才在输出，完全没有等待的多线程
+```text
+1234
+1
+start7
+start0
+start6
+start5
+start4
+start2
+start8
+start1
+start9
+start3
+end8
+end4
+end9
+end6
+end2
+end0
+end1
+end3
+end5
+end7
+```

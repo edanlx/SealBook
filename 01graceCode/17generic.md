@@ -7,7 +7,8 @@
 * [博客园目录](https://www.cnblogs.com/sealLee/articles/14748368.html)
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/generic)
 * [上一篇](./16bloomAndRate.md)guava布隆过滤与限流算法
-* [下一章](../02jvm/01classloader.md)双亲委派都会说，破坏双亲委派你会吗
+* [下一篇](./16method.md)反射与序列换联合使用(你没用过的反射技巧-上)
+
 
 ## 1.背景
 日常开发中单独用泛型没有问题，单独用多态没有问题，但是当两者相遇就会变成神奇的java
