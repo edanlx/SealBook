@@ -7,7 +7,7 @@
 * [下一篇](./03optional.md)optional杜绝空指针异常
 
 ## 1.背景介绍
-在日常工作中总会需要重复的工作，而作为一个现代人，应该学会使用工具避免重复的工作
+在日常工作中总会需要重复的工作，而作为一个现代人，应该学会使用工具避免重复的工作。java能做很多事情不止是web方向，而如果不限于java能做的事情就更多了。 
 ## 2.黑盒自动化
 以下介绍的软件基本以python为主，当然有些也可以用java编写
 |平台|软件|
@@ -49,23 +49,38 @@ print("finish")
 
 ```
 整理一下逻辑就是对于定位一般性可以采用pyautogui的图片定位(如果不行采用坐标定位)，如果需要截取文字，能够复制的就直接双击鼠标选择当行然后ctrl+c复制下来，再通过剪切板拿到数据，不能复制的就通过坐标截取图片再用OCR获取内容。以此为基础基本可以满足所有个人自动化需求了，写个普通脚本都不在话下。不吹不黑，靠这些东西笔者是真的写过游戏脚本和交易脚本。
-## 3.白盒测试工具
-这里仅介绍postman和jmeter，使用方式上jmeter要更加全面，支持更多的协议。postman作为http测试一直非常优秀，而jmeter在性能测试方面则非常优异，甚至是数据库。
-### 3.1postman
-![postman](http://seal_li.gitee.io/sealbook/pic/grace_junit_postman.png)
-### 3.2jmeter
-![jmeter](http://seal_li.gitee.io/sealbook/pic/grace_junit_jmeter1.png)
-![jmeter](http://seal_li.gitee.io/sealbook/pic/grace_junit_jmeter2.png)
+
 ## 4.黑盒抓包
+
 抓包不只是在pc端最关键是它可以辅助在app上抓包，抓到未加密连接破解后配合黑盒自动化效果更佳。这里仅介绍两个代表，windows使用fiddler，mac使用charless
+
 ### 4.1fiddler
-![fiddler](http://seal_li.gitee.io/sealbook/pic/grace_junit_fiddler.png)
+
+![fiddler](https://seal_li.gitee.io/sealbook/pic/grace_junit_fidller.jpg)
+抓包测试链接
+https://movie.douban.com/j/search_subjects?type=movie&tag=%E7%83%AD%E9%97%A8&sort=recommend&page_limit=20&page_start=20
+
 ### 4.2charless
-![fiddler](http://seal_li.gitee.io/sealbook/pic/grace_junit_charless.png)
+
+![2charless](http://seal_li.gitee.io/sealbook/pic/grace_junit_charless.png)
+
+## 4.白盒测试工具
+
+这里仅介绍postman和jmeter，使用方式上jmeter要更加全面，支持更多的协议。postman作为http测试一直非常优秀，而jmeter在性能测试方面则非常优异，甚至是数据库。
+### 4.1postman
+![postman](http://seal_li.gitee.io/sealbook/pic/grace_junit_postman.png)
+### 4.2jmeter
+![jmeter](http://seal_li.gitee.io/sealbook/pic/grace_junit_jmeter1.png)
+![jmeter](http://seal_li.gitee.io/sealbook/pic/grace_junit_jmeter2.jpg)
+
 ## 5.软件打包转为可执行程序
-将自动化程序打包成软件自动运行也是非常重要的一步，当你的自动化软件日趋成熟就会有分享，甚至本身就是为了解决某个MM的问题，总不能给别人是bat文件吧。桌面端推荐vue+electron，移动端推荐Hbuilder，语法上都是以vue为主或者类似降低学习成本。推荐这两个是因为语言基本一致，而且跨端，win和mac，ios和android都可以使用。
+将自动化程序打包成软件自动运行也是非常重要的一步，当你的自动化软件日趋成熟就会有分享，甚至本身就是为了解决某个MM的问题，总不能给别人是bat文件吧。桌面端推荐vue+electron进行打包核心逻辑可调用java。推荐这个主要是vscode、typora都是以electron进行研发的。
+* [官网快速入门地址](https://www.electronjs.org/zh/docs/latest/tutorial/quick-start)
+[文档截图](http://seal_li.gitee.io/sealbook/pic/grace_junit_electron.png)
+
 ***最重要的一点***：不要把语言学死了，主力开发肯定是以熟悉的语言为主，最需要掌握的是语言之间相互调用就可以完成很多看似很难的工作。
-## 6.junit自动化
+
+## 6.junit单元测试
 ### 6.1准备工作
 注意scope是test，所以要在test目录下才能生效
 ```java
