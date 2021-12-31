@@ -2,7 +2,7 @@
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/junit) 
-* [视频讲解](https://www.bilibili.com/video/BV1yC4y1877R/)
+* [视频讲解](https://www.bilibili.com/video/BV1Bq4y1174Q/)
 * [上一篇](./01lombok.md)lombok精选注解及原理
 * [下一篇](./03optional.md)optional杜绝空指针异常
 
@@ -74,9 +74,9 @@ https://movie.douban.com/j/search_subjects?type=movie&tag=%E7%83%AD%E9%97%A8&sor
 ![jmeter](http://seal_li.gitee.io/sealbook/pic/grace_junit_jmeter2.jpg)
 
 ## 5.软件打包转为可执行程序
-将自动化程序打包成软件自动运行也是非常重要的一步，当你的自动化软件日趋成熟就会有分享，甚至本身就是为了解决某个MM的问题，总不能给别人是bat文件吧。桌面端推荐vue+electron进行打包核心逻辑可调用java。推荐这个主要是vscode、typora都是以electron进行研发的。
+将自动化程序打包成软件自动运行也是非常重要的一步，当你的自动化软件日趋成熟就会有分享，甚至本身就是为了解决某个MM的问题，总不能给别人是bat文件吧。桌面端推荐vue+electron进行打包核心逻辑可调用java。推荐这个主要是vscode、typora都是以electron进行研发的，并且中文文档很详细。
 * [官网快速入门地址](https://www.electronjs.org/zh/docs/latest/tutorial/quick-start)
-[文档截图](http://seal_li.gitee.io/sealbook/pic/grace_junit_electron.png)
+![文档截图](http://seal_li.gitee.io/sealbook/pic/grace_junit_electron.png)
 
 ***最重要的一点***：不要把语言学死了，主力开发肯定是以熟悉的语言为主，最需要掌握的是语言之间相互调用就可以完成很多看似很难的工作。
 

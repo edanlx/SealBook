@@ -7,9 +7,9 @@
 ![公众号](http://seal_li.gitee.io/sealbook/pic/wechat.jpg)
 
   1. 优雅代码
-        1. [lombok(lombok精选注解及原理)](./01graceCode/01lombok.md)  [视频版](https://www.bilibili.com/video/BV13m4y1Q7GD/)
-        2. [使用get、set方法避免魔法值(java传个方法你会吗,不是Method对象)](./01graceCode/02method.md)  [视频版](https://www.bilibili.com/video/BV1ok4y1q7Be/)
-        3. [Optional杜绝NPE(看完这个就不要再写空指针了)](./01graceCode/03optional.md)  [视频版](https://www.bilibili.com/video/BV1oy4y1r7r1/)
+        1. [lombok精选注解及原理](./01graceCode/01lombok.md)  [视频版](https://www.bilibili.com/video/BV13m4y1Q7GD/)
+        2. [自动化工具合集介绍](./01graceCode/02junit.md)  [视频版](https://www.bilibili.com/video/BV1Bq4y1174Q/)
+        3. [optional杜绝空指针异常](./01graceCode/03optional.md)  [视频版](https://www.bilibili.com/video/BV1oy4y1r7r1/)
         4. [1行代码完成多线程，别再写runnable了](./01graceCode/04thread.md)  [视频版](https://www.bilibili.com/video/BV1jr4y1w7SH/)
         5. [异或、左移、右移到底该怎么用](./01graceCode/05symbol.md)
         6. [apache下优秀的工具类](./01graceCode/06apacheUtils.md)
