@@ -26,7 +26,10 @@
         14. [guava精选方法](./01graceCode/14guava.md)
         15. [不用部署中间件的本地缓存](./01graceCode/15localeCache.md)
         16. [guava布隆过滤与限流算法](./01graceCode/16bloomAndRate.md)
-        17. [当泛型遇上多肽](./01graceCode/17generic.md)
+        17. [当泛型遇上多态](./01graceCode/17generic.md)
+        18. 反射与序列换联合使用(你没用过的反射技巧-上)
+        19. list、tree互转通用工具(你没用过的反射技巧-中)
+        20. 复杂树的回调通用工具(你没用过的反射技巧-下)
   2. JVM深度剖析及调优
         1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)](./02jvm/01classloader.md)  [视频版](https://www.bilibili.com/video/BV1Sz4y1f7FB/)
         2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)](./02jvm/02myclassLoader.md)  [视频版](https://www.bilibili.com/video/BV1Y54y1274Y/)
