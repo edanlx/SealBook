@@ -4,10 +4,12 @@
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/thread)  
 * [视频讲解](https://www.bilibili.com/video/BV1jr4y1w7SH/)  
 * [上一篇](./03optional.md)optional杜绝空指针异常
-* [下一篇](./05symbol.md)异或、左移、右移到底该怎么用
+* [下一篇](./05symbol.md)从hashMap源码介绍位运算符
 
-## 1.建立相关类
-### 1.1.ThreadEntity
+## 1.背景介绍
+java8提供的CompletableFuture以及匿名函数可以让我们一行代码完成多线程
+## 2.建立相关类
+### 2.1.ThreadEntity
 用于多线程测试的实体类
 ```java
 public class ThreadEntity {
@@ -27,7 +29,7 @@ public class ThreadEntity {
     }
 }
 ```
-### 1.2.ThreadPoolManager
+### 2.2.ThreadPoolManager
 ```java
 /**
  * tasks 每秒的任务数，默认200,依据访问量及使用线程池的地方进行计算
@@ -118,8 +120,8 @@ public class ThreadPoolManager {
     }
 }
 ```
-## 2.核心代码
-### 2.1.并行流
+## 3.核心代码
+### 3.1.并行流
 parallel是并行核心可以发现内部是多线程运行，但是经过collect以后会排好序所以不用担心，小项目可以使用，大项目的话建议老老实实用自己的线程池，JDK自带的fork/join并不贴合业务
 ```java
 System.out.println(Stream.of(1, 2, 3, 4, 5, 6).parallel().map(l -> {
@@ -137,7 +139,7 @@ System.out.println(Stream.of(1, 2, 3, 4, 5, 6).parallel().map(l -> {
 1
 [1, 2, 3, 4, 5, 6]
 ```
-### 2.2.同步代码
+### 3.2.同步代码
 这个可以不用再去实现线程的接口，不过还是要考虑一下队列满了的丢弃情况
 ```java
 List<ThreadEntity> listEntity = IntStream.range(0, 10).mapToObj(x -> ThreadEntity.builder().num(x).build()).collect(Collectors.toList());
@@ -201,7 +203,7 @@ java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.Compl
     at com.example.demo.lesson.grace.thread.TestMain.main(TestMain.java:26)
 rejectThreadEntity(super=com.example.demo.lesson.grace.thread.ThreadEntity@1a9, num=366)
 ```
-### 2.3.异步代码
+### 3.3.异步代码
 以下代码可以直接简写成一行，在处理异步任务变得异常方便  
 CompletableFuture.runAsync(() -> fun())  
 

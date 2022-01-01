@@ -6,7 +6,9 @@
 * [上一篇](./02junit.md)自动化工具合集介绍
 * [下一篇](./04thread.md)1行代码完成多线程
 
-## 1.建立Child、Parent、GrandParent的层级
+## 1.背景介绍
+在日常开发中总会遇到NPE问题，但是java提供了optional，可以让我们流畅写代码的同时避免NPE
+## 2.建立Child、Parent、GrandParent的层级
 建立如下结构的类GrandParent->Parent->List<Child>
 * Child
 
@@ -79,7 +81,7 @@ opt3Str:ssss
 ```
 可以发现嵌套类无论是string还是list，中间任何一个类为null都会直接返回null，而不用去多层嵌套if这种很蠢的做法
 
-## 2.非常规复杂optional用法
+## 3.非常规复杂optional用法
 当然平常时候总会遇到一些奇奇怪怪的结果，例如查询数据库会返回List<Map<String, String>>这样的结构，也是可以用Optinoal做的
 ```java
 // 获取list嵌map并随机返回一个key，此时list为null的获取不会NPE
@@ -119,7 +121,7 @@ null
 null
 C
 ```
-## 3.其它优秀杜绝空指针异常的优秀方法
+## 4.其它优秀杜绝空指针异常的优秀方法
 首先是lombok的@NonNull，这个可以作用于方法参数上，如果传入空则直接抛异常，并在日志精准打印出异常位置及情况，非常适合校验参数，增加代码简洁性。非空指针的校验方式可以看[优雅和前端交互](https://github.com/edanlx/SealBook/blob/master/01graceCode/10front.md)
 
 当然刚才写的类还是返回了null，但是没关系，可以用以下工具类，在各种情况下都可以抛出自定义异常或直接return出去

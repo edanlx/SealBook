@@ -2,7 +2,7 @@
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/apache)  
-* [上一篇](./05symbol.md)异或、左移、右移到底该怎么用
+* [上一篇](./05symbol.md)从hashMap源码介绍位运算符
 * [下一篇](./07springUtils.md)spring下的优秀工具类
 
 ## 1.codec包
@@ -44,11 +44,60 @@ public void base64Example(){
 该工具包主要处理集合相关，常用方法为集合判空，以及空集合CollectionUtils、ListUtils、MapUtils、SetUtils、QueueUtils为常用工具类。BagUtils、ClosureUtils、ComparatorUtils、EnumerationUtils、FactoryUtils、IterableUtils、IteratorUtils、MultiMapUtils、MultiSetUtils、PredicateUtils、SplitMapUtils、TransformerUtils、TrieUtils为非常用工具类
 ### 2.2使用
 ```java
-Collections.emptyList();
-Collections.emptyMap();
-Collections.emptySet();
-Collections.singletonList("1");
-Collections.singletonMap("1", "2");
+public static void CollectionUtilsExample() {
+    // addAll 改变原数组
+    List<Integer> list = Stream.of(1, 2, 3, 4).collect(Collectors.toList());
+    List<Integer> list2 = Stream.of(1, 2, 3, 4).collect(Collectors.toList());
+    System.out.println(CollectionUtils.addAll(
+            list,
+            list2
+    ));
+    System.out.println(list);
+
+    //循环获得新数组，不如用直接用stream
+    list = Stream.of(1, 2, 3, 4).collect(Collectors.toList());
+    System.out.println(CollectionUtils.collect(list, x -> (x + 1)));
+
+    // 根据hash值返回下标，似乎毫无作用
+    System.out.println("get");
+    System.out.println(CollectionUtils.get(new HashMap<String, String>(3) {
+        {
+            put("10", "1");
+            put("2", "2");
+            put("3", "3");
+        }
+    }, 0).getKey());
+
+    //比filter更简洁的写法，但是似乎意义不大
+    System.out.println(CollectionUtils.select(list, x -> x > 1));
+
+    //只用这个比较好用
+    CollectionUtils.isEmpty(list2);
+
+    //此处对比java自带的工具包
+    Collections.emptyList();
+    Collections.emptyMap();
+    Collections.emptySet();
+    Collections.singletonList("1");
+    Collections.singletonMap("1", "2");
+}
+
+public static void predicateUtilsExample() {
+    // 验证
+    // OnePredicate.onePredicate() 一个
+    // UniquePredicate.uniquePredicate() 不可重复
+    // ComparatorPredicate.comparatorPredicate 比较
+
+    Predicate<Integer> stringPredicate = PredicateUtils.allPredicate(
+            NotNullPredicate.notNullPredicate(),
+            UniquePredicate.uniquePredicate()
+    );
+    List<Integer> list = PredicatedList.predicatedList(new ArrayList<>(), stringPredicate);
+    list.add(1);
+    // list.add(1);
+    // list.add(null);
+    System.out.println(list);
+}
 ```
 ## 3.compress包
 ### 3.1背景
@@ -147,6 +196,58 @@ System.out.println(IOUtils.LINE_SEPARATOR_UNIX);
 System.out.println(IOUtils.LINE_SEPARATOR_WINDOWS);
 ```
 
+* 各种copy流相关
+```java
+public static void test1() throws IOException {
+    // try with 写法
+    try (
+            InputStream is = IOUtils.toInputStream("This is a String", "utf-8");
+            OutputStream os = new FileOutputStream("/Users/seal/IdeaProjects/demo/src/main/java/com/example/demo/example/test2.txt");
+    ) {
+        //copy流
+        int bytes = IOUtils.copy(is, os);
+        System.out.println("File Written with " + bytes + " bytes");
+        // 读文件为string
+        System.out.println(IOUtils.toString(new FileReader("/Users/seal/IdeaProjects/demo/src/main/java/com/example/demo/example/test2.txt")));
+    } catch (Exception e) {
+
+    }
+
+    //读
+    try (FileInputStream fin = new FileInputStream("test2.txt")) {
+        List ls = IOUtils.readLines(fin, "utf-8");
+        for (int i = 0; i < ls.size(); i++) {
+            System.out.println(ls.get(i));
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    //写
+    List<String> ls = new ArrayList<>();
+    ls.add("asdasd");
+    ls.add("ada21");
+    ls.add("addsf");
+    try (OutputStream os = new FileOutputStream("test3.txt")) {
+        IOUtils.writeLines(ls, IOUtils.LINE_SEPARATOR_WINDOWS, os);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    //读网站
+    InputStream in = new URL("http://commons.apache.org").openStream();
+    try {
+        InputStreamReader inR = new InputStreamReader(in);
+        BufferedReader buf = new BufferedReader(inR);
+        String line;
+        while ((line = buf.readLine()) != null) {
+            System.out.println(line);
+        }
+    } finally {
+        in.close();
+    }
+}
+```
 ## 6.lang包(重要)
 ### 6.1背景
 对平时工具类的补充，优秀的有SerializationUtils，简便的序列化，DateFormatUtils、DateUtils两个非常优秀的日期处理工具类，StringUtils、ObjectUtils这两个可太常用了，处理了各种null的情况，代码写起来更加丝滑。ArrayUtils，补齐了collection的最后一环。
@@ -334,7 +435,7 @@ private static void jaccardSimilarityExample() {
     System.out.println("cosSimilary:"+cosSimilary);
 }
 ```
-* 功能很强，但是java自带的已经基本能覆盖住95&以上的场景了
+* 功能很强，但是java自带的已经基本能覆盖住95%以上的场景了
 ```java
 private static void messageFormatExample() {
     String param1 = String.format("hi,%s, your age is %s", "john", "26");

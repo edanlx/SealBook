@@ -11,7 +11,7 @@
         2. [自动化工具合集介绍](./01graceCode/02junit.md)  [视频版](https://www.bilibili.com/video/BV1Bq4y1174Q/)
         3. [optional杜绝空指针异常](./01graceCode/03optional.md)  [视频版](https://www.bilibili.com/video/BV1oy4y1r7r1/)
         4. [1行代码完成多线程，别再写runnable了](./01graceCode/04thread.md)  [视频版](https://www.bilibili.com/video/BV1jr4y1w7SH/)
-        5. [异或、左移、右移到底该怎么用](./01graceCode/05symbol.md)
+        5. [从hashMap源码介绍位运算符](./01graceCode/05symbol.md)  [视频版](https://www.bilibili.com/video/BV1ir4y1m7FT/)
         6. [apache下优秀的工具类](./01graceCode/06apacheUtils.md)
         7. [spring下优秀的工具类](./01graceCode/07springUtils.md)
         8. [构建自己的高效连接池(区分连接池和线程池)](./01graceCode/08commonPool.md)
