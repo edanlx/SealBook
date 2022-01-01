@@ -14,7 +14,7 @@
         5. [从hashMap源码介绍位运算符](./01graceCode/05symbol.md)  [视频版](https://www.bilibili.com/video/BV1ir4y1m7FT/)
         6. [apache下优秀的工具类](./01graceCode/06apacheUtils.md)
         7. [spring下优秀的工具类](./01graceCode/07springUtils.md)
-        8. [构建自己的高效连接池(区分连接池和线程池)](./01graceCode/08commonPool.md)
+        8. [构建自己的高效连接池](./01graceCode/08commonPool.md)
         9. [idea调优](./01graceCode/09idea.md)
         10. [优雅和前端交互](./01graceCode/10front.md)
         11. [stream精选示例](./01graceCode/11stream.md)
