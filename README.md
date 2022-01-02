@@ -17,7 +17,7 @@
         8. [构建自己的高效连接池](./01graceCode/08commonPool.md)
         9. [idea断点、插件、模板合集](./01graceCode/09idea.md)
         10. [拒绝if/else数据校验及转换](./01graceCode/10front.md)
-        11. [stream精选示例](./01graceCode/11stream.md)
+        11. [stream、@functional精选示例](./01graceCode/11stream.md)
         12. [更快的序列化](./01graceCode/12serialize.md)
         13. [linkedList插入真的比arrayList快么](./01graceCode/13listSpeed.md)
         14. [guava精选方法](./01graceCode/14guava.md)

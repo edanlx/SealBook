@@ -1,12 +1,12 @@
-# 【优雅代码】11-stream精选示例
+# 【优雅代码】11-stream精选/@functional懒加载示例
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/stream) 
 * [上一篇](./10front.md)拒绝if/else数据校验及转换
-* [下一篇](./12serialize.md)更快的序列化
+* [下一篇](./12serialize.md)序列化大对比
 
 ## 1.背景
-之前在优雅代码系列的第3节分享过了[optional](./03optional.md)的用法,这边就不再赘述了
+主要是对@functional简单示例，复杂示例会在18~20期展示。之前在优雅代码系列的第3节分享过了optional的用法,这边就不再赘述了
 ## 2.常用部分
 该部分包含了个人日常开发中95%以上的使用场景，或者其变种
 ```java
@@ -78,9 +78,10 @@ Step10
 {excel=[TestEnum.EXCEL(super=EXCEL, code=1, desc=excel)], ppt=[TestEnum.PPT(super=PPT, code=2, desc=ppt)]}
 ```
 
-## 3.扩展部分
-之前在优雅代码系列的第2节[method](./02method.md)和第4节[threa](./04thread.md)分享过了传方法的两种特定场景的用法,这边补充一下常规用法
+## 3.@functional懒加载应用
 
+模拟场景1，从redis获取数据。  
+模拟场景2，打印日志。
 ```java
 /**
  * Consumer ：
@@ -97,39 +98,68 @@ Step10
  * @date 2021/2/10 9:25 上午
  */
 public class Delay {
-    public static <T> T showLog(int level, Supplier<T> method) {
-        // 级别等于1的时候执行，等于redis.get(XXX)!=null的时候执行方法
-        if (level == 1) {
-            return method.get();
+    public static <T> T getFromRedisAndRefresh(String redisKey, Supplier<T> method) {
+        // 从redis获取数据
+        T redisData = getKey(redisKey);
+        if (redisData != null) {
+            System.out.println("redis hit");
+            return redisData;
         } else {
-            return null;
+            System.out.println("redis not hit");
+            T data = method.get();
+            System.out.println("redis refresh");
+            return data;
         }
     }
 
-    public static void showLog2(int level, Consumer method) {
-        // 日志级别等于3的时候输出日志
-        if (level == 3) {
-            method.accept(level);
+    private static <T> T getKey(String redisKey) {
+        if (redisKey.equals("1")) {
+            return (T) new Integer(0);
+        }
+        return null;
+    }
+
+    public static void showLog(int level, Consumer method) {
+        // 日志级别等于3的时候输出日志同时执行计算，避免了传统的先计算再判断
+        if (level >= 4) {
+            method.accept(String.format("current level is %s", JSON.toJSONString(level)));
         }
     }
 
     public static void main(String[] args) throws InterruptedException {
+        // 模拟场景1，从redis获取数据。 
         // 输出
-        showLog(1, () -> {
-            System.out.println(1);
-            return 1;
+        int data1 = 1;
+        getFromRedisAndRefresh("1", () -> {
+            // 从数据库拿到1
+            System.out.println("get From database" + data1);
+            return data1;
         });
         // 不输出
-        showLog(2, () -> {
-            System.out.println(2);
-            return 1;
+        int data2 = 2;
+        getFromRedisAndRefresh("2", () -> {
+            // 从数据库拿到2
+            System.out.println("get From database" + data2);
+            return data2;
         });
-        // 输出
-        showLog2(3, System.out::println);
+
+
+        // 模拟场景2，打印日志。
         // 不输出
-        showLog2(4, System.out::println);
+        showLog(3, System.out::println);
+
+        // 输出
+        showLog(4, System.out::println);
     }
 }
+```
+输出如下,代表redisKey如果是1则直接返回redis结果redisKey如果是2则没有命中，需要去数据库加载。日志级别大于等于4的时候输出日志同时执行计算，避免了传统的先计算再判断
+```text
+redis hit
+redis not hit
+get From database2
+redis refresh
+current level is 4
 ```
 
 ## 4.非常用部分
