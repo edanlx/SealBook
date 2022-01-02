@@ -2,7 +2,7 @@
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [上一篇](./08commonPool.md)构建自己的连接池
-* [下一篇](./10front.md)优雅和前端交互
+* [下一篇](./10front.md)优雅数据校验及转换
 
 ## 1.背景
 用好idea可以辅助程序员更快的开发，从效率和bug上都能取得更优秀的成绩
@@ -118,6 +118,7 @@ Preferences | Editor | Inspections | serializable ->勾选class without 'serialV
 ![propertiesUTF8](http://seal_li.gitee.io/sealbook/pic/grace_09idea_propertiesUTF8.png)
 Editor | File Encodings->勾选 Transp....
 ## 4.idea插件
+这部分推荐的比较少，个人在用的不止这几个
 1. lombok
 主要用@slfj和javaBean相关的注解，插入后可以再用idea反编译成实体代码，非常舒适
 2. free mybaties

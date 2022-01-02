@@ -1,7 +1,7 @@
 1. 优雅代码
-    1. [lombok(lombok精选注解及原理)](https://mp.weixin.qq.com/s/8pK9Z4upDlLMGK-RcLSoxQ)
-    2. [自动化工具合集介绍](https://mp.weixin.qq.com/s/tyumKp6obMJ-jEBO8_XcYw)
-    3. [Optional杜绝NPE(看完这个就不要再写空指针了)]
+    1. [lombok(lombok精选注解及原理)](https://mp.weixin.qq.com/s/8pK9Z4upDlLMGK-RcLSoxQ)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/lombok)
+    2. [自动化工具合集介绍](https://mp.weixin.qq.com/s/tyumKp6obMJ-jEBO8_XcYw)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/junit)
+    3. [Optional杜绝NPE(看完这个就不要再写空指针了)](https://mp.weixin.qq.com/s/n5F6Xz-wkELACdL-SlYwkw)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/optional)
     4. [1行代码完成多线程，别再写runnable了]
     5. [异或、左移、右移到底该怎么用]
     6. apache、spring下优秀的工具类

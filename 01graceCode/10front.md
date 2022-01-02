@@ -1,4 +1,4 @@
-# 【优雅代码】10-优雅和前端交互
+# 【优雅代码】10-优雅数据校验及转换
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/front) 
@@ -6,7 +6,7 @@
 * [下一篇](./11stream.md)stream精选示例
 
 ## 1.背景
-在目前开发中，前后端分离已然成为主流，而后端则有三件事要做，1.不完全信任前端的数据，2.减轻前后端压力3.将接口文档暴露给前端并确保其能看得懂，
+避免if、else，只用注解完成校验及格式化
 ## 2.注解边界值
 ### 2.1官方注解
 1. 给接口添加@Validated注解(其可以使用分组更为优秀)
@@ -16,18 +16,18 @@ public ResponseVO<FrontRepVO> testFront(@Validated @RequestBody FrontReqVO front
     return new ResponseVO<>();
 }
 ```
-2. 使用javax.validation.constraints下的注解
+2. 使用javax.validation.constraints下的注解，该注解在非controller中
 ```java
 public class FrontReqVO {
     @NotNull
     private String name;
     @Size(min = 1)
     private String name2;
-    // 如果加了其它分组要把default带上，不然会覆盖
+    // 校验去除空格后不可为空
     @TrimNotNull(groups = {Default.class, Insert.class})
-    // 序列化
+    // 序列化,去除空格
     @JsonSerialize(using = TrimNotNullJson.class)
-    // 反序列化
+    // 反序列化,去除空格
     @JsonDeserialize(using = TrimNotNullDeJson.class)
     private String name3;
     @Pattern(regexp = "^[Y|N]$")
@@ -36,6 +36,19 @@ public class FrontReqVO {
     private Date date;
     private ErrorCodeEnum errorCodeEnum;
     private Boolean boo;
+}
+```
+
+3. 让方法间互相调用也生效
+需要在方法上加@Validated，属性上加@Valid
+```java
+@Service
+@Validated
+public class FrontTestService {
+
+    public ResponseVO<FrontRepVO> testFront3Valid(@Valid FrontReqVO frontReqVO) {
+        return new ResponseVO<>();
+    }
 }
 ```
 
@@ -233,10 +246,17 @@ public class TrimNotNullJson extends JsonSerializer<String> {
     }
 }
 ```
-2. 表单或get请求格式
+2. 表单form/data格式或get请求格式
 * 实现Converter，将code转成enum
 ```java
-public class StringToCodeConvert implements Converter<String, ErrorCodeEnum> {
+/**
+ * 表单form/data格式或get请求实现Convert
+ * 将stringCode直接转成enum
+ *
+ * @author seal 876651109@qq.com
+ * @date 2022/1/2 12:57
+ */
+public class StringCodeToEnumConvert implements Converter<String, ErrorCodeEnum> {
     @Override
     public ErrorCodeEnum convert(String source) {
         return ErrorCodeEnum.MAPS.get(source);
@@ -251,6 +271,22 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport {
     protected void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new StringToCodeConvert());
     }
+    /**
+     * 非必要，用于开放静态资源拦截
+     * @param registry
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**").addResourceLocations(
+                "classpath:/static/");
+        registry.addResourceHandler("swagger-ui.html").addResourceLocations(
+                "classpath:/META-INF/resources/");
+        registry.addResourceHandler("doc.html").addResourceLocations(
+                "classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations(
+                "classpath:/META-INF/resources/webjars/");
+        super.addResourceHandlers(registry);
+    }
 }
 ```
 
@@ -262,9 +298,21 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport {
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface LogAnnotation {
+    /**
+     * 运行时长
+     */
     boolean totalConsume() default true;
+    /**
+     * 请求参数
+     */
     boolean parameter() default false;
+    /**
+     * 返回值
+     */
     boolean result() default false;
+    /**
+     * 异常时打印请求参数
+     */
     boolean exception() default true;
 }
 ```
@@ -392,4 +440,4 @@ public class SwaggerConfig {
 2. yapi
 * [github](https://github.com/YMFE/yapi)
 与swagger不同的是，这个有权限控制，这对于整个大团队维护一份文档则显得尤为重要，其支持多种格式的导入，包括上面提到的swagger。
-## 8.方法间使用valid
+
