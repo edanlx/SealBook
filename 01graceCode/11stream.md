@@ -98,7 +98,7 @@ Step10
  */
 public class Delay {
     public static <T> T showLog(int level, Supplier<T> method) {
-        // 日志级别等于1的时候执行，实际场景为从redis获取数据为空时执行刷新缓存并返回
+        // 级别等于1的时候执行，等于redis.get(XXX)!=null的时候执行方法
         if (level == 1) {
             return method.get();
         } else {
@@ -107,7 +107,7 @@ public class Delay {
     }
 
     public static void showLog2(int level, Consumer method) {
-        // 日志街边等于3的时候输出日志
+        // 日志级别等于3的时候输出日志
         if (level == 3) {
             method.accept(level);
         }
