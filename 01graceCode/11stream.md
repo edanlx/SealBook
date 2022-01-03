@@ -3,7 +3,7 @@
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/stream) 
 * [上一篇](./10front.md)拒绝if/else数据校验及转换
-* [下一篇](./12serialize.md)序列化大对比
+* [下一篇](./12serialize.md)hessian、kryo、json序列化大对比
 
 ## 1.背景
 主要是对@functional简单示例，复杂示例会在18~20期展示。之前在优雅代码系列的第3节分享过了optional的用法,这边就不再赘述了

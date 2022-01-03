@@ -1,11 +1,11 @@
-# 【优雅代码】12-序列化大对比
+# 【优雅代码】12-hessian、kryo、json序列化大对比
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [上一篇](./11stream.md)stream精选/@functional懒加载示例
 * [下一篇](./13listSpeed.md)linkedList插入真的比arrayList快么
 
 ## 1.背景
-平常我们在使用rpc调用或者将其持久化到数据库的时候则需要将对象或者文件或者图片等数据将其转为二进制字节数据。
+平常我们在使用rpc调用或者将其持久化到数据库的时候则需要将对象或者文件或者图片等数据将其转为二进制字节数据，那么各自的优劣是什么呢。
 ## 2.常见的序列化方式
 java自带的序列化,平常用的最多的json序列化(也可以叫http数据传输的序列化),dubbo默认的序列化hessian2,其优势在于跨语言(不过跨语言序列化一般还是json和xml范围更广些),目前公认稳定且最快的序列化方式Kryo
 ### 2.1 Hessian使用
@@ -79,7 +79,6 @@ private static final ThreadLocal<Kryo> KRYO = ThreadLocal.withInitial(() -> {
 //            return kryo;
 //        }).softReferences().build();
 //    }
-//    https://www.jianshu.com/p/f56c9360936d
 public static <T extends Serializable> byte[] serialization(T obj) {
     KRYO.get().register(obj.getClass());
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -107,19 +106,19 @@ public static void compareLength() {
     serializeTestObject.name = "1";
     byte[] serialize = SerializationUtils.serialize(serializeTestObject);
     SerializeTestObject deserialize = SerializationUtils.<SerializeTestObject>deserialize(serialize);
-    System.out.println(deserialize);
+    System.out.println("deserialize");
     System.out.println(serialize.length);
 
     byte[] serializeHe = Hessian2Utils.serialize(serializeTestObject);
     SerializeTestObject deserializeHe = Hessian2Utils.<SerializeTestObject>deserialize(serializeHe);
-    System.out.println(deserializeHe);
+    System.out.println("deserializeHe");
     System.out.println(serializeHe.length);
 
     byte[] serializeHeKryo = KryoUtils.serialization(serializeTestObject);
     SerializeTestObject deserializeKryo = KryoUtils.deserialization(serializeHeKryo, SerializeTestObject.class);
-    System.out.println(deserializeKryo);
+    System.out.println("deserializeKryo");
     System.out.println(serializeHeKryo.length);
-
+    System.out.println("json");
     System.out.println(JSON.toJSONString(serializeTestObject).getBytes(StandardCharsets.UTF_8).length);
 }
 ```
