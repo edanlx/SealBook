@@ -1,14 +1,14 @@
-# 【优雅代码】15-不用部署中间件的本地缓存
+# 【优雅代码】15-guavaCache本地缓存使用及源码解析
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/guava)
-* [上一篇](./14guava.md)guava精选方法
-* [下一篇](./16bloomAndRate.md)guava布隆过滤与限流算法
+* [上一篇](./14guava.md)guava精选方法及eventBus观察者模式源码解析
+* [下一篇](./16bloomAndRate.md)guava布隆过滤与限流算法源码解析
 
 ## 1.背景
 承接前一篇章的guava精选方法
 ## 2.cache
-这一块的功能设计很巧的是和redis也很像
+这一块的功能设计真的很精巧，特别是队列的设计
 ### 2.1使用
 ```java
 @SneakyThrows

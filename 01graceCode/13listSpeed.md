@@ -3,7 +3,7 @@
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/listspeed) 
 * [上一篇](./12serialize.md)hessian、kryo、json序列化大对比
-* [下一篇](./14localeCache.md)guava精选方法
+* [下一篇](./14localeCache.md)guava精选方法及eventBus观察者模式源码解析
 
 ## 1.背景
 在学习中，常规的方法总是先去模仿，硬性的接收知识，但是实际情况往往出人意料，等到构建起大体框架后再去探寻实际情况

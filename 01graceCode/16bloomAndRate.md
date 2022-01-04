@@ -1,8 +1,8 @@
-# 【优雅代码】16-guava布隆过滤与限流算法
+# 【优雅代码】16-guava布隆过滤与限流算法源码解析
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/guava)
-* [上一篇](./15localeCache.md)不用部署中间件的本地缓存
+* [上一篇](./15localeCache.md)guavaCache本地缓存使用及源码解析
 * [下一章](./17generic.md)双当泛型遇上多态
 
 ## 1.背景
@@ -139,6 +139,39 @@ public <T> boolean mightContain(T object, Funnel<? super T> funnel, int numHashF
 }
 ```
 
+### 2.3布隆算法的状态压缩
+```java
+boolean set(long bitIndex) {
+  if (get(bitIndex)) {
+    return false;
+  }
+  // 注意此处long转int有精度丢失导致不同的bitIndex落在同一个longIndex上
+  int longIndex = (int) (bitIndex >>> LONG_ADDRESSABLE_BITS);
+  long mask = 1L << bitIndex; // only cares about low 6 bits of bitIndex
+
+  long oldValue;
+  long newValue;
+  do {
+    // 此时第一个数进来假设mask是00100，而此时oldValue是00000，则得到newValue是00100
+    // 此时第二个数进来假设mask是01000，而此时oldValue是00100，则得到newValue是01100
+    oldValue = data.get(longIndex);
+    newValue = oldValue | mask;
+    if (oldValue == newValue) {
+      return false;
+    }
+  } while (!data.compareAndSet(longIndex, oldValue, newValue));
+
+  // We turned the bit on, so increment bitCount.
+  bitCount.increment();
+  return true;
+}
+boolean get(long bitIndex) {
+    // 此时第一个数进来假设mask是00100，而此时数据内容是01100，则得到00100,!=0返回true,代表能拿到值
+    // 此时第二个数进来假设mask是00010，而此时数据内容是01100，则得到00000,==0返回false,代表拿不到值
+  return (data.get((int) (bitIndex >>> LONG_ADDRESSABLE_BITS)) & (1L << bitIndex)) != 0;
+}
+```
+
 ## 3.限流
 这部分和其它限流算法的令牌桶算法基本一致
 ### 3.1使用
@@ -191,7 +224,7 @@ public final void setRate(double permitsPerSecond) {
       doSetRate(permitsPerSecond, stopwatch.readMicros());
     }
   }
-// 该标记为方法主流程方法3
+// 该标记为方法主流程方法3,注意会有多个doSetRate，但是传参不一样
 final void doSetRate(double permitsPerSecond, long nowMicros) {
 	// 用于刷新当前令牌数，在构造方法不重要，获取令牌时会再次调用
     resync(nowMicros);

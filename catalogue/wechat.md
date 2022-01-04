@@ -3,7 +3,7 @@
     2. [自动化工具合集介绍](https://mp.weixin.qq.com/s/tyumKp6obMJ-jEBO8_XcYw)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/junit)
     3. [optional杜绝空指针异常)](https://mp.weixin.qq.com/s/n5F6Xz-wkELACdL-SlYwkw)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/optional)
     4. [1行代码完成多线程，别再写runnable了](https://mp.weixin.qq.com/s/HQMq1C6XdcVSJQm71WF-8w)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/thread)
-    5. [异或、左移、右移到底该怎么用]
+    5. [从hashMap源码介绍位运算符](https://mp.weixin.qq.com/s/d2whUkVnifmdij_CIHxvFQ)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/symbol)
     6. apache、spring下优秀的工具类
     7. 利用common-pool构建高效连接池，实测连接池访问baidu的效率
     8. 利用idea优化代码
