@@ -3,8 +3,8 @@
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/optional)  
 * [视频讲解](https://www.bilibili.com/video/BV1oy4y1r7r1/)   
-* [上一篇](./02junit.md)自动化工具合集介绍
-* [下一篇](./04thread.md)1行代码完成多线程
+* [上一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/02junit.md)自动化工具合集介绍
+* [下一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/04thread.md)1行代码完成多线程
 
 ## 1.背景介绍
 在日常开发中总会遇到NPE问题，但是java提供了optional，可以让我们流畅写代码的同时避免NPE

@@ -1,8 +1,8 @@
 # 【优雅代码】12-hessian、kryo、json序列化大对比
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
-* [上一篇](./11stream.md)stream精选/@functional懒加载示例
-* [下一篇](./13listSpeed.md)linkedList插入真的比arrayList快么
+* [上一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/11stream.md)stream精选/@functional懒加载示例
+* [下一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/13listSpeed.md)linkedList插入真的比arrayList快么
 
 ## 1.背景
 平常我们在使用rpc调用或者将其持久化到数据库的时候则需要将对象或者文件或者图片等数据将其转为二进制字节数据，那么各自的优劣是什么呢。

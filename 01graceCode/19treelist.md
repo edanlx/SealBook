@@ -1,13 +1,13 @@
-# 【优雅代码】19-list、tree互转通用工具(你没用过的反射技巧-中)
+# 【优雅代码】19-list、tree互转通用工具
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/reflect)  
 * [视频讲解](https://www.bilibili.com/video/BV1ok4y1q7Be)   
-* [上一篇](./18method.md)反射与序列换联合使用(你没用过的反射技巧-上)
-* [下一篇](./20treeDeep.md)复杂树的回调通用工具(你没用过的反射技巧-下)
+* [上一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/18method.md)反射与序列换联合使用(你没用过的反射技巧-上)
+* [下一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/20treeDeep.md)复杂树的回调通用工具(你没用过的反射技巧-下)
 
 ## 1.背景介绍
-在日常工作中我们会遇到数据库查出来是list要递归转成树如果每个都去写方法那么效率就会很低，于是利用反射可以一行代码完成转换,对于Function有理解困难的小换班先去看第11期的内容
+在日常工作中我们会遇到数据库查出来是list要递归转成树如果每个都去写方法那么效率就会很低，对于Function有理解困难的小伙伴先去看第11期的内容
 ## 2.相关代码  
 ```java
 public class TreeUtils {

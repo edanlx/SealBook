@@ -3,8 +3,8 @@
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/junit) 
 * [视频讲解](https://www.bilibili.com/video/BV1Bq4y1174Q/)
-* [上一篇](./01lombok.md)lombok精选注解及原理
-* [下一篇](./03optional.md)optional杜绝空指针异常
+* [上一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/01lombok.md)lombok精选注解及原理
+* [下一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/03optional.md)optional杜绝空指针异常
 
 ## 1.背景介绍
 在日常工作中总会需要重复的工作，而作为一个现代人，应该学会使用工具避免重复的工作。java能做很多事情不止是web方向，而如果不限于java能做的事情就更多了。 

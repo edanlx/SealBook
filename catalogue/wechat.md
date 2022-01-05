@@ -4,7 +4,7 @@
     3. [optional杜绝空指针异常)](https://mp.weixin.qq.com/s/n5F6Xz-wkELACdL-SlYwkw)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/optional)
     4. [1行代码完成多线程，别再写runnable了](https://mp.weixin.qq.com/s/HQMq1C6XdcVSJQm71WF-8w)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/thread)
     5. [从hashMap源码介绍位运算符](https://mp.weixin.qq.com/s/d2whUkVnifmdij_CIHxvFQ)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/symbol)
-    6. apache、spring下优秀的工具类
+    6. [apache下优秀的工具类](https://mp.weixin.qq.com/s/HPrxG3kQ0PO9_tr-QsiPtw)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/apacheUtilse)
     7. 利用common-pool构建高效连接池，实测连接池访问baidu的效率
     8. 利用idea优化代码
     9. Swagger前后端分离api文档

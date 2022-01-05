@@ -2,8 +2,8 @@
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [视频讲解](https://www.bilibili.com/video/BV1HL411V7ba/)  
-* [上一篇](./04thread.md)1行代码完成多线程
-* [下一篇](./06apacheUtils.md)apache下的优秀工具类
+* [上一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/04thread.md)1行代码完成多线程
+* [下一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/06apacheUtils.md)apache下的优秀工具类
 
 ## 1.背景介绍
 在看源码的时候往往会被位运算符劝退，但其实位运算符虽然难，但是用的时候使用规律/公式的。笔者以hashMap为例介绍位运算符

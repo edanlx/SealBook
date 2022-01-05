@@ -3,8 +3,8 @@
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/thread)  
 * [视频讲解](https://www.bilibili.com/video/BV1jr4y1w7SH/)  
-* [上一篇](./03optional.md)optional杜绝空指针异常
-* [下一篇](./05symbol.md)从hashMap源码介绍位运算符
+* [上一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/03optional.md)optional杜绝空指针异常
+* [下一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/05symbol.md)从hashMap源码介绍位运算符
 
 ## 1.背景介绍
 java8提供的CompletableFuture以及匿名函数可以让我们一行代码完成多线程

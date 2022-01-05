@@ -2,8 +2,8 @@
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/commonpool) 
-* [上一篇](./07springUtils.md)spring下的优秀工具类
-* [下一篇](./09idea.md)idea断点、插件、模板合集
+* [上一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/07springUtils.md)spring下的优秀工具类
+* [下一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/09idea.md)idea断点、插件、模板合集
 
 ## 1.背景
 线程池的优势自不比多说，连接池和线程池有着众多想通之处，比较常见的连接池有druid、jedis等，但若是某些自研数据库等该如何构建自己的连接池就成问题。笔者使用http这一工具进行构建，可以对比效率差异。核心包为common-pool2
