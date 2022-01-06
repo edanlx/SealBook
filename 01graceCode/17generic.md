@@ -3,7 +3,7 @@
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/generic)
 * [上一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/16bloomAndRate.md)guava布隆过滤与限流算法源码解析
-* [下一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/18method.md)反射与序列换联合使用(你没用过的反射技巧-上)
+* [下一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/18method.md)反射与序列化联合使用(你没用过的反射技巧-上)
 
 
 ## 1.背景

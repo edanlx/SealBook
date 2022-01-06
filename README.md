@@ -14,7 +14,7 @@
         5. [从hashMap源码介绍位运算符](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/05symbol.md)  [视频版](https://www.bilibili.com/video/BV1HL411V7ba/)
         6. [apache下优秀的工具类](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/06apacheUtils.md)  [视频版](https://www.bilibili.com/video/BV1XR4y1u7FC/)
         7. [spring下优秀的工具类](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/07springUtils.md)  [视频版](https://www.bilibili.com/video/BV1ia411z7rw/)
-        8. [构建自己的高效连接池](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/08commonPool.md)
+        8. [构建自己的高效连接池](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/08commonPool.md)  [视频版](https://www.bilibili.com/video/BV1hP4y1E7jB)
         9. [idea断点、插件、模板合集](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/09idea.md)
         10. [拒绝if/else数据校验及转换](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/10front.md)
         11. [stream精选/@functional懒加载示例](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/11stream.md)
