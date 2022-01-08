@@ -6,10 +6,9 @@
     5. [从hashMap源码介绍位运算符](https://mp.weixin.qq.com/s/d2whUkVnifmdij_CIHxvFQ)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/symbol)
     6. [apache下优秀的工具类](https://mp.weixin.qq.com/s/HPrxG3kQ0PO9_tr-QsiPtw)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/apache)
     7. [spring下优秀的工具类](https://mp.weixin.qq.com/s/aJhjwPCCmQD_z1i7lFdRlA)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/spring)
-    8. [构建自己的高效连接池](https://mp.weixin.qq.com/s/xIZiu1hZ6uOBRQRsY-UuvQ)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/commonpool)
-    8. 利用idea优化代码
-    9. Swagger前后端分离api文档
-    10. 借助aop构建全局日志
+    8. [commonpool2构建自己的高效连接池](https://mp.weixin.qq.com/s/xIZiu1hZ6uOBRQRsY-UuvQ)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/commonpool)
+    9. [idea断点、插件、模板合集](https://mp.weixin.qq.com/s/UpRps9jPEsW-UjGV2c4fAQ)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/commonpool)
+    10. [拒绝if/else数据校验及转换](https://mp.weixin.qq.com/s/wwglTG370QTPHfIuraLyQg)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/front)
     11. 借助ErrorController无侵入验证字段
     12. stream的常用示例
     13. mybatisplus
