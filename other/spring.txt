@@ -9,7 +9,7 @@ IOC和DI
 		注入:
 			构造方法
 			setter
-	spring的依赖注入
+	spring的依赖注入(@Bean会覆盖@Companonet)
 		bean和BeanFactory
 			在spring中BeanFactory负责管理bean，应用程序可以通过BeanFactory访问bean。虽然BeanFactory可以通过编程式配置，但更多的做法是由BeanDefinition接口的实例保存bean配置信息。通过使用 PropertiesBeanDefinitionReader和XMLBeanDefinitionReader从配置文件中读取BeanDefinition数据,前者为propertiese后者为xml。所以在BeanFactory为每一个bean分配一个ID、一个名称或两者兼具。或者说一个bean一定有一个名称，可能会有别名。
 		ApplicationContext
@@ -28,6 +28,7 @@ IOC和DI
 			当有byTpe多个bean的时候处理方案,当有两个的时候可以添加@Primary,当有多个时则使用byname的模式。在spring 的命名规则中，普通bean为第一个字母小写，如果是@Bean方式，则还会有一个方法名是bean的名称。
 		继承
 			parent,可以直接继承另一个bean的属性值，不过在注解上并没有被支持，未被广泛使用
+		@Configuration,启用appConfig代理模式，让其加载@Bean只有一个
 SpringBean
 	sprringBean的生命周期
 		【TODO4-1 Spring bean 的生命周期】
