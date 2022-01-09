@@ -8,6 +8,7 @@
 ## 1.背景
 主要是对@functional简单示例，复杂示例会在18~20期展示。之前在优雅代码系列的第3节分享过了optional的用法,这边就不再赘述了
 ## 2.常用部分
+## 2.1示例
 该部分包含了个人日常开发中95%以上的使用场景，或者其变种
 ```java
 public static void ordinaryUsed() {
@@ -77,6 +78,14 @@ Step9
 Step10
 {excel=[TestEnum.EXCEL(super=EXCEL, code=1, desc=excel)], ppt=[TestEnum.PPT(super=PPT, code=2, desc=ppt)]}
 ```
+## 2.2说明
+Lambda 表达式免去了使用匿名方法的麻烦
+|使用方法|对应lambda表达式|
+|--|--|
+|object::instanceMethod|(a,b,.....)->特定对象.实例方法(a,b....)|
+|Class::statucMethod|(a,b,.....)->类名.类方法(a,b....)|
+|Class::instanceMethod|(a,b,.....)->a.实例方法(b....)|
+|Class::new|(a,b,.....)->new 类名(a,b....)|
 
 ## 3.@functional懒加载应用
 
