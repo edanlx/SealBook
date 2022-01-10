@@ -10,6 +10,7 @@
     9. [idea断点、插件、模板合集](https://mp.weixin.qq.com/s/UpRps9jPEsW-UjGV2c4fAQ)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/commonpool)
     10. [拒绝if/else数据校验及转换](https://mp.weixin.qq.com/s/wwglTG370QTPHfIuraLyQg)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/front)
     11. [stream精选/@functional懒加载示例](https://mp.weixin.qq.com/s/q9fb5jVBaAW0t0hKhNMg7A)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/stream)
+    12. [hessian、kryo、json序列化对比](hhttps://mp.weixin.qq.com/s/nyGhHOEX3Zia1ZUhlKkgEw)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/serialize)
 2. JVM深度剖析及调优
 3. 并发 
 4. tomcat深度剖析及调优
