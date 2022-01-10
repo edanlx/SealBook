@@ -4,6 +4,7 @@
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/reflect)  
 * [视频讲解](https://www.bilibili.com/video/BV1ok4y1q7Be)   
 * [上一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/19treelist.md)list、tree互转通用工具
+* [下一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/20treeDeep.md)复杂树的回调通用工具(你没用过的反射技巧-下)
 
 ## 1.背景介绍
 类似省市区的树结构在日常开发中经常遇到，如果结构一致则可以利用上一篇介绍的工具类进行循环，但难免会遇到虽然有层级结构，但是结构不一致的，嵌套循环又很深的
