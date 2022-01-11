@@ -5,8 +5,9 @@
 * [github](https://github.com/edanlx/SealBook)
 
 ![公众号](http://seal_li.gitee.io/sealbook/pic/wechat.jpg)
-
-  1. 优雅代码
+  1. 触手可及
+        1. [stream的基础使用及基本原理](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/00greenhand/01stream.md)  [视频版](https://www.bilibili.com/video/BV1BL4y1b7S5/)
+  2. 优雅代码
         1. [lombok精选注解及原理](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/01lombok.md)  [视频版](https://www.bilibili.com/video/BV13m4y1Q7GD/)
         2. [自动化工具合集介绍](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/02junit.md)  [视频版](https://www.bilibili.com/video/BV1Bq4y1174Q/)
         3. [optional杜绝空指针异常](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/03optional.md)  [视频版](https://www.bilibili.com/video/BV1oy4y1r7r1/)

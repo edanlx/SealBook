@@ -84,7 +84,7 @@ Lambda 表达式免去了使用匿名方法的麻烦
 |使用方法|对应lambda表达式|
 |--|--|
 |object::instanceMethod|(a,b,.....)->特定对象.实例方法(a,b....)|
-|Class::statucMethod|(a,b,.....)->类名.类方法(a,b....)|
+|Class::staticMethod|(a,b,.....)->类名.类方法(a,b....)|
 |Class::instanceMethod|(a,b,.....)->a.实例方法(b....)|
 |Class::new|(a,b,.....)->new 类名(a,b....)|
 
