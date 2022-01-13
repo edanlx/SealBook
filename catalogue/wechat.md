@@ -13,6 +13,8 @@
     10. [拒绝if/else数据校验及转换](https://mp.weixin.qq.com/s/wwglTG370QTPHfIuraLyQg)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/front)
     11. [stream精选/@functional懒加载示例](https://mp.weixin.qq.com/s/q9fb5jVBaAW0t0hKhNMg7A)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/stream)
     12. [hessian、kryo、json序列化对比](hhttps://mp.weixin.qq.com/s/nyGhHOEX3Zia1ZUhlKkgEw)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/serialize)
+    13. [linkedList插入真的比arrayList快么](https://mp.weixin.qq.com/s/k7QVkV39YYGdPVuXaSd2MA)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/listspeed)
+    14. [guava精选方法及eventBus观察者模式源码解析](https://mp.weixin.qq.com/s/um666au547GJdFQakKfBkQ)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/guava)
 2. JVM深度剖析及调优
 3. 并发 
 4. tomcat深度剖析及调优

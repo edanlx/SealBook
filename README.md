@@ -20,8 +20,8 @@
         10. [拒绝if/else数据校验及转换](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/10front.md)  [视频版](https://www.bilibili.com/video/BV1TT4y117r3)
         11. [stream精选/@functional懒加载示例](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/11stream.md)  [视频版](https://www.bilibili.com/video/BV1pT4y1m7vo)
         12. [hessian、kryo、json序列化对比](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/12serialize.md)  [视频版](https://www.bilibili.com/video/BV11u41127bF)
-        13. [linkedList插入真的比arrayList快么](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/13listSpeed.md)
-        14. [guava精选方法及eventBus观察者模式源码解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/14guava.md)
+        13. [linkedList插入真的比arrayList快么](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/13listSpeed.md)  [视频版](https://www.bilibili.com/video/BV1UL4y1b7Ft)  
+        14. [guava精选方法及eventBus观察者模式源码解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/14guava.md)  [视频版](https://www.bilibili.com/video/BV1tY411h7mR)  
         15. [guavaCache本地缓存使用及源码解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/15localeCache.md)
         16. [guava布隆过滤与限流算法源码解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/16bloomAndRate.md)
         17. [当泛型遇上多态](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/17generic.md)
@@ -29,15 +29,15 @@
         19. list、tree互转通用工具
         20. 复杂树的回调通用工具(你没用过的反射技巧-下)
   2. JVM深度剖析及调优
-        1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/02jvm/01classloader.md)  [视频版](https://www.bilibili.com/video/BV1Sz4y1f7FB/)
-        2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/02jvm/02myclassLoader.md)  [视频版](https://www.bilibili.com/video/BV1Y54y1274Y/)
-        3. [JVM整体结构(写了final就是常量池了么)](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/02jvm/03jv.md)  [视频版](https://www.bilibili.com/video/BV1LZ4y1N75R)
-        4. [字节码(我偷偷改了你编译后的class文件)](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/02jvm/04clazz.md)  [视频版](https://www.bilibili.com/video/BV1454y1r7mf/)
-        5. [编译优化(为什么你写的代码有时候和预期不一致)](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/02jvm/05compile.md)  [视频版](https://www.bilibili.com/video/BV11i4y1L7BX/)
-        6. [HotSpot创建对象(new一个对象到底占了多少内存?)](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/02jvm/06HotSpotAndObject.md) [视频版](https://www.bilibili.com/video/BV1A54y1k7UW/)
-        7. [并发的内存模型(偏向锁、轻量锁、重量锁到底是啥?)](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/02jvm/07concurrence.md)  [视频版](https://www.bilibili.com/video/BV1LV411a7u7/)
-        8. [垃圾收集器(垃圾回收器那么多傻傻分不清?)](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/02jvm/08gcCollector.md)  [视频版](https://www.bilibili.com/video/BV1S5411V74U/)
-        9. [GC调优(频繁full gc分析思路)](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/02jvm/09gc.md) [视频版](https://www.bilibili.com/video/BV1Ey4y167HQ/)
+        1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)]
+        2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)]
+        3. [JVM整体结构(写了final就是常量池了么)]
+        4. [字节码(我偷偷改了你编译后的class文件)]
+        5. [编译优化(为什么你写的代码有时候和预期不一致)]
+        6. [HotSpot创建对象(new一个对象到底占了多少内存?)]
+        7. [并发的内存模型(偏向锁、轻量锁、重量锁到底是啥?)]
+        8. [垃圾收集器(垃圾回收器那么多傻傻分不清?)]
+        9. [GC调优(频繁full gc分析思路)]
   3. 并发
         1. jmm(jmm与cpu)
         2. sychornized(monitor,两种队列,锁升级)
