@@ -3,17 +3,11 @@
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
 ## 1.背景
-beandefinition是如何转成单例和原型bean对象的，中间经过了哪些回调，auto注解是什么时候生效的
+@autowired注解作为spring最重要的注解之一，其核心原理如何赋值
 ## 2.整体流程
-1. 判断bean类型->如果是多例创建直接返回，如果是request则在相应作用域创建缓存，如果是单例则进入单例池
-2. 实例化前扩展点InstantiationAwareBeanPostProcessor.postProcessBeforeInstantiation()
-3. 实例化后属性赋值前扩展点(针对beanDefinition)MergedBeanDefinitionPostProcessor.postProcessMergedBeanDefinition()
-4. 实例化后属性赋值前扩展点(针对bean对象)InstantiationAwareBeanPostProcessor.postProcessAfterInstantiation()
-5. 属性赋值扩展点(例如@Autowired基于此扩展点实现)InstantiationAwareBeanPostProcessor.postProcessProperties()
-6. 执行各种aware回调
-7. 初始化前BeanPostProcessor.postProcessBeforeInitialization()
-8. 初始化InitializingBean.afterPropertiesSet()
-9. 初始化后BeanPostProcessor.postProcessAfterInitialization()
+1. postProcessMergedBeanDefinition流程先扫描然后将符合条件的@Value、@Autowired字段及方法缓存
+2. postProcessProperties进行回调，如果是@Value直接解析从环境变量中获取结果，如果是@Autowired则进行6次过滤获得最终结果(如果是注入自己则会优先注入其他对象)，如果没初始化则初始化
+3. 反射赋值
 ## 3.初始代码
 ```java
 @ComponentScan("com.example.demo.lesson.spring")
@@ -169,6 +163,7 @@ public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, Str
 }
 ```
 
+## 4.2.1inject
 ```java
 public void inject(Object target, @Nullable String beanName, @Nullable PropertyValues pvs) throws Throwable {
 	Collection<InjectedElement> checkedElements = this.checkedElements;
@@ -187,6 +182,7 @@ public void inject(Object target, @Nullable String beanName, @Nullable PropertyV
 }
 ```
 
+## 4.2.2inject
 ```java
 @Override
 protected void inject(Object bean, @Nullable String beanName, @Nullable PropertyValues pvs) throws Throwable {
@@ -237,6 +233,7 @@ protected void inject(Object bean, @Nullable String beanName, @Nullable Property
 }
 ```
 
+## 4.3resolveDependency
 ```java
 public Object resolveDependency(DependencyDescriptor descriptor, @Nullable String requestingBeanName,
 			@Nullable Set<String> autowiredBeanNames, @Nullable TypeConverter typeConverter) throws BeansException {
@@ -270,6 +267,7 @@ public Object resolveDependency(DependencyDescriptor descriptor, @Nullable Strin
 }
 ```
 
+## 4.4doResolveDependency
 ```java
 public Object doResolveDependency(DependencyDescriptor descriptor, @Nullable String beanName,
 			@Nullable Set<String> autowiredBeanNames, @Nullable TypeConverter typeConverter) throws BeansException {
@@ -312,7 +310,7 @@ public Object doResolveDependency(DependencyDescriptor descriptor, @Nullable Str
 			return multipleBeans;
 		}
 
-		// 根据参数找bean
+		// 根据参数找bean,如果该bean没有被实例化则会返回class
 		Map<String, Object> matchingBeans = findAutowireCandidates(beanName, type, descriptor);
 		if (matchingBeans.isEmpty()) {
 			if (isRequired(descriptor)) {
@@ -352,7 +350,7 @@ public Object doResolveDependency(DependencyDescriptor descriptor, @Nullable Str
 		if (autowiredBeanNames != null) {
 			autowiredBeanNames.add(autowiredBeanName);
 		}
-		// 如果是class即表示还没创建
+		// 如果是class即表示还没创建，则进行创建
 		if (instanceCandidate instanceof Class) {
 			instanceCandidate = descriptor.resolveCandidate(autowiredBeanName, type, this);
 		}
@@ -374,7 +372,7 @@ public Object doResolveDependency(DependencyDescriptor descriptor, @Nullable Str
 	}
 }
 ```
-
+## 4.5findAutowireCandidates
 ```java
 protected Map<String, Object> findAutowireCandidates(
 			@Nullable String beanName, Class<?> requiredType, DependencyDescriptor descriptor) {
@@ -396,7 +394,7 @@ protected Map<String, Object> findAutowireCandidates(
 		}
 	}
 	for (String candidate : candidateNames) {
-		// 除去自己，以及autowireCandicate=false等情况
+		// 除去自己，判断autowireCandicate=false，beanClass是否匹配，@Qualifer是否匹配
 		if (!isSelfReference(beanName, candidate) && isAutowireCandidate(candidate, descriptor)) {
 			addCandidateEntry(result, candidate, descriptor, requiredType);
 		}

@@ -22,12 +22,11 @@
         12. [hessian、kryo、json序列化对比](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/12serialize.md)  [视频版](https://www.bilibili.com/video/BV11u41127bF)
         13. [linkedList插入真的比arrayList快么](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/13listSpeed.md)  [视频版](https://www.bilibili.com/video/BV1UL4y1b7Ft)  
         14. [guava精选方法及eventBus观察者模式源码解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/14guava.md)  [视频版](https://www.bilibili.com/video/BV1tY411h7mR)  
-        15. [guavaCache本地缓存使用及源码解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/15localeCache.md)
-        16. [guava布隆过滤与限流算法源码解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/16bloomAndRate.md)
-        17. [当泛型遇上多态](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/17generic.md)
-        18. 反射与序列换联合使用(你没用过的反射技巧-上)
-        19. list、tree互转通用工具
-        20. 复杂树的回调通用工具(你没用过的反射技巧-下)
+        15. [guavaCache本地缓存使用及源码解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/15localeCache.md)  [视频版](https://www.bilibili.com/video/BV1PF411i7op)  
+        16. [guava布隆过滤解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/16bloom.md)
+        17. [guava限流算法解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/17rate.md)
+        18. list、tree互转通用工具
+        19. spring下优秀的工具类(进阶)
   2. JVM深度剖析及调优
         1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)]
         2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)]
