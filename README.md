@@ -23,7 +23,7 @@
         13. [linkedList插入真的比arrayList快么](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/13listSpeed.md)  [视频版](https://www.bilibili.com/video/BV1UL4y1b7Ft)  
         14. [guava精选方法及eventBus观察者模式源码解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/14guava.md)  [视频版](https://www.bilibili.com/video/BV1tY411h7mR)  
         15. [guavaCache本地缓存使用及源码解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/15localeCache.md)  [视频版](https://www.bilibili.com/video/BV1PF411i7op)  
-        16. [guava布隆过滤解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/16bloom.md)
+        16. [guava布隆过滤解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/16bloom.md)  [视频版](https://www.bilibili.com/video/BV1vL411c7UP)
         17. [guava限流算法解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/17rate.md)
         18. list、tree互转通用工具
         19. spring下优秀的工具类(进阶)
