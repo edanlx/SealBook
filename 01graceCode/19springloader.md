@@ -1,9 +1,9 @@
-# 【优雅代码】19-spring下的优秀工具类(进阶)
+# 【优雅代码】19-spring下的优秀工具类-加载
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 > 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 >
 > * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/springloader)  
-* [上一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/18treelist.md)list、tree互转通用工具
+* [上一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/18treelist.md)利用function实现list、tree互转工具
 
 ## 1.背景介绍
 spring中有很多神奇的匹配、加载，它用到的工具类会在该篇章中介绍
