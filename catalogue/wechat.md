@@ -15,6 +15,11 @@
     12. [hessian、kryo、json序列化对比](hhttps://mp.weixin.qq.com/s/nyGhHOEX3Zia1ZUhlKkgEw)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/serialize)
     13. [linkedList插入真的比arrayList快么](https://mp.weixin.qq.com/s/k7QVkV39YYGdPVuXaSd2MA)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/listspeed)
     14. [guava精选方法及eventBus观察者模式源码解析](https://mp.weixin.qq.com/s/um666au547GJdFQakKfBkQ)  [对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/guava)
+    15. [guavaCache本地缓存使用及源码解析](https://mp.weixin.qq.com/s/YJUJ3rNzREvM4hTovH5I1A)  对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/guava)
+    16. [guava布隆过滤解析](https://mp.weixin.qq.com/s/jdUNVjRu3uwOK5YSJbT7CQ)  对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/guava)
+    17. [guava限流算法解析](https://mp.weixin.qq.com/s/jdUNVjRu3uwOK5YSJbT7CQ)  对应源码地址](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/guava)
+    18. [list、tree互转通用工具](https://mp.weixin.qq.com/s/-wNhzerA-zoQgd1es5DUIw)  对应源码地址](https://github.com/edanlx/TechingCode/blob/master/demoGrace/src/main/java/com/example/demo/util/TreeUtils.java)
+    19. spring下优秀的工具类(进阶)
 2. JVM深度剖析及调优
 3. 并发 
 4. tomcat深度剖析及调优

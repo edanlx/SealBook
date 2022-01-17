@@ -7,26 +7,26 @@
 
 ![公众号](http://seal_li.gitee.io/sealbook/pic/wechat.jpg)
   1. 触手可及
-        1. [stream的基础使用及基本原理](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/00greenhand/01stream.md)  [视频版](https://www.bilibili.com/video/BV1BL4y1b7S5/)
+        1. [stream的基础使用及基本原理](./00greenhand/01stream.mdd)  [视频版](https://www.bilibili.com/video/BV1BL4y1b7S5/)
   2. 优雅代码
-        1. [lombok精选注解及原理](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/01lombok.md)  [视频版](https://www.bilibili.com/video/BV13m4y1Q7GD/)
-        2. [自动化工具合集介绍](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/02junit.md)  [视频版](https://www.bilibili.com/video/BV1Bq4y1174Q/)
-        3. [optional杜绝空指针异常](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/03optional.md)  [视频版](https://www.bilibili.com/video/BV1oy4y1r7r1/)
-        4. [1行代码完成多线程，别再写runnable了](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/04thread.md)  [视频版](https://www.bilibili.com/video/BV1jr4y1w7SH/)
-        5. [从hashMap源码介绍位运算符](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/05symbol.md)  [视频版](https://www.bilibili.com/video/BV1HL411V7ba/)
-        6. [apache下优秀的工具类](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/06apacheUtils.md)  [视频版](https://www.bilibili.com/video/BV1XR4y1u7FC/)
-        7. [spring下优秀的工具类](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/07springUtils.md)  [视频版](https://www.bilibili.com/video/BV1ia411z7rw/)
-        8. [commonpool2构建自己的高效连接池](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/08commonPool.md)  [视频版](https://www.bilibili.com/video/BV1hP4y1E7jB)
-        9. [idea断点、插件、模板合集](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/09idea.md)  [视频版](https://www.bilibili.com/video/BV1pY41187rm)
-        10. [拒绝if/else数据校验及转换](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/10front.md)  [视频版](https://www.bilibili.com/video/BV1TT4y117r3)
-        11. [stream精选/@functional懒加载示例](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/11stream.md)  [视频版](https://www.bilibili.com/video/BV1pT4y1m7vo)
-        12. [hessian、kryo、json序列化对比](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/12serialize.md)  [视频版](https://www.bilibili.com/video/BV11u41127bF)
-        13. [linkedList插入真的比arrayList快么](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/13listSpeed.md)  [视频版](https://www.bilibili.com/video/BV1UL4y1b7Ft)  
-        14. [guava精选方法及eventBus观察者模式源码解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/14guava.md)  [视频版](https://www.bilibili.com/video/BV1tY411h7mR)  
-        15. [guavaCache本地缓存使用及源码解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/15localeCache.md)  [视频版](https://www.bilibili.com/video/BV1PF411i7op)  
-        16. [guava布隆过滤解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/16bloom.md)  [视频版](https://www.bilibili.com/video/BV1vL411c7UP)
-        17. [guava限流算法解析](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/01graceCode/17rate.md)
-        18. list、tree互转通用工具
+        1. [lombok精选注解及原理](./01graceCode/01lombok.md)  [视频版](https://www.bilibili.com/video/BV13m4y1Q7GD/)
+        2. [自动化工具合集介绍](./01graceCode/02junit.md)  [站内文字版](./01graceCode/02junit.md)   [视频版](https://www.bilibili.com/video/BV1Bq4y1174Q/)
+        3. [optional杜绝空指针异常](./01graceCode/03optional.md)  [视频版](https://www.bilibili.com/video/BV1oy4y1r7r1/)
+        4. [1行代码完成多线程，别再写runnable了](./01graceCode/04thread.md)  [视频版](https://www.bilibili.com/video/BV1jr4y1w7SH/)
+        5. [从hashMap源码介绍位运算符](./01graceCode/05symbol.md)  [视频版](https://www.bilibili.com/video/BV1HL411V7ba/)
+        6. [apache下优秀的工具类](./01graceCode/06apacheUtils.md)   [视频版](https://www.bilibili.com/video/BV1XR4y1u7FC/)
+        7. [spring下优秀的工具类](./01graceCode/07springUtils.md)  [视频版](https://www.bilibili.com/video/BV1ia411z7rw/)
+        8. [commonpool2构建自己的高效连接池](./01graceCode/08commonPool.md)  [站内文字版](./01graceCode/08commonPool.md)  [视频版](https://www.bilibili.com/video/BV1hP4y1E7jB)
+        9. [idea断点、插件、模板合集](./01graceCode/09idea.md)  [视频版](https://www.bilibili.com/video/BV1pY41187rm)
+        10. [拒绝if/else数据校验及转换](./01graceCode/10front.md) [视频版](https://www.bilibili.com/video/BV1TT4y117r3)
+        11. [stream精选/@functional懒加载示例](./01graceCode/11stream.md)  [视频版](https://www.bilibili.com/video/BV1pT4y1m7vo)
+        12. [hessian、kryo、json序列化对比](./01graceCode/12serialize.md)  [视频版](https://www.bilibili.com/video/BV11u41127bF)
+        13. [linkedList插入真的比arrayList快么](./01graceCode/13listSpeed.md)  [视频版](https://www.bilibili.com/video/BV1UL4y1b7Ft)
+        14. [guava精选方法及eventBus观察者模式源码解析](./01graceCode/14guava.md) [视频版](https://www.bilibili.com/video/BV1tY411h7mR)  
+        15. [guavaCache本地缓存使用及源码解析](./01graceCode/15localeCache.md)  [视频版](https://www.bilibili.com/video/BV1PF411i7op)
+        16. [guava布隆过滤解析](./01graceCode/16bloom.md)  [视频版](https://www.bilibili.com/video/BV1vL411c7UP)
+        17. [guava限流算法解析](./01graceCode/17rate.md)  [视频版](https://www.bilibili.com/video/BV18b4y1J7bH/)
+        18. [list、tree互转通用工具](./01graceCode/18treelist.md)  [视频版](https://www.bilibili.com/video/BV1534y1i72U/)
         19. spring下优秀的工具类(进阶)
   2. JVM深度剖析及调优
         1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)]
@@ -57,7 +57,7 @@
         16. stream
         17. forkJoinPool
   4. tomcat深度剖析及调优
-        1. [tomcat主流程](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/04tomcat/01bootstrap.md)  [视频版](https://www.bilibili.com/video/BV1GK41137LQ/)
+        1. [tomcat主流程](./04tomcat/01bootstrap.md)
    5. mysql深度剖析及调优
    6. spring
    7. zookeeper
@@ -73,7 +73,7 @@
    17. 设计模式
    18. 面试专题
   19. 算法专题
-            1. [数据结构概述(注意区分jvm堆与堆/jvm栈与栈)](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/arithmetic/structure.md)
+            1. [数据结构概述(注意区分jvm堆与堆/jvm栈与栈)](./arithmetic/structure.md)
             2. 二分查找
             3. 深度优先
             4. 广度优先
