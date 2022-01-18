@@ -273,3 +273,516 @@ protected void finishRefresh() {
 	LiveBeansView.registerApplicationContext(this);
 }
 ```
+
+### 4.2invokeBeanFactoryPostProcessors
+```java
+protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+	// 先调postProcessBeanDefinitionRegistry，再回调beanFactory后置处理器(postProcessBeanFactory)
+	PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
+
+	// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime
+	// (e.g. through an @Bean method registered by ConfigurationClassPostProcessor)
+	if (beanFactory.getTempClassLoader() == null && beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
+		beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
+		beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
+	}
+}
+```
+#### 4.2.1invokeBeanFactoryPostProcessors
+```java
+public static void invokeBeanFactoryPostProcessors(
+			ConfigurableListableBeanFactory beanFactory, List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
+	// Invoke BeanDefinitionRegistryPostProcessors first, if any.
+	Set<String> processedBeans = new HashSet<>();
+
+	// 此处只有直接通过context添加的，如果通过接口写的此时还没生成对象
+	if (beanFactory instanceof BeanDefinitionRegistry) {
+		BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
+		List<BeanFactoryPostProcessor> regularPostProcessors = new ArrayList<>();
+		List<BeanDefinitionRegistryPostProcessor> registryProcessors = new ArrayList<>();
+
+		for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
+			if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
+				BeanDefinitionRegistryPostProcessor registryProcessor =
+						(BeanDefinitionRegistryPostProcessor) postProcessor;
+				// 执行回调BeanDefinitionRegistryPostProcessor.postProcessBeanDefinitionRegistry()
+				registryProcessor.postProcessBeanDefinitionRegistry(registry);
+				registryProcessors.add(registryProcessor);
+			}
+			else {
+				regularPostProcessors.add(postProcessor);
+			}
+		}
+
+		// Do not initialize FactoryBeans here: We need to leave all regular beans
+		// uninitialized to let the bean factory post-processors apply to them!
+		// Separate between BeanDefinitionRegistryPostProcessors that implement
+		// PriorityOrdered, Ordered, and the rest.
+		List<BeanDefinitionRegistryPostProcessor> currentRegistryProcessors = new ArrayList<>();
+
+		// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
+		// 执行实现PriorityOrdered.postProcessBeanDefinitionRegistry()接口的类
+		String[] postProcessorNames =
+				beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+		for (String ppName : postProcessorNames) {
+			if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
+				// 将BeanDefinition生成对象
+				currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+				processedBeans.add(ppName);
+			}
+		}
+		sortPostProcessors(currentRegistryProcessors, beanFactory);
+		registryProcessors.addAll(currentRegistryProcessors);
+		invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+		currentRegistryProcessors.clear();
+
+		// Next, invoke the BeanDefinitionRegistryPostProcessors that implement Ordered.
+		// 执行实现Ordered.postProcessBeanDefinitionRegistry()接口的类
+		postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+		for (String ppName : postProcessorNames) {
+			// 执行实现
+			if (!processedBeans.contains(ppName) && beanFactory.isTypeMatch(ppName, Ordered.class)) {
+				currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+				processedBeans.add(ppName);
+			}
+		}
+		sortPostProcessors(currentRegistryProcessors, beanFactory);
+		registryProcessors.addAll(currentRegistryProcessors);
+		invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+		currentRegistryProcessors.clear();
+
+		// Finally, invoke all other BeanDefinitionRegistryPostProcessors until no further ones appear.
+		boolean reiterate = true;
+		// 重复循环，防止在beanFactory中定义beandefinition中beanFactory
+		while (reiterate) {
+			reiterate = false;
+			// 执行前面没有实例化的BeanFactory
+			postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+			for (String ppName : postProcessorNames) {
+				if (!processedBeans.contains(ppName)) {
+					currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+					processedBeans.add(ppName);
+					reiterate = true;
+				}
+			}
+			sortPostProcessors(currentRegistryProcessors, beanFactory);
+			registryProcessors.addAll(currentRegistryProcessors);
+			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+			currentRegistryProcessors.clear();
+		}
+
+		// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
+		// 先执行实现子接口的BeanFactory后置处理器
+		invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
+		// 手动添加的
+		invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
+	}
+
+	else {
+		// Invoke factory processors registered with the context instance.
+		invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);
+	}
+
+	// Do not initialize FactoryBeans here: We need to leave all regular beans
+	// uninitialized to let the bean factory post-processors apply to them!
+	String[] postProcessorNames =
+			beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class, true, false);
+
+	// Separate between BeanFactoryPostProcessors that implement PriorityOrdered,
+	// Ordered, and the rest.
+	List<BeanFactoryPostProcessor> priorityOrderedPostProcessors = new ArrayList<>();
+	List<String> orderedPostProcessorNames = new ArrayList<>();
+	List<String> nonOrderedPostProcessorNames = new ArrayList<>();
+	for (String ppName : postProcessorNames) {
+		if (processedBeans.contains(ppName)) {
+			// skip - already processed in first phase above
+		}
+		else if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
+			priorityOrderedPostProcessors.add(beanFactory.getBean(ppName, BeanFactoryPostProcessor.class));
+		}
+		else if (beanFactory.isTypeMatch(ppName, Ordered.class)) {
+			orderedPostProcessorNames.add(ppName);
+		}
+		else {
+			nonOrderedPostProcessorNames.add(ppName);
+		}
+	}
+
+	// First, invoke the BeanFactoryPostProcessors that implement PriorityOrdered.
+	sortPostProcessors(priorityOrderedPostProcessors, beanFactory);
+	invokeBeanFactoryPostProcessors(priorityOrderedPostProcessors, beanFactory);
+
+	// Next, invoke the BeanFactoryPostProcessors that implement Ordered.
+	List<BeanFactoryPostProcessor> orderedPostProcessors = new ArrayList<>(orderedPostProcessorNames.size());
+	for (String postProcessorName : orderedPostProcessorNames) {
+		orderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));
+	}
+	sortPostProcessors(orderedPostProcessors, beanFactory);
+	invokeBeanFactoryPostProcessors(orderedPostProcessors, beanFactory);
+
+	// Finally, invoke all other BeanFactoryPostProcessors.
+	List<BeanFactoryPostProcessor> nonOrderedPostProcessors = new ArrayList<>(nonOrderedPostProcessorNames.size());
+	for (String postProcessorName : nonOrderedPostProcessorNames) {
+		nonOrderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));
+	}
+	invokeBeanFactoryPostProcessors(nonOrderedPostProcessors, beanFactory);
+
+	// Clear cached merged bean definitions since the post-processors might have
+	// modified the original metadata, e.g. replacing placeholders in values...
+	beanFactory.clearMetadataCache();
+}
+```
+
+### 4.3ConfigurationClassPostProcessor
+#### 4.3.1postProcessBeanDefinitionRegistry
+```java
+public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
+	int registryId = System.identityHashCode(registry);
+	if (this.registriesPostProcessed.contains(registryId)) {
+		throw new IllegalStateException(
+				"postProcessBeanDefinitionRegistry already called on this post-processor against " + registry);
+	}
+	if (this.factoriesPostProcessed.contains(registryId)) {
+		throw new IllegalStateException(
+				"postProcessBeanFactory already called on this post-processor against " + registry);
+	}
+	this.registriesPostProcessed.add(registryId);
+	// 寻找配置类并解析
+	processConfigBeanDefinitions(registry);
+}
+```
+
+#### 4.3.1.1postProcessBeanDefinitionRegistry
+```java
+public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
+	List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
+	String[] candidateNames = registry.getBeanDefinitionNames();
+
+	for (String beanName : candidateNames) {
+		BeanDefinition beanDef = registry.getBeanDefinition(beanName);
+		if (beanDef.getAttribute(ConfigurationClassUtils.CONFIGURATION_CLASS_ATTRIBUTE) != null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Bean definition has already been processed as a configuration class: " + beanDef);
+			}
+		}
+		// 检查配置类
+		else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
+			configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
+		}
+	}
+
+	// Return immediately if no @Configuration classes were found
+	if (configCandidates.isEmpty()) {
+		return;
+	}
+
+	// Sort by previously determined @Order value, if applicable
+	configCandidates.sort((bd1, bd2) -> {
+		int i1 = ConfigurationClassUtils.getOrder(bd1.getBeanDefinition());
+		int i2 = ConfigurationClassUtils.getOrder(bd2.getBeanDefinition());
+		return Integer.compare(i1, i2);
+	});
+
+	// Detect any custom bean name generation strategy supplied through the enclosing application context
+	SingletonBeanRegistry sbr = null;
+	if (registry instanceof SingletonBeanRegistry) {
+		sbr = (SingletonBeanRegistry) registry;
+		if (!this.localBeanNameGeneratorSet) {
+			BeanNameGenerator generator = (BeanNameGenerator) sbr.getSingleton(
+					AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR);
+			if (generator != null) {
+				this.componentScanBeanNameGenerator = generator;
+				this.importBeanNameGenerator = generator;
+			}
+		}
+	}
+
+	if (this.environment == null) {
+		this.environment = new StandardEnvironment();
+	}
+
+	// Parse each @Configuration class
+	// 解析配置类，包括@bean、scan等
+	ConfigurationClassParser parser = new ConfigurationClassParser(
+			this.metadataReaderFactory, this.problemReporter, this.environment,
+			this.resourceLoader, this.componentScanBeanNameGenerator, registry);
+
+	Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
+	Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
+	do {
+		// 解析成相应对象 例如：@Bean->BeanMethods,properties->环境变量等
+		parser.parse(candidates);
+		parser.validate();
+
+		Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
+		configClasses.removeAll(alreadyParsed);
+
+		// Read the model and create bean definitions based on its content
+		if (this.reader == null) {
+			this.reader = new ConfigurationClassBeanDefinitionReader(
+					registry, this.sourceExtractor, this.resourceLoader, this.environment,
+					this.importBeanNameGenerator, parser.getImportRegistry());
+		}
+		// 将前面的解析的对象进行注册等，例如BeanMethods->BeanDefinitions
+		this.reader.loadBeanDefinitions(configClasses);
+		alreadyParsed.addAll(configClasses);
+
+		candidates.clear();BeanDefinition
+		// 如果有新增的，则进行循环
+		if (registry.getBeanDefinitionCount() > candidateNames.length) {
+			String[] newCandidateNames = registry.getBeanDefinitionNames();
+			Set<String> oldCandidateNames = new HashSet<>(Arrays.asList(candidateNames));
+			Set<String> alreadyParsedClasses = new HashSet<>();
+			for (ConfigurationClass configurationClass : alreadyParsed) {
+				alreadyParsedClasses.add(configurationClass.getMetadata().getClassName());
+			}
+			for (String candidateName : newCandidateNames) {
+				if (!oldCandidateNames.contains(candidateName)) {
+					BeanDefinition bd = registry.getBeanDefinition(candidateName);
+					if (ConfigurationClassUtils.checkConfigurationClassCandidate(bd, this.metadataReaderFactory) &&
+							!alreadyParsedClasses.contains(bd.getBeanClassName())) {
+						candidates.add(new BeanDefinitionHolder(bd, candidateName));
+					}
+				}
+			}
+			candidateNames = newCandidateNames;
+		}
+	}
+	while (!candidates.isEmpty());
+
+	// Register the ImportRegistry as a bean in order to support ImportAware @Configuration classes
+	if (sbr != null && !sbr.containsSingleton(IMPORT_REGISTRY_BEAN_NAME)) {
+		sbr.registerSingleton(IMPORT_REGISTRY_BEAN_NAME, parser.getImportRegistry());
+	}
+
+	if (this.metadataReaderFactory instanceof CachingMetadataReaderFactory) {
+		// Clear cache in externally provided MetadataReaderFactory; this is a no-op
+		// for a shared cache since it'll be cleared by the ApplicationContext.
+		((CachingMetadataReaderFactory) this.metadataReaderFactory).clearCache();
+	}
+}
+```
+
+##### 4.3.1.1.1checkConfigurationClassCandidate
+```java
+public static boolean checkConfigurationClassCandidate(
+			BeanDefinition beanDef, MetadataReaderFactory metadataReaderFactory) {
+
+	String className = beanDef.getBeanClassName();
+	if (className == null || beanDef.getFactoryMethodName() != null) {
+		return false;
+	}
+
+	// 获取注解元数据
+	AnnotationMetadata metadata;
+	if (beanDef instanceof AnnotatedBeanDefinition &&
+			className.equals(((AnnotatedBeanDefinition) beanDef).getMetadata().getClassName())) {
+		// Can reuse the pre-parsed metadata from the given BeanDefinition...
+		metadata = ((AnnotatedBeanDefinition) beanDef).getMetadata();
+	}
+	else if (beanDef instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) beanDef).hasBeanClass()) {
+		// Check already loaded Class if present...
+		// since we possibly can't even load the class file for this Class.
+		Class<?> beanClass = ((AbstractBeanDefinition) beanDef).getBeanClass();
+		if (BeanFactoryPostProcessor.class.isAssignableFrom(beanClass) ||
+				BeanPostProcessor.class.isAssignableFrom(beanClass) ||
+				AopInfrastructureBean.class.isAssignableFrom(beanClass) ||
+				EventListenerFactory.class.isAssignableFrom(beanClass)) {
+			return false;
+		}
+		metadata = AnnotationMetadata.introspect(beanClass);
+	}
+	else {
+		try {
+			MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(className);
+			metadata = metadataReader.getAnnotationMetadata();
+		}
+		catch (IOException ex) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Could not find class file for introspecting configuration annotations: " +
+						className, ex);
+			}
+			return false;
+		}
+	}
+	// 获取@Configuration
+	Map<String, Object> config = metadata.getAnnotationAttributes(Configuration.class.getName());
+	// full配置类
+	if (config != null && !Boolean.FALSE.equals(config.get("proxyBeanMethods"))) {
+		beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
+	}
+	// lite配置类,有@Component、@ComponentScan、@Import、@ImportResource或者有@Bean方法
+	else if (config != null || isConfigurationCandidate(metadata)) {
+		/**
+		 * for (String indicator : candidateIndicators) {
+			if (metadata.isAnnotated(indicator)) {
+				return true;
+			}
+			metadata.hasAnnotatedMethods(Bean.class.getName());
+		}
+		 * */
+		beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
+	}
+	else {
+		return false;
+	}
+
+	// It's a full or lite configuration candidate... Let's determine the order value, if any.
+	Integer order = getOrder(metadata);
+	if (order != null) {
+		beanDef.setAttribute(ORDER_ATTRIBUTE, order);
+	}
+
+	return true;
+}
+```
+
+##### 4.3.1.1.2parser.parse()
+```java
+public void parse(Set<BeanDefinitionHolder> configCandidates) {
+	for (BeanDefinitionHolder holder : configCandidates) {
+		BeanDefinition bd = holder.getBeanDefinition();
+		try {
+			if (bd instanceof AnnotatedBeanDefinition) {
+				// 核心方法
+				parse(((AnnotatedBeanDefinition) bd).getMetadata(), holder.getBeanName());
+			}
+			else if (bd instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) bd).hasBeanClass()) {
+				// 核心方法
+				parse(((AbstractBeanDefinition) bd).getBeanClass(), holder.getBeanName());
+			}
+			else {
+				// 核心方法
+				parse(bd.getBeanClassName(), holder.getBeanName());
+			}
+		}
+		catch (BeanDefinitionStoreException ex) {
+			throw ex;
+		}
+		catch (Throwable ex) {
+			throw new BeanDefinitionStoreException(
+					"Failed to parse configuration class [" + bd.getBeanClassName() + "]", ex);
+		}
+	}
+
+	this.deferredImportSelectorHandler.process();
+}
+
+protected void processConfigurationClass(ConfigurationClass configClass, Predicate<String> filter) throws IOException {
+	// 是否有@Conditional注解
+	if (this.conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.PARSE_CONFIGURATION)) {
+		return;
+	}
+
+	ConfigurationClass existingClass = this.configurationClasses.get(configClass);
+	if (existingClass != null) {
+		if (configClass.isImported()) {
+			if (existingClass.isImported()) {
+				existingClass.mergeImportedBy(configClass);
+			}
+			// Otherwise ignore new imported config class; existing non-imported class overrides it.
+			return;
+		}
+		else {
+			// Explicit bean definition found, probably replacing an import.
+			// Let's remove the old one and go with the new one.
+			this.configurationClasses.remove(configClass);
+			this.knownSuperclasses.values().removeIf(configClass::equals);
+		}
+	}
+
+	// Recursively process the configuration class and its superclass hierarchy.
+	SourceClass sourceClass = asSourceClass(configClass, filter);
+	do {
+		// 核心方法
+		sourceClass = doProcessConfigurationClass(configClass, sourceClass, filter);
+	}
+	while (sourceClass != null);
+
+	this.configurationClasses.put(configClass, configClass);
+}
+
+protected final SourceClass doProcessConfigurationClass(
+			ConfigurationClass configClass, SourceClass sourceClass, Predicate<String> filter)
+			throws IOException {
+
+	if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
+		// Recursively process any member (nested) classes first
+		processMemberClasses(configClass, sourceClass, filter);
+	}
+
+	// Process any @PropertySource annotations
+	for (AnnotationAttributes propertySource : AnnotationConfigUtils.attributesForRepeatable(
+			sourceClass.getMetadata(), PropertySources.class,
+			org.springframework.context.annotation.PropertySource.class)) {
+		if (this.environment instanceof ConfigurableEnvironment) {
+			processPropertySource(propertySource);
+		}
+		else {
+			logger.info("Ignoring @PropertySource annotation on [" + sourceClass.getMetadata().getClassName() +
+					"]. Reason: Environment must implement ConfigurableEnvironment");
+		}
+	}
+
+	// Process any @ComponentScan annotations
+	Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
+			sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
+	if (!componentScans.isEmpty() &&
+			!this.conditionEvaluator.shouldSkip(sourceClass.getMetadata(), ConfigurationPhase.REGISTER_BEAN)) {
+		for (AnnotationAttributes componentScan : componentScans) {
+			// The config class is annotated with @ComponentScan -> perform the scan immediately
+			// 扫描
+			Set<BeanDefinitionHolder> scannedBeanDefinitions =
+					this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());
+			// Check the set of scanned definitions for any further config classes and parse recursively if needed
+			for (BeanDefinitionHolder holder : scannedBeanDefinitions) {
+				BeanDefinition bdCand = holder.getBeanDefinition().getOriginatingBeanDefinition();
+				if (bdCand == null) {
+					bdCand = holder.getBeanDefinition();
+				}
+				if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {
+					parse(bdCand.getBeanClassName(), holder.getBeanName());
+				}
+			}
+		}
+	}
+
+	// Process any @Import annotations
+	processImports(configClass, sourceClass, getImports(sourceClass), filter, true);
+
+	// Process any @ImportResource annotations
+	AnnotationAttributes importResource =
+			AnnotationConfigUtils.attributesFor(sourceClass.getMetadata(), ImportResource.class);
+	if (importResource != null) {
+		String[] resources = importResource.getStringArray("locations");
+		Class<? extends BeanDefinitionReader> readerClass = importResource.getClass("reader");
+		for (String resource : resources) {
+			String resolvedResource = this.environment.resolveRequiredPlaceholders(resource);
+			configClass.addImportedResource(resolvedResource, readerClass);
+		}
+	}
+
+	// Process individual @Bean methods
+	Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(sourceClass);
+	for (MethodMetadata methodMetadata : beanMethods) {
+		configClass.addBeanMethod(new BeanMethod(methodMetadata, configClass));
+	}
+
+	// Process default methods on interfaces
+	processInterfaces(configClass, sourceClass);
+
+	// Process superclass, if any
+	if (sourceClass.getMetadata().hasSuperClass()) {
+		String superclass = sourceClass.getMetadata().getSuperClassName();
+		if (superclass != null && !superclass.startsWith("java") &&
+				!this.knownSuperclasses.containsKey(superclass)) {
+			this.knownSuperclasses.put(superclass, configClass);
+			// Superclass found, return its annotation metadata and recurse
+			return sourceClass.getSuperClass();
+		}
+	}
+
+	// No superclass -> processing is complete
+	return null;
+}
+```

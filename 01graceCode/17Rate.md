@@ -1,6 +1,7 @@
 # 【优雅代码】17-guava限流源码解析
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
+* [视频讲解](https://www.bilibili.com/video/BV18b4y1J7bH/)  
 * [可直接运行的完整代码](https://github.com/edanlx/TechingCode/tree/master/demoGrace/src/main/java/com/example/demo/lesson/grace/guava)
 * [上一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/16bloom.md)guava布隆过滤与限流算法源码解析
 * [下一篇](https://github.com/edanlx/SealBook/blob/master/01graceCode/18treelist.md)利用function实现list、tree互转工具
