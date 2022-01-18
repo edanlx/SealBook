@@ -27,7 +27,7 @@
         16. [guava布隆过滤解析](./01graceCode/16bloom.md)  [视频版](https://www.bilibili.com/video/BV1vL411c7UP)
         17. [guava限流算法解析](./01graceCode/17rate.md)  [视频版](https://www.bilibili.com/video/BV18b4y1J7bH/)
         18. [list、tree互转通用工具](./01graceCode/18treelist.md)  [视频版](https://www.bilibili.com/video/BV1534y1i72U/)
-        19. spring下优秀的工具类(进阶)
+        19. [spring下优秀的工具类(进阶)](./01graceCode/19springloader.md)  [视频版](https://www.bilibili.com/video/BV1MY411b7ub/)
   2. JVM深度剖析及调优
         1. [双亲委派及其破坏(双亲委派都会说，破坏双亲委派你会吗)]
         2. [自定义类加载器(当我自己写一个java.lang.String自己加载会发生什么)]
