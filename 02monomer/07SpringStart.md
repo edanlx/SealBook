@@ -514,6 +514,7 @@ public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
 		parser.parse(candidates);
 		parser.validate();
 
+		// 配置类解析后的结果
 		Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
 		configClasses.removeAll(alreadyParsed);
 
@@ -763,6 +764,7 @@ protected final SourceClass doProcessConfigurationClass(
 	}
 
 	// Process individual @Bean methods
+	// 找到@Bean
 	Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(sourceClass);
 	for (MethodMetadata methodMetadata : beanMethods) {
 		configClass.addBeanMethod(new BeanMethod(methodMetadata, configClass));
@@ -784,5 +786,154 @@ protected final SourceClass doProcessConfigurationClass(
 
 	// No superclass -> processing is complete
 	return null;
+}
+```
+
+##### 4.3.1.1.3loadBeanDefinitions
+```java
+public void loadBeanDefinitions(Set<ConfigurationClass> configurationModel) {
+	TrackedConditionEvaluator trackedConditionEvaluator = new TrackedConditionEvaluator();
+	for (ConfigurationClass configClass : configurationModel) {
+		loadBeanDefinitionsForConfigurationClass(configClass, trackedConditionEvaluator);
+	}
+}
+
+private void loadBeanDefinitionsForConfigurationClass(
+			ConfigurationClass configClass, TrackedConditionEvaluator trackedConditionEvaluator) {
+
+	if (trackedConditionEvaluator.shouldSkip(configClass)) {
+		String beanName = configClass.getBeanName();
+		if (StringUtils.hasLength(beanName) && this.registry.containsBeanDefinition(beanName)) {
+			this.registry.removeBeanDefinition(beanName);
+		}
+		this.importRegistry.removeImportingClass(configClass.getMetadata().getClassName());
+		return;
+	}
+
+	if (configClass.isImported()) {
+		// 将被导入的类生成BeanDefinition并注册到spring中(@Import、@Component的内部类)
+		registerBeanDefinitionForImportedConfigurationClass(configClass);
+	}
+	// @Bean生成BeanDefinition并注册
+	for (BeanMethod beanMethod : configClass.getBeanMethods()) {
+		loadBeanDefinitionsForBeanMethod(beanMethod);
+	}
+
+	// 处理@ImportResource()
+	loadBeanDefinitionsFromImportedResources(configClass.getImportedResources());
+	// 处理ImportBeanDefinitionRegistrar调用registerBeanDefinition
+	loadBeanDefinitionsFromRegistrars(configClass.getImportBeanDefinitionRegistrars());
+}
+
+private void loadBeanDefinitionsForBeanMethod(BeanMethod beanMethod) {
+	ConfigurationClass configClass = beanMethod.getConfigurationClass();
+	MethodMetadata metadata = beanMethod.getMetadata();
+	String methodName = metadata.getMethodName();
+
+	// Do we need to mark the bean as skipped by its condition?
+	if (this.conditionEvaluator.shouldSkip(metadata, ConfigurationPhase.REGISTER_BEAN)) {
+		configClass.skippedBeanMethods.add(methodName);
+		return;
+	}
+	if (configClass.skippedBeanMethods.contains(methodName)) {
+		return;
+	}
+
+	AnnotationAttributes bean = AnnotationConfigUtils.attributesFor(metadata, Bean.class);
+	Assert.state(bean != null, "No @Bean annotation attributes");
+
+	// Consider name and any aliases
+	List<String> names = new ArrayList<>(Arrays.asList(bean.getStringArray("name")));
+	String beanName = (!names.isEmpty() ? names.remove(0) : methodName);
+
+	// Register aliases even when overridden
+	for (String alias : names) {
+		this.registry.registerAlias(beanName, alias);
+	}
+
+	// Has this effectively been overridden before (e.g. via XML)?
+	// 检查是否已经存在,如果是扫描的则覆盖，如果是注解的则跳过
+	if (isOverriddenByExistingDefinition(beanMethod, beanName)) {
+		if (beanName.equals(beanMethod.getConfigurationClass().getBeanName())) {
+			throw new BeanDefinitionStoreException(beanMethod.getConfigurationClass().getResource().getDescription(),
+					beanName, "Bean name derived from @Bean method '" + beanMethod.getMetadata().getMethodName() +
+					"' clashes with bean name for containing configuration class; please make those names unique!");
+		}
+		return;
+	}
+
+	ConfigurationClassBeanDefinition beanDef = new ConfigurationClassBeanDefinition(configClass, metadata);
+	beanDef.setSource(this.sourceExtractor.extractSource(metadata, configClass.getResource()));
+
+	if (metadata.isStatic()) {
+		// static @Bean method
+		if (configClass.getMetadata() instanceof StandardAnnotationMetadata) {
+			beanDef.setBeanClass(((StandardAnnotationMetadata) configClass.getMetadata()).getIntrospectedClass());
+		}
+		else {
+			beanDef.setBeanClassName(configClass.getMetadata().getClassName());
+		}
+		beanDef.setUniqueFactoryMethodName(methodName);
+	}
+	else {
+		// instance @Bean method
+		beanDef.setFactoryBeanName(configClass.getBeanName());
+		beanDef.setUniqueFactoryMethodName(methodName);
+	}
+
+	if (metadata instanceof StandardMethodMetadata) {
+		beanDef.setResolvedFactoryMethod(((StandardMethodMetadata) metadata).getIntrospectedMethod());
+	}
+
+	beanDef.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR);
+	beanDef.setAttribute(org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor.
+			SKIP_REQUIRED_CHECK_ATTRIBUTE, Boolean.TRUE);
+
+	AnnotationConfigUtils.processCommonDefinitionAnnotations(beanDef, metadata);
+
+	Autowire autowire = bean.getEnum("autowire");
+	if (autowire.isAutowire()) {
+		beanDef.setAutowireMode(autowire.value());
+	}
+
+	boolean autowireCandidate = bean.getBoolean("autowireCandidate");
+	if (!autowireCandidate) {
+		beanDef.setAutowireCandidate(false);
+	}
+
+	String initMethodName = bean.getString("initMethod");
+	if (StringUtils.hasText(initMethodName)) {
+		beanDef.setInitMethodName(initMethodName);
+	}
+
+	String destroyMethodName = bean.getString("destroyMethod");
+	beanDef.setDestroyMethodName(destroyMethodName);
+
+	// Consider scoping
+	ScopedProxyMode proxyMode = ScopedProxyMode.NO;
+	AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(metadata, Scope.class);
+	if (attributes != null) {
+		beanDef.setScope(attributes.getString("value"));
+		proxyMode = attributes.getEnum("proxyMode");
+		if (proxyMode == ScopedProxyMode.DEFAULT) {
+			proxyMode = ScopedProxyMode.NO;
+		}
+	}
+
+	// Replace the original bean definition with the target one, if necessary
+	BeanDefinition beanDefToRegister = beanDef;
+	if (proxyMode != ScopedProxyMode.NO) {
+		BeanDefinitionHolder proxyDef = ScopedProxyCreator.createScopedProxy(
+				new BeanDefinitionHolder(beanDef, beanName), this.registry,
+				proxyMode == ScopedProxyMode.TARGET_CLASS);
+		beanDefToRegister = new ConfigurationClassBeanDefinition(
+				(RootBeanDefinition) proxyDef.getBeanDefinition(), configClass, metadata);
+	}
+
+	if (logger.isTraceEnabled()) {
+		logger.trace(String.format("Registering bean definition for @Bean method %s.%s()",
+				configClass.getMetadata().getClassName(), beanName));
+	}
+	this.registry.registerBeanDefinition(beanName, beanDefToRegister);
 }
 ```
