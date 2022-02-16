@@ -7,13 +7,26 @@ beandefinition是如何转成单例和原型bean对象的，中间经过了哪�
 ## 2.整体流程
 1. 判断bean类型->如果是多例创建直接返回，如果是request则在相应作用域创建缓存，如果是单例则进入单例池
 2. 实例化前扩展点InstantiationAwareBeanPostProcessor.postProcessBeforeInstantiation()
-3. 实例化后属性赋值前扩展点(针对beanDefinition)MergedBeanDefinitionPostProcessor.postProcessMergedBeanDefinition()
-4. 实例化后属性赋值前扩展点(针对bean对象)InstantiationAwareBeanPostProcessor.postProcessAfterInstantiation()
-5. 属性赋值扩展点(例如@Autowired基于此扩展点实现)InstantiationAwareBeanPostProcessor.postProcessProperties()
-6. 执行各种aware回调
-7. 初始化前BeanPostProcessor.postProcessBeforeInitialization()
-8. 初始化InitializingBean.afterPropertiesSet()
-9. 初始化后BeanPostProcessor.postProcessAfterInitialization()
+3. 实例化
+4. 实例化后属性赋值前扩展点(针对beanDefinition)MergedBeanDefinitionPostProcessor.postProcessMergedBeanDefinition()
+5. 实例化后属性赋值前扩展点(针对bean对象)InstantiationAwareBeanPostProcessor.postProcessAfterInstantiation()
+6. 属性赋值扩展点(例如@Autowired基于此扩展点实现)InstantiationAwareBeanPostProcessor.postProcessProperties()
+7. 执行aware回调
+	1. BeanNameAware：回传beanName给bean对象。
+	2. BeanClassLoaderAware：回传classLoader给bean对象
+	3. BeanFactoryAware：回传beanFactory给对象
+8. 初始化前BeanPostProcessor.postProcessBeforeInitialization()
+	1. InitDestroyAnnotationBeanPostProcessor分支在该步骤执行@PostConstruct
+	2. ApplicationContextAwareProcessor分支在该步骤执行其它aware回调
+		1. EnvironmentAware：回传环境变量 
+		2. EmbeddedValueResolverAware：回传占位符解析器 
+		3. ResourceLoaderAware：回传资源加载器 
+		4. ApplicationEventPublisherAware：回传事件发布器 
+		5. MessageSourceAware：回传国际化资源 
+		6. ApplicationStartupAware：回传应用其他监听对象
+		7. ApplicationContextAware：回传Spring容器ApplicationContext
+9. 初始化InitializingBean.afterPropertiesSet()。调用init-Method指定的初始化方法
+10. 初始化后BeanPostProcessor.postProcessAfterInitialization()
 ## 3.初始代码
 ```java
 @ComponentScan("com.example.demo.lesson.spring")
@@ -415,6 +428,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 	// Register bean as disposable.
 	try {
+		// 注册bean销毁逻辑
 		registerDisposableBeanIfNecessary(beanName, bean, mbd);
 	}
 	catch (BeanDefinitionValidationException ex) {
@@ -577,7 +591,7 @@ protected void populateBean(String beanName, RootBeanDefinition mbd, @Nullable B
 			pvs = mbd.getPropertyValues();
 		}
 		for (BeanPostProcessor bp : getBeanPostProcessors()) {
-			// 回调InstantiationAwareBeanPostProcessor，通常用于处理自定义注解
+			// 回调InstantiationAwareBeanPostProcessor，通常用于处理自定义注解，包括spring的属性注解@resource等
 			if (bp instanceof InstantiationAwareBeanPostProcessor) {
 				InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
 				PropertyValues pvsToUse = ibp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName);
@@ -606,3 +620,172 @@ protected void populateBean(String beanName, RootBeanDefinition mbd, @Nullable B
 	}
 }
 ```
+
+### 4.8initializeBean
+```java
+protected Object initializeBean(final String beanName, final Object bean, @Nullable RootBeanDefinition mbd) {
+	if (System.getSecurityManager() != null) {
+		AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+			invokeAwareMethods(beanName, bean);
+			return null;
+		}, getAccessControlContext());
+	}
+	else {
+		// BeanNameAware、BeanClassLoaderAware、BeanFactoryAware
+		invokeAwareMethods(beanName, bean);
+	}
+
+	Object wrappedBean = bean;
+	if (mbd == null || !mbd.isSynthetic()) {
+		// 执行postProcessBeforeInitialization
+		wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
+	}
+
+	try {
+		// afterPropertiesSet、init-method
+		invokeInitMethods(beanName, wrappedBean, mbd);
+	}
+	catch (Throwable ex) {
+		throw new BeanCreationException(
+				(mbd != null ? mbd.getResourceDescription() : null),
+				beanName, "Invocation of init method failed", ex);
+	}
+	if (mbd == null || !mbd.isSynthetic()) {
+		// postProcessAfterInitialization
+		wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
+	}
+
+	return wrappedBean;
+}
+```
+
+#### 4.8.1invokeAwareMethods
+```java
+private void invokeAwareMethods(final String beanName, final Object bean) {
+	if (bean instanceof Aware) {
+		if (bean instanceof BeanNameAware) {
+			((BeanNameAware) bean).setBeanName(beanName);
+		}
+		if (bean instanceof BeanClassLoaderAware) {
+			ClassLoader bcl = getBeanClassLoader();
+			if (bcl != null) {
+				((BeanClassLoaderAware) bean).setBeanClassLoader(bcl);
+			}
+		}
+		if (bean instanceof BeanFactoryAware) {
+			((BeanFactoryAware) bean).setBeanFactory(AbstractAutowireCapableBeanFactory.this);
+		}
+	}
+}
+```
+
+#### 4.8.2applyBeanPostProcessorsBeforeInitialization
+```java
+public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName)
+			throws BeansException {
+
+	Object result = existingBean;
+	for (BeanPostProcessor processor : getBeanPostProcessors()) {
+		Object current = processor.postProcessBeforeInitialization(result, beanName);
+		if (current == null) {
+			return result;
+		}
+		result = current;
+	}
+	return result;
+}
+```
+
+#### 4.8.3invokeInitMethods
+```java
+protected void invokeInitMethods(String beanName, final Object bean, @Nullable RootBeanDefinition mbd)
+			throws Throwable {
+
+	boolean isInitializingBean = (bean instanceof InitializingBean);
+	if (isInitializingBean && (mbd == null || !mbd.isExternallyManagedInitMethod("afterPropertiesSet"))) {
+		if (logger.isTraceEnabled()) {
+			logger.trace("Invoking afterPropertiesSet() on bean with name '" + beanName + "'");
+		}
+		if (System.getSecurityManager() != null) {
+			try {
+				AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+					((InitializingBean) bean).afterPropertiesSet();
+					return null;
+				}, getAccessControlContext());
+			}
+			catch (PrivilegedActionException pae) {
+				throw pae.getException();
+			}
+		}
+		else {
+			((InitializingBean) bean).afterPropertiesSet();
+		}
+	}
+
+	if (mbd != null && bean.getClass() != NullBean.class) {
+		String initMethodName = mbd.getInitMethodName();
+		if (StringUtils.hasLength(initMethodName) &&
+				!(isInitializingBean && "afterPropertiesSet".equals(initMethodName)) &&
+				!mbd.isExternallyManagedInitMethod(initMethodName)) {
+			invokeCustomInitMethod(beanName, bean, mbd);
+		}
+	}
+}
+```
+#### 4.8.4applyBeanPostProcessorsAfterInitialization
+```java
+public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
+			throws BeansException {
+
+	Object result = existingBean;
+	for (BeanPostProcessor processor : getBeanPostProcessors()) {
+		Object current = processor.postProcessAfterInitialization(result, beanName);
+		if (current == null) {
+			return result;
+		}
+		result = current;
+	}
+	return result;
+}
+```
+
+### 4.6registerDisposableBeanIfNecessary
+```java
+protected void registerDisposableBeanIfNecessary(String beanName, Object bean, RootBeanDefinition mbd) {
+	AccessControlContext acc = (System.getSecurityManager() != null ? getAccessControlContext() : null);
+	if (!mbd.isPrototype() && requiresDestruction(bean, mbd)) {
+		if (mbd.isSingleton()) {
+			// Register a DisposableBean implementation that performs all destruction
+			// work for the given bean: DestructionAwareBeanPostProcessors,
+			// DisposableBean interface, custom destroy method.
+			registerDisposableBean(beanName,
+					new DisposableBeanAdapter(bean, beanName, mbd, getBeanPostProcessors(), acc));
+		}
+		else {
+			// A bean with a custom scope...
+			Scope scope = this.scopes.get(mbd.getScope());
+			if (scope == null) {
+				throw new IllegalStateException("No Scope registered for scope name '" + mbd.getScope() + "'");
+			}
+			scope.registerDestructionCallback(beanName,
+					new DisposableBeanAdapter(bean, beanName, mbd, getBeanPostProcessors(), acc));
+		}
+	}
+}
+```
+### 4.6.1requiresDestruction
+将所有的销毁方式都进行判断
+```java
+protected boolean requiresDestruction(Object bean, RootBeanDefinition mbd) {
+	return (bean.getClass() != NullBean.class &&
+			(DisposableBeanAdapter.hasDestroyMethod(bean, mbd) || (hasDestructionAwareBeanPostProcessors() &&
+					DisposableBeanAdapter.hasApplicableProcessors(bean, getBeanPostProcessors()))));
+}
+```
+***销毁逻辑***:
+1. 发布ContextClosedEvent事件
+2. 调用lifecycleProcessor的onCloese()方法
+3. 销毁单例Bean
+	1. 将其从单例池中移除
+	2. 调用destroy()
+	3. 销毁依赖这个bean的其它bean以及内部bean

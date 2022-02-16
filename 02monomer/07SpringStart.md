@@ -1,13 +1,30 @@
-# 【框架类源码】07-spring推断构造方法
+# 【框架类源码】07-spring启动整体流程
 > 欢迎关注b站账号/公众号【六边形战士夏宁】，一个要把各项指标拉满的男人。该文章已在[github目录](https://github.com/edanlx/SealBook/blob/master/catalogue/wechat.md)收录。
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
 ## 1.背景
-spring推断构造方法
+spring启动大体流程
 ## 2.整体流程
 1. 实例化AnnotationConfigApplicationContext->同时自动调用父类GenericApplicationContext构造方法this.beanFactory = new DefaultListableBeanFactory()->DefaultListableBeanFactory自动调用父类构造方法使用cglib策略同时ingnore(BeanNameAware、BeanFactoryAware、BeanClassLoaderAware)
 2. 实例化reader->实例化环境变量对象、实例化@Conditional的解析器ConditionEvaluator->setDependencyComparator比较器等
-3. 实例化scaaner
+3. 实例化scaaner->实例化默认Filter
+4. 调用refresh
+5. prepareRefresh准备环境变量，包括系统的和tomcat容器的
+6. obtainFreshBeanFactory刷新bean
+7. prepareBeanFactory初始化classloader，以及多种默认类型转化器，包括ApplicationContextAware，处理aware回调的
+8. postProcessBeanFactory，模板方法
+9. invokeBeanFactoryPostProcessors，doScan扫描
+	1. 主步骤
+		1. 将BeanDefinition生成对象，执行回调BeanDefinitionRegistryPostProcessor.postProcessBeanDefinitionRegistry
+		2. 执行回调BeanFactoryPostProcessor.postProcessBeanFactory
+	2. ConfigurationClassPostProcessor分支步骤
+		1. ConfigurationClassPostProcessor中的postProcessBeanDefinitionRegistry，循环将各种配置文件xml、properties、@Configuration、@Component、@ComponentScan、@Import、@ImportResource或者有@Bean等进行解析、ImportBeanDefinitionRegistrar.registerBeanDefinition接口
+10. registerBeanPostProcessors，将自己实现的BeanPostProcessors放入集合
+11. initMessageSource国际化
+12. initApplicationEventMulticaster初始化事件发布器
+13. onRefresh(模板方法,在springboot中会启动tomcat)
+14. finishBeanFactoryInitialization初始化bean
+15. finishRefresh，回调生命周期、事件发布
 ## 3.初始代码
 ```java
 @ComponentScan("com.example.demo.lesson.spring")
@@ -669,6 +686,10 @@ public void parse(Set<BeanDefinitionHolder> configCandidates) {
 	this.deferredImportSelectorHandler.process();
 }
 
+protected final void parse(AnnotationMetadata metadata, String beanName) throws IOException {
+  processConfigurationClass(new ConfigurationClass(metadata, beanName), DEFAULT_EXCLUSION_FILTER);
+}
+
 protected void processConfigurationClass(ConfigurationClass configClass, Predicate<String> filter) throws IOException {
 	// 是否有@Conditional注解
 	if (this.conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.PARSE_CONFIGURATION)) {
@@ -732,7 +753,7 @@ protected final SourceClass doProcessConfigurationClass(
 			!this.conditionEvaluator.shouldSkip(sourceClass.getMetadata(), ConfigurationPhase.REGISTER_BEAN)) {
 		for (AnnotationAttributes componentScan : componentScans) {
 			// The config class is annotated with @ComponentScan -> perform the scan immediately
-			// 扫描
+			// 扫描doScan
 			Set<BeanDefinitionHolder> scannedBeanDefinitions =
 					this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());
 			// Check the set of scanned definitions for any further config classes and parse recursively if needed

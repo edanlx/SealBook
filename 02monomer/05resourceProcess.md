@@ -7,7 +7,7 @@
 ## 2.整体流程
 1. postProcessMergedBeanDefinition流程先扫描然后将符合条件的@Resource
 2. postProcessProperties进行回调，如果没初始化则初始化
-3. 反射赋值
+3. CommonAnnotationBeanPostProcessor类中进行反射赋值反射赋值
 ## 3.初始代码
 ```java
 @ComponentScan("com.example.demo.lesson.spring")
@@ -34,7 +34,7 @@ public class UserEntity implements FactoryBean<UserFacoryBean> {
 }
 ```
 ## 4.源码过程
-AutowiredAnnotationBeanPostProcessor
+CommonAnnotationBeanPostProcessor
 ### 4.1postProcessMergedBeanDefinition.postProcessMergedBeanDefinition()
 ```java
 public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
