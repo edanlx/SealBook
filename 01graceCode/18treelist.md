@@ -92,7 +92,7 @@ public class TreeUtils {
     private static <F, T> void assembleTree(F current, Map<T, List<F>> map, BiConsumer<F, List<F>> setChildListFn, Function<F, T> idFn, BiConsumer<Integer, F> listen, int idx) {
         List<F> fs = map.get(idFn.apply(current));
         setChildListFn.accept(current, fs);
-        if (CollectionUtils.isEmpty(fs)) {
+        if (CollectionUtils.isNotEmpty(fs)) {
             fs.forEach(l -> assembleTree(l, map, setChildListFn, idFn, listen, idx + 1));
         }
         if (listen != null) {
