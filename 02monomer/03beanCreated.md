@@ -10,7 +10,7 @@ beandefinition是如何转成单例和原型bean对象的，中间经过了哪�
 3. 实例化
 4. 实例化后属性赋值前扩展点(针对beanDefinition)MergedBeanDefinitionPostProcessor.postProcessMergedBeanDefinition()
 5. 实例化后属性赋值前扩展点(针对bean对象)InstantiationAwareBeanPostProcessor.postProcessAfterInstantiation()
-6. 属性赋值扩展点(例如@Autowired基于此扩展点实现)InstantiationAwareBeanPostProcessor.postProcessProperties()
+6. 属性赋值扩展点(例如@Autowired基于此扩展点实现)InstantiationAwareBeanPostProcessor.postProcessProperties()以及InstantiationAwareBeanPostProcessor.postProcessPropertyValues,此外还有aop独立扩展点AbstractAutoProxyCreator
 7. 执行aware回调
 	1. BeanNameAware：回传beanName给bean对象。
 	2. BeanClassLoaderAware：回传classLoader给bean对象
@@ -27,6 +27,7 @@ beandefinition是如何转成单例和原型bean对象的，中间经过了哪�
 		7. ApplicationContextAware：回传Spring容器ApplicationContext
 9. 初始化InitializingBean.afterPropertiesSet()。调用init-Method指定的初始化方法
 10. 初始化后BeanPostProcessor.postProcessAfterInitialization()
+11. 全部初始化完毕后会重新循环SmartInitializingSingleton
 ## 3.初始代码
 ```java
 @ComponentScan("com.example.demo.lesson.spring")

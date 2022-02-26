@@ -72,7 +72,7 @@ public static BeanDefinition registerAutoProxyCreatorIfNecessary(BeanDefinitionR
 ```java
 public static BeanDefinition registerAutoProxyCreatorIfNecessary(
 		BeanDefinitionRegistry registry, @Nullable Object source) {
-	// 注册核心类InfrastructureAdvisorAutoProxyCreator
+	// 注册核心类InfrastructureAdvisorAutoProxyCreator，其继承AbstractAutoProxyCreator
 	return registerOrEscalateApcAsRequired(InfrastructureAdvisorAutoProxyCreator.class, registry, source);
 }
 ```
