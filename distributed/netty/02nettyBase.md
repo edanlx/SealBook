@@ -28,7 +28,7 @@ Netty网络通信组件
 3. read0表示有写事件，我方可以读取
 - Channelpipeline
 pipeline与tomcat的pipeline类似，起拦截器的功能，结构为双向链表，虽然在一个链表内，但是入站只会走入站的方法，出站只会走出站的方法
-一般加入解码器StringDecoder、编码器StringEncoder(其实现ChannelOutboundHandler)、Handler(自己的实现逻辑)
+一般加入解码器StringDecoder、编码器StringEncoder(其实现ChannelOutboundHandler)、Handler(自己的实现逻辑)、FixedLengthFrameDecoder(根据长度处理粘包、拆包,实现逻辑是先接收字符串再根据字符串接收相应长度)
 - ByteBuffer
 与NIO的ByteBuffer类似但是操作体验完全不用，NIO的需要读写切换flip。
 1. readIndex读索引
@@ -39,6 +39,16 @@ pipeline与tomcat的pipeline类似，起拦截器的功能，结构为双向链�
 1. 已读[0.readIndex)
 2. 可读[readIndex,WriteIndex)
 3. 未写[WriteIndex,capacity)
+
+- 心跳
+1. 在服务端增加 pipeline.addLast(new IdleStateHandler(3, 0, 0, TimeUnit.SECONDS));分别是读超时、写超时、读写超时，内部原理为嵌套线程定时任务检测，如示例则是每3秒检测一下该连接，如果有连通则要重新计时，即重启一个线程
+2. 自己的handler需要实现userEventTriggered，如果没有及时收到响应，则IdleStateHandler会调用该方法。例如执行socket执行关闭
+3. 客户端根据需求发送任意数据即可
+
+- 重连
+在客户端检测到服务端断开连接，则进行connect重连即可
+1. channelInactive,客户端丢失
+2. 启动时没通
 - 零拷贝
 socket缓冲-直接内存-jvm内存-直接内存-socket缓冲，完整的四次拷贝。零拷贝则为socket缓冲-直接内存-socket缓冲，共2次
 - epoll空轮询
