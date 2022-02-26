@@ -3,6 +3,14 @@
 屏幕前的**大帅比**和**大漂亮**如果有帮助到你的话请顺手点个赞、加个收藏这对我真的很重要。别下次一定了，都不关注上哪下次一定。
 
 ## 1.背景
+- 三种注册方式
+```text
+<aop:config /> 方式对应的注册AutoProxyCreator 的方法是：registerAspectJAutoProxyCreatorIfNecessary；
+<aop:aspectj-autoproxy/> 方式对应的注册AutoProxyCreator 的方法是：registerAspectJAnnotationAutoProxyCreatorIfNecessary；
+DefaultAdvisorAutoProxyCreator 方式对应的注册AutoProxyCreator 的方法是：registerAutoProxyCreatorIfNecessary；
+```
+这三个方法最终调用的都是 AopConfigUtils 类同一个方法：
+
 Advisor
 	pointcut
 		classFilter

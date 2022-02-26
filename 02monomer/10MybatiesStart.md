@@ -187,7 +187,7 @@ private void processBeanDefinitions(Set<BeanDefinitionHolder> beanDefinitions) {
       // but, the actual class of the bean is MapperFactoryBean
       // 给构造函数方法传参
       definition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName); // issue #59
-      // 构造mapper的class
+      // 构造该bean的class
       definition.setBeanClass(this.mapperFactoryBeanClass);
 
       definition.getPropertyValues().add("addToConfig", this.addToConfig);
