@@ -73,7 +73,7 @@ Host和context干的事情类似，不过是解析最前面的path,一般作为�
 engine:虚拟主机，正常使用就是localhost，使用场景非常有限。
 第14章服务器组件和服务组件
 org.apache.catalina.Server接口的实例表示Catalina的整个引擎。
-org.apache.catalina.Service接口则是connector和comtaier的引擎。
+org.apache.catalina.Service接口则是connector和contaier的引擎。
 以上两个接口的实现类均实现了生命周期管理
 第15章Digester
 一个开源库，在tomcat中负责将server.xml转为java对象。

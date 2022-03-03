@@ -131,6 +131,10 @@ maven的优秀伙伴，但是越发觉得maven臃肿了，项目体量一上来j
 5. jclasslib
 学习字节码的好帮手
 ![ThreadValue](http://seal_li.gitee.io/sealbook/pic/grace_09idea_jclasslib.png)
+6. SequenceDiagaram
+生成时序图
+7. QAfindBug
+静态检测代码是否有死循环、无限递归等潜在因素
 
 ## 5.idea快捷键
 |快捷键|介绍|

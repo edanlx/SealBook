@@ -5,7 +5,7 @@
 
 @EnableDubbo里面有@EnableDubboConfig和@DubboComponentScan，分别@Imoort了DubboConfigConfigurationRegistrar、DubboComponentScanRegistrar
 
-旧版Config的是先是使用registBeanDefinition。然后postProcessBeforeInitialization中使用beanName.equals进行判断并生成相应的nean，在afterP中赋值其他属性
+旧版Config的是先是使用registBeanDefinition。然后postProcessBeforeInitialization中使用beanName.equals进行判断并生成相应的bean，在afterP中赋值其他属性
 
 
 ## 4.org.apache.dubbo.config.spring.context.annotation.DubboComponentScanRegistrar#registerBeanDefinitions
@@ -330,6 +330,25 @@ private Object getCallProxy() throws Exception {
     //get reference proxy
     // ReferenceConfigCache是dubbo包里的了
     return ReferenceConfigCache.getCache().get(referenceConfig);
+}
+```
+- org.apache.dubbo.config.utils.ReferenceConfigCache#get(org.apache.dubbo.config.ReferenceConfigBase<T>)
+```java
+public <T> T get(ReferenceConfigBase<T> referenceConfig) {
+    String key = generator.generateKey(referenceConfig);
+    Class<?> type = referenceConfig.getInterfaceClass();
+
+    proxies.computeIfAbsent(type, _t -> new ConcurrentHashMap<>());
+
+    ConcurrentMap<String, Object> proxiesOfType = proxies.get(type);
+    // 如果没有则创建
+    proxiesOfType.computeIfAbsent(key, _k -> {
+        Object proxy = referenceConfig.get();
+        referredReferences.put(key, referenceConfig);
+        return proxy;
+    });
+
+    return (T) proxiesOfType.get(key);
 }
 ```
 ### 5.2@DubboReference赋值

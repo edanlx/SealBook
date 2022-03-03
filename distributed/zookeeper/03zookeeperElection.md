@@ -33,7 +33,7 @@ public static long makeZxid(long epoch, long counter) {
 
 - 端口(server.1=127.0.0.1:2888:3888)
 1. 2181 监听客户端的默认端口(NIO)
-2. 2888 监听数据同步端口
+2. 2888 监听数据同步端口(BIO)
 3. 3888 监听选举投票端口(BIO)
 ## 2.源码下载
 ```shell

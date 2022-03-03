@@ -48,7 +48,7 @@ consumer与kafka的topic均保存offset情况，方便rebanlance，默认50个�
         2. 动态给topic增加分区
         3. 消费者订阅更多topic
 rebanlance中，消费者无法从kafka获取消息
-    - 分配擦略
+    - 分配策略
     默认range(取模，还有轮询和sticky，sticky保证原有尽可能不变)
     - 步骤
         1. 由分区leader指定消费组的组长GroupCoordinator(最先连接的)进行消费组的分配方案
