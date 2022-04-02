@@ -26,7 +26,7 @@
   3）字节码验证  
   4）符号引用验证
  3. 准备  
-    为静态变量分配内存并设置类变量初始值(null)   
+    为静态变量分配内存并设置类变量初始值(null,final的则是实际写的值)   
     注意这里有个概念为方法区，是逻辑概念  
     jdk8以前使用永久代实现方法区(有专门的永久代区域)，在后面使用了元空间实现方法区，但实例变量物理存储地址其实是放到了堆中。所以说静态变量、字符串等存在堆中也对，存在方法区也对。
  4. 解析  
@@ -35,6 +35,7 @@
     CONSTANT_Methodref_info、CONSTANT_InterfaceMethodref_info、 
     CONSTANT_MethodType_info、CONSTANT_MethodHandle_info、CONSTANT_Dyna-mic_info和 CONSTANT_InvokeDynamic_info 8种常量类型。  
     主要有以下4种解析过程。  
+    符号引用就是方法、接口的内存地址  
     1）类或接口的解析  
     2）字段解析   
     3）方法解析 

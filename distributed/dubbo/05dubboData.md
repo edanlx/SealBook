@@ -1,5 +1,15 @@
 NettyServerHandler.channelRead()->MultiMessageHandler.received()->HeartbaetHandler.received()->AllChannelHandler.received()->DecodeHandler.received()->HeaderExchangeHandler.received()
 
+为了保证Dubbo传输层不依赖于特定框架，Dubbo封装了自己的事件接口用于适配各个传输层框架。下面是dubbo和netty中事件接口的对应关系。
+Netty   Dubbo   描述
+channelActive   connected   连接
+channelInactive disconnected    断连
+channelRead received    收到报文
+write   sent    发送报文
+exceptionCaught caught  发生异常
+userEventTriggered  使用netty接口   用户事件
+
+
 ## 4.
 - org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol#export
 ```java

@@ -151,7 +151,7 @@ protected Object getEarlyBeanReference(String beanName, RootBeanDefinition mbd, 
 	Object exposedObject = bean;
 	if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
 		for (BeanPostProcessor bp : getBeanPostProcessors()) {
-			// 判断该bean是否存在aop代理，如果有则返回代理对象
+			// 循环所有SmartInstantiationAwareBeanPostProcessor(其中aop的AbstractAutoProxyCreator会实现该接口)内部该bean是否存在aop代理，如果有则返回代理对象。也可以是自己实现SmartInstantiationAwareBeanPostProcessor
 			if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
 				SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
 				exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName);

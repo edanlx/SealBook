@@ -155,7 +155,7 @@ protected void prepareRefresh() {
 		}
 	}
 	 * */
-	// 将额外的环境变量如tomcat中的变量加入到spring容器中
+	// 将额外的环境变量如tomcat中的变量加入到spring容器中，如果是内置tomcat
 	initPropertySources();
 
 	// Validate that all properties marked as required are resolvable:
@@ -519,7 +519,7 @@ public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
 	}
 
 	// Parse each @Configuration class
-	// 解析配置类，包括@bean、scan等
+	// 解析配置类
 	ConfigurationClassParser parser = new ConfigurationClassParser(
 			this.metadataReaderFactory, this.problemReporter, this.environment,
 			this.resourceLoader, this.componentScanBeanNameGenerator, registry);
@@ -662,7 +662,7 @@ public void parse(Set<BeanDefinitionHolder> configCandidates) {
 		BeanDefinition bd = holder.getBeanDefinition();
 		try {
 			if (bd instanceof AnnotatedBeanDefinition) {
-				// 核心方法
+				// 核心方法(@configuration默认)
 				parse(((AnnotatedBeanDefinition) bd).getMetadata(), holder.getBeanName());
 			}
 			else if (bd instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) bd).hasBeanClass()) {

@@ -27,7 +27,7 @@ public SpringApplication(Class<?>... primarySources) {
 public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
 	this.resourceLoader = resourceLoader;
 	Assert.notNull(primarySources, "PrimarySources must not be null");
-	// 将启动类存起来，挡在@Configuration启动类使用
+	// 将启动类存起来，当做@Configuration启动类使用
 	this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 	// 推算当前webflux还是servlet
 	this.webApplicationType = WebApplicationType.deduceFromClasspath();
@@ -279,9 +279,9 @@ private void initialize() throws WebServerException {
 ```
 
 ## 4.@SpringBootApplication自动装配
-@import的三种主要使用方式，springboot使用的是DeferredImportSelector
+@import的三种主要使用方式，springboot使用的是DeferredImportSelector(三种方式都是递归的方式当做@configuration处理)
 1. import直接导入bean
-2. import导入的bean实现importSelector(再定义要导入的ben)->DeferredImportSelector(在将@Component加载成beanDefinition之后，组内顺序)
+2. import导入的bean实现importSelector(再定义要导入的bean)->DeferredImportSelector(在将@Component加载成beanDefinition之后在parse方法最后一行)
 3. import导入的bean实现importBeanDefinitionRegister(使用beanDefinition注册)
 ### 4.1spring.factories
 文件读取路径  

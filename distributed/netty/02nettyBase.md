@@ -28,7 +28,35 @@ Netty网络通信组件
 3. read0表示有写事件，我方可以读取
 - Channelpipeline
 pipeline与tomcat的pipeline类似，起拦截器的功能，结构为双向链表，虽然在一个链表内，但是入站只会走入站的方法，出站只会走出站的方法
-一般加入解码器StringDecoder、编码器StringEncoder(其实现ChannelOutboundHandler)、Handler(自己的实现逻辑)、FixedLengthFrameDecoder(根据长度处理粘包、拆包,实现逻辑是先接收字符串再根据字符串接收相应长度)
+一般加入
+1. 解码器StringDecoder、编码器StringEncoder(其实现ChannelOutboundHandler，用于处理汉字等)、
+2. Handler(自己的实现逻辑,可以传输对象需要自己继承MessageToByteEncoder，服务端继承ByteToMessageDecoder)
+```
+// 客户端
+out.writeInt(长度)
+out.writeBytes(内容)
+```
+```
+// 服务端
+if(in.readableBytes()>=4){
+    // 整形4个字节
+    if(length == 0) {
+        // 如果此时length是初始化的0则进入并读取到长度，同时先读掉4个字节
+        length == in.readInt();
+    }
+    if(in.readableBytes() < length){
+        // 可读长度不够
+        renturn;
+    }
+    if(in.readableBytes()>=length){
+        in.readBytes(接收容器，只读length这么长new Byte[length]);
+        // 处理反序列化业务逻辑。。。
+        out.add(XXX序列化完成的对象交给下一个handler)
+    }
+    length = 0
+}
+```
+3. FixedLengthFrameDecoder(根据长度处理粘包、拆包,实现逻辑是先接收字符串再根据字符串接收相应长度，除了序列化以外的重要编解码器处理粘包拆包，但并不好用，自定义也可以实现同样的功能)
 - ByteBuffer
 与NIO的ByteBuffer类似但是操作体验完全不用，NIO的需要读写切换flip。
 1. readIndex读索引
@@ -230,13 +258,13 @@ public ChannelFuture bind(SocketAddress localAddress) {
 ```
 ```java
 private ChannelFuture doBind(final SocketAddress localAddress) {
-	// 通过反射初始化外部传入的channel，例如NioServerSocketChannel
+	// 通过反射初始化外部传入的channel，例如NioServerSocketChannel(内部javaChannel()会获得java的原始Channel)
     final ChannelFuture regFuture = initAndRegister();
     final Channel channel = regFuture.channel();
     if (regFuture.cause() != null) {
         return regFuture;
     }
-
+    // 执行完毕则监听回调，最终都会进入doBind0
     if (regFuture.isDone()) {
         // At this point we know that the registration was complete and successful.
         ChannelPromise promise = channel.newPromise();
@@ -264,6 +292,45 @@ private ChannelFuture doBind(final SocketAddress localAddress) {
         });
         return promise;
     }
+}
+```
+- io.netty.bootstrap.AbstractBootstrap#initAndRegister
+```java
+final ChannelFuture initAndRegister() {
+    Channel channel = null;
+    try {
+        channel = channelFactory.newChannel();
+        init(channel);
+    } catch (Throwable t) {
+        if (channel != null) {
+            // channel can be null if newChannel crashed (eg SocketException("too many open files"))
+            channel.unsafe().closeForcibly();
+            // as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor
+            return new DefaultChannelPromise(channel, GlobalEventExecutor.INSTANCE).setFailure(t);
+        }
+        // as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor
+        return new DefaultChannelPromise(new FailedChannel(), GlobalEventExecutor.INSTANCE).setFailure(t);
+    }
+    // 此处的group即模型中的parent
+    ChannelFuture regFuture = config().group().register(channel);
+    if (regFuture.cause() != null) {
+        if (channel.isRegistered()) {
+            channel.close();
+        } else {
+            channel.unsafe().closeForcibly();
+        }
+    }
+
+    // If we are here and the promise is not failed, it's one of the following cases:
+    // 1) If we attempted registration from the event loop, the registration has been completed at this point.
+    //    i.e. It's safe to attempt bind() or connect() now because the channel has been registered.
+    // 2) If we attempted registration from the other thread, the registration request has been successfully
+    //    added to the event loop's task queue for later execution.
+    //    i.e. It's safe to attempt bind() or connect() now:
+    //         because bind() or connect() will be executed *after* the scheduled registration task is executed
+    //         because register(), bind(), and connect() are all bound to the same thread.
+
+    return regFuture;
 }
 ```
 ### 5.1io.netty.channel.socket.nio.NioServerSocketChannel#NioServerSocketChannel()
@@ -366,7 +433,7 @@ void init(Channel channel) {
     }
     final Entry<AttributeKey<?>, Object>[] currentChildAttrs = childAttrs.entrySet().toArray(EMPTY_ATTRIBUTE_ARRAY);
 
-    // 向pipeline中添加ChannelInitializer，注意这个addLast是添加到倒数第二个，倒数第一的tail是不动的
+    // 向pipeline中添加ChannelInitializer(根据注释该类只会执行一次就会被删除)，注意这个addLast是添加到倒数第二个，倒数第一的tail是不动的(此处只是将该实例添加到pipeline，但未执行具体的initChannel)
     p.addLast(new ChannelInitializer<Channel>() {
         @Override
         public void initChannel(final Channel ch) {
@@ -435,7 +502,7 @@ public final void register(EventLoop eventLoop, final ChannelPromise promise) {
             register0(promise);
         } else {
             try {
-            	// 核心逻辑
+            	// 核心逻辑，异步存入task
                 eventLoop.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -464,9 +531,10 @@ public void execute(Runnable task) {
 ```java
 private void execute(Runnable task, boolean immediate) {
     boolean inEventLoop = inEventLoop();
-    // 存入之前的task,即register0
+    // 存入之前的task
     addTask(task);
     if (!inEventLoop) {
+        // 此方法最终会异步有个runAllTask执行上面的task
         startThread();
         if (isShutdown()) {
             boolean reject = false;
@@ -523,6 +591,7 @@ private void doStartThread() {
             boolean success = false;
             updateLastExecutionTime();
             try {
+                // 核心方法
                 SingleThreadEventExecutor.this.run();
                 success = true;
             } catch (Throwable t) {
@@ -598,6 +667,7 @@ private void doStartThread() {
 ```java
 protected void run() {
     int selectCnt = 0;
+    // 死循环要么进入监听要么处理任务
     for (;;) {
         try {
             int strategy;
@@ -611,6 +681,7 @@ protected void run() {
                     // fall-through to SELECT since the busy-wait is not supported with NIO
 
                 case SelectStrategy.SELECT:
+                    // 核心分支，用于select()阻塞
                     long curDeadlineNanos = nextScheduledTaskDeadlineNanos();
                     if (curDeadlineNanos == -1L) {
                         curDeadlineNanos = NONE; // nothing on the calendar
@@ -646,7 +717,9 @@ protected void run() {
             if (ioRatio == 100) {
                 try {
                     if (strategy > 0) {
-                    	// 处理对应的事件
+                    	// 处理对应的事件，连接、读写等unsafe.read()，unsafe是AbstractNioChannel.NioUnsafe的内部类
+                        // 在接收连接事件后会调用accept得到channel同时包装成netty的channel，接着调用parent的pipeline，里面的ServerBootstrapAcceptor会在此时发挥作用child.pipeline().addLast(childHandler);将用户写的handler加入到child里面,接着进行regist到workerGroup的其中一个event(selector)中和parent一样的结构以及循环
+                        // 也即存到task后再runAllTask处理任务，回调pipeline
                         processSelectedKeys();
                     }
                 } finally {
@@ -709,6 +782,7 @@ private void register0(ChannelPromise promise) {
             return;
         }
         boolean firstRegistration = neverRegistered;
+        // selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);nio注册的同样写法
         doRegister();
         neverRegistered = false;
         registered = true;

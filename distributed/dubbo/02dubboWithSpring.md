@@ -13,7 +13,7 @@
 public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
     // @since 2.7.6 Register the common beans
-    // 此处会注册一个关键beanReferenceAnnotationBeanPostProcessor，用于处理@DubboService的注入，其实现BeanFactoryPostProcessor会在spring的doScan时回调
+    // 此处会注册一个关键bean,ReferenceAnnotationBeanPostProcessor，用于处理@DubboService的注入，其实现BeanFactoryPostProcessor会在spring的doScan时回调
     // 如果是旧版该bean会在此处直接注册
     registerCommonBeans(registry);
 
@@ -255,7 +255,7 @@ protected void prepareInjection(AnnotatedInjectionMetadata metadata) throws Bean
             }
             Class<?> injectedType = fieldElement.field.getType();
             AnnotationAttributes attributes = fieldElement.attributes;
-            // 生成相应的bean
+            // 生成相应的bean->beanDefinition.setBeanClassName(ReferenceBean.class.getName());
             String referenceBeanName = registerReferenceBean(fieldElement.getPropertyName(), injectedType, attributes, fieldElement.field);
 
             //associate fieldElement and reference bean
