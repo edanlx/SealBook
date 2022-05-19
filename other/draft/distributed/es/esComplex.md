@@ -1,4 +1,4 @@
-
+default 是索引和搜索时用的默认的 analyzer，default_index 是索引时用的默认的 analyzer ， default_search 是查询时用的默认analyzer。
 - 通过inner_hits实现折叠内容里面的排序
 ```json
 {
