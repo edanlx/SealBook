@@ -117,3 +117,16 @@ default 是索引和搜索时用的默认的 analyzer，default_index 是索引�
         }
     }
 ```
+- 模糊查询
+```json
+{
+	"query": {
+		"wildcard": {
+			"label": "*参数*"
+		}
+	},
+	"sort": {
+		"createdTime": "desc"
+	}
+}
+```
