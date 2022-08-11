@@ -130,3 +130,5 @@ default 是索引和搜索时用的默认的 analyzer，default_index 是索引�
 	}
 }
 ```
+es牺牲度性能后的相关写优化
+https://blog.csdn.net/qq_16504067/article/details/123520523
